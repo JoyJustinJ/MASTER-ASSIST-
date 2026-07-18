@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Aging Report</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .age-0{color:#28a745;}.age-30{color:#f57c00;}.age-60{color:#ff5722;}.age-90{color:#dc3545;font-weight:700;}
+    .age-bar{height:8px;border-radius:4px;background:#f0f0f5;overflow:hidden;margin-top:4px;}
+    .age-fill{height:100%;border-radius:4px;}
+    .aging-summary{background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:16px;text-align:center;}
+  </style>
+</head>
+<body>
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg><div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div></a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search..." /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;"><button class="navbar-user" id="userDropdownToggle"><div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span><i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i></button>
+    <div class="user-dropdown" id="userDropdown"><div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div><a href="profile.html"><i class="fas fa-user"></i> My Profile</a><a href="settings.html"><i class="fas fa-cog"></i> Settings</a><div class="user-dropdown-divider"></div><button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div>
+  </div>
+</nav>
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload</a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html" class="active"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div><div class="page-title">Accounts Receivable Aging Report</div><div class="page-breadcrumb">Reports / Aging Report</div></div>
+    <div class="d-flex gap-2">
+      <button class="btn-ma-outline" onclick="window.print()"><i class="fas fa-print me-1"></i>Print</button>
+      <button class="btn-ma-outline" onclick="Swal2.fire('Export','Aging report exported.','success')"><i class="fas fa-download me-1"></i>Export</button>
+    </div>
+  </div>
+
+  <!-- Age Buckets Summary -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="aging-summary"><div style="font-size:12px;font-weight:700;color:#28a745;margin-bottom:8px;">0–30 Days</div><div style="font-size:22px;font-weight:800;color:#28a745;" id="ag0">₹0</div><div class="age-bar"><div class="age-fill" style="width:45%;background:#28a745;"></div></div><div style="font-size:11px;color:#888;margin-top:4px;">18 parties</div></div></div>
+    <div class="col-6 col-md-3"><div class="aging-summary"><div style="font-size:12px;font-weight:700;color:#f57c00;margin-bottom:8px;">31–60 Days</div><div style="font-size:22px;font-weight:800;color:#f57c00;" id="ag30">₹0</div><div class="age-bar"><div class="age-fill" style="width:27%;background:#f57c00;"></div></div><div style="font-size:11px;color:#888;margin-top:4px;">11 parties</div></div></div>
+    <div class="col-6 col-md-3"><div class="aging-summary"><div style="font-size:12px;font-weight:700;color:#ff5722;margin-bottom:8px;">61–90 Days</div><div style="font-size:22px;font-weight:800;color:#ff5722;" id="ag60">₹0</div><div class="age-bar"><div class="age-fill" style="width:16%;background:#ff5722;"></div></div><div style="font-size:11px;color:#888;margin-top:4px;">7 parties</div></div></div>
+    <div class="col-6 col-md-3"><div class="aging-summary"><div style="font-size:12px;font-weight:700;color:#dc3545;margin-bottom:8px;">&gt;90 Days</div><div style="font-size:22px;font-weight:800;color:#dc3545;" id="ag90">₹0</div><div class="age-bar"><div class="age-fill" style="width:12%;background:#dc3545;"></div></div><div style="font-size:11px;color:#888;margin-top:4px;">5 parties</div></div></div>
+  </div>
+
+  <div class="filter-bar mb-3">
+    <select class="ma-select" id="filterType" style="max-width:160px;" onchange="renderTable()">
+      <option value="">Receivable &amp; Payable</option><option value="receivable">Receivable (Customers)</option><option value="payable">Payable (Suppliers)</option>
+    </select>
+    <input type="text" class="ma-input" placeholder="Search party..." id="searchInput" style="max-width:220px;" oninput="renderTable()" />
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="ma-table" id="agingTable">
+      <thead><tr><th>Party Name</th><th>Type</th><th>Total Due</th><th class="age-0">0–30 Days</th><th class="age-30">31–60 Days</th><th class="age-60">61–90 Days</th><th class="age-90">&gt;90 Days</th><th>Last Payment</th><th>Action</th></tr></thead>
+      <tbody id="agingBody"></tbody>
+      <tfoot><tr id="agingTotals" style="font-weight:700;background:#f8f8fc;"></tr></tfoot>
+    </table>
+  </div>
+</main>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
+const parties = MA.getAll('suppliers').map(function(s){return {name:s.name,type:'payable',due:s.balance||0,a0:s.balance||0,a30:0,a60:0,a90:0,lastPmt:''};}).concat(MA.getAll('customers').filter(function(c){return (c.balance||0)>0;}).map(function(c){return {name:c.name,type:'receivable',due:c.balance||0,a0:c.balance||0,a30:0,a60:0,a90:0,lastPmt:c.lastVisit||''};}));
+function fmtAmt(n){return n?'₹'+n.toLocaleString('en-IN'):'—';}
+function renderTable(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const type=document.getElementById('filterType').value;
+  const filtered=parties.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!type||p.type===type));
+  document.getElementById('agingBody').innerHTML=filtered.map(p=>`
+    <tr>
+      <td style="font-weight:600;">${p.name}</td>
+      <td><span style="background:${p.type==='receivable'?'#e8f5e9':'#fff3e0'};color:${p.type==='receivable'?'#28a745':'#f57c00'};padding:2px 8px;border-radius:4px;font-size:11px;text-transform:capitalize;">${p.type}</span></td>
+      <td style="font-weight:700;">₹${p.due.toLocaleString('en-IN')}</td>
+      <td class="age-0">${fmtAmt(p.a0)}</td>
+      <td class="age-30">${fmtAmt(p.a30)}</td>
+      <td class="age-60">${fmtAmt(p.a60)}</td>
+      <td class="age-90">${fmtAmt(p.a90)}</td>
+      <td style="font-size:12px;color:#888;">${p.lastPmt}</td>
+      <td><button class="btn-icon" onclick="sendReminder('${p.name}')"><i class="fas fa-bell" title="Send Reminder"></i></button></td>
+    </tr>`).join('');
+  const t0=filtered.reduce((a,p)=>a+p.a0,0),t30=filtered.reduce((a,p)=>a+p.a30,0),t60=filtered.reduce((a,p)=>a+p.a60,0),t90=filtered.reduce((a,p)=>a+p.a90,0);
+  document.getElementById('agingTotals').innerHTML=`<td colspan="2">Total (${filtered.length} parties)</td><td>₹${(t0+t30+t60+t90).toLocaleString('en-IN')}</td><td class="age-0">₹${t0.toLocaleString('en-IN')}</td><td class="age-30">₹${t30.toLocaleString('en-IN')}</td><td class="age-60">₹${t60.toLocaleString('en-IN')}</td><td class="age-90">₹${t90.toLocaleString('en-IN')}</td><td colspan="2"></td>`;
+}
+function sendReminder(name){Swal2.fire({icon:'success',title:'Reminder Sent',text:`Payment reminder sent to ${name}`,timer:1500,showConfirmButton:false});}
+document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
+document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
+document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
+renderTable();
+
+
+(function(){
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('ag0', MA.fmt(parties.reduce(function(a,p){return a+p.a0;},0)));
+  el('ag30',MA.fmt(parties.reduce(function(a,p){return a+p.a30;},0)));
+  el('ag60',MA.fmt(parties.reduce(function(a,p){return a+p.a60;},0)));
+  el('ag90',MA.fmt(parties.reduce(function(a,p){return a+p.a90;},0)));
+  renderTable();
+})();
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

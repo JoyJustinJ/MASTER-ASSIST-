@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — SMS &amp; Email</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .comm-layout{display:grid;grid-template-columns:240px 1fr;gap:0;background:#fff;border:1px solid #e8e8f0;border-radius:10px;min-height:500px;overflow:hidden;}
+    .comm-sidebar{border-right:1px solid #e8e8f0;}
+    .comm-sidebar-item{padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s;border-bottom:1px solid #f5f5fb;}
+    .comm-sidebar-item:hover{background:#f8f8fd;}
+    .comm-sidebar-item.active{background:#ededff;border-left:3px solid #696cff;}
+    .comm-content{padding:24px;}
+    .template-preview{background:#f8f8fd;border:1px solid #e8e8f0;border-radius:8px;padding:14px;font-size:13px;line-height:1.6;color:#333;font-family:monospace;}
+    .var-chip{display:inline-block;background:#ededff;color:#696cff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;margin:2px;}
+    .send-log-row{padding:10px 0;border-bottom:1px solid #f5f5fb;display:flex;align-items:center;gap:12px;}
+    .comm-tab-btn{padding:8px 18px;border:2px solid #e0e0ea;border-radius:7px;background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;color:#555;}
+    .comm-tab-btn.active{border-color:#696cff;background:#696cff;color:#fff;}
+  </style>
+</head>
+<body>
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg><div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div></a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search..." /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;"><button class="navbar-user" id="userDropdownToggle"><div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span><i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i></button>
+    <div class="user-dropdown" id="userDropdown"><div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div><a href="profile.html"><i class="fas fa-user"></i> My Profile</a><a href="settings.html"><i class="fas fa-cog"></i> Settings</a><div class="user-dropdown-divider"></div><button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div>
+  </div>
+</nav>
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload</a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html" class="active"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div><div class="page-title">SMS &amp; Email</div><div class="page-breadcrumb">Communication / SMS &amp; Email</div></div>
+    <div class="d-flex gap-2">
+      <button class="comm-tab-btn active" onclick="showView('templates',this)"><i class="fas fa-file-alt me-1"></i>Templates</button>
+      <button class="comm-tab-btn" onclick="showView('send',this)"><i class="fas fa-paper-plane me-1"></i>Send</button>
+      <button class="comm-tab-btn" onclick="showView('logs',this)"><i class="fas fa-history me-1"></i>Logs</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#ededff;color:#696cff;"><i class="fas fa-sms"></i></div><div class="stat-info"><div class="stat-value" id="smsSent">0</div><div class="stat-label">SMS Sent Today</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e8f5e9;color:#28a745;"><i class="fas fa-envelope-open-text"></i></div><div class="stat-info"><div class="stat-value" id="emailsSent">0</div><div class="stat-label">Emails Sent Today</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#fff3e0;color:#f57c00;"><i class="fas fa-check-double"></i></div><div class="stat-info"><div class="stat-value" id="deliveryRate">—</div><div class="stat-label">Delivery Rate</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e3f2fd;color:#1976d2;"><i class="fas fa-coins"></i></div><div class="stat-info"><div class="stat-value" id="smsCredits">—</div><div class="stat-label">SMS Credits Left</div></div></div></div>
+  </div>
+
+  <!-- Templates View -->
+  <div id="view-templates">
+    <div class="comm-layout">
+      <div class="comm-sidebar">
+        <div style="padding:12px 16px;font-size:12px;font-weight:700;color:#888;letter-spacing:.5px;">SMS TEMPLATES</div>
+        <div class="comm-sidebar-item active" onclick="loadTemplate('sale',this)"><i class="fas fa-receipt" style="color:#696cff;"></i><div><div style="font-size:13px;font-weight:600;">Sale Receipt</div><div style="font-size:11px;color:#888;">Auto-trigger</div></div></div>
+        <div class="comm-sidebar-item" onclick="loadTemplate('payment',this)"><i class="fas fa-check-circle" style="color:#28a745;"></i><div><div style="font-size:13px;font-weight:600;">Payment Received</div><div style="font-size:11px;color:#888;">Auto-trigger</div></div></div>
+        <div class="comm-sidebar-item" onclick="loadTemplate('due',this)"><i class="fas fa-exclamation-circle" style="color:#f57c00;"></i><div><div style="font-size:13px;font-weight:600;">Due Reminder</div><div style="font-size:11px;color:#888;">Manual</div></div></div>
+        <div class="comm-sidebar-item" onclick="loadTemplate('offer',this)"><i class="fas fa-tag" style="color:#c2185b;"></i><div><div style="font-size:13px;font-weight:600;">Promotional Offer</div><div style="font-size:11px;color:#888;">Manual</div></div></div>
+        <div class="comm-sidebar-item" onclick="loadTemplate('otp',this)"><i class="fas fa-key" style="color:#7b1fa2;"></i><div><div style="font-size:13px;font-weight:600;">OTP / Login</div><div style="font-size:11px;color:#888;">Auto-trigger</div></div></div>
+        <div style="padding:12px 16px;font-size:12px;font-weight:700;color:#888;letter-spacing:.5px;margin-top:8px;">EMAIL TEMPLATES</div>
+        <div class="comm-sidebar-item" onclick="loadTemplate('invoice',this)"><i class="fas fa-file-invoice" style="color:#1976d2;"></i><div><div style="font-size:13px;font-weight:600;">Invoice Email</div><div style="font-size:11px;color:#888;">Auto-trigger</div></div></div>
+        <div class="comm-sidebar-item" onclick="loadTemplate('welcome',this)"><i class="fas fa-hand-wave" style="color:#f57c00;"></i><div><div style="font-size:13px;font-weight:600;">Welcome Customer</div><div style="font-size:11px;color:#888;">Auto-trigger</div></div></div>
+        <div class="comm-sidebar-item" onclick="openAdd()"><i class="fas fa-plus" style="color:#696cff;"></i><span style="font-size:13px;font-weight:600;color:#696cff;">Add New Template</span></div>
+      </div>
+      <div class="comm-content">
+        <div id="templateContent">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div><div style="font-size:16px;font-weight:700;" id="tplTitle">Sale Receipt SMS</div><div style="font-size:12px;color:#888;" id="tplTrigger">Trigger: Auto — after every sale</div></div>
+            <div class="d-flex gap-2">
+              <button class="btn-ma-outline btn-ma-sm" onclick="openEdit()"><i class="fas fa-edit me-1"></i>Edit</button>
+              <button class="btn-ma-primary btn-ma-sm" onclick="testTemplate()"><i class="fas fa-paper-plane me-1"></i>Test Send</button>
+            </div>
+          </div>
+          <div class="template-preview" id="tplBody">Dear {customer_name}, Thank you for your purchase at Master Assist! Bill No: {bill_no} | Amount: Rs. {amount} | Date: {date}. Your loyalty points: {points}. Thank you! - Team Master Assist</div>
+          <div style="margin-top:16px;">
+            <div style="font-size:12px;font-weight:700;color:#888;margin-bottom:8px;">Available Variables (click to copy):</div>
+            <div id="tplVars">
+              <span class="var-chip" onclick="copyVar('{customer_name}')">{customer_name}</span>
+              <span class="var-chip" onclick="copyVar('{bill_no}')">{bill_no}</span>
+              <span class="var-chip" onclick="copyVar('{amount}')">{amount}</span>
+              <span class="var-chip" onclick="copyVar('{date}')">{date}</span>
+              <span class="var-chip" onclick="copyVar('{points}')">{points}</span>
+              <span class="var-chip" onclick="copyVar('{store_name}')">{store_name}</span>
+              <span class="var-chip" onclick="copyVar('{phone}')">{phone}</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;background:#f0f0f5;border-radius:8px;padding:12px;font-size:12px;color:#666;">
+            <strong>Character count:</strong> <span id="charCount">0</span>/160 &nbsp;|&nbsp; <strong>SMS parts:</strong> <span id="smsParts">1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send View -->
+  <div id="view-send" style="display:none;">
+    <div style="background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:24px;">
+      <div class="row g-3">
+        <div class="col-md-3"><label class="form-label">Channel</label>
+          <select class="ma-select w-100" id="sendChannel"><option>SMS</option><option>Email</option><option>Both</option></select>
+        </div>
+        <div class="col-md-3"><label class="form-label">Send To</label>
+          <select class="ma-select w-100" id="sendTo"><option>All Customers</option><option>Gold Members</option><option>Silver Members</option><option>Custom List</option></select>
+        </div>
+        <div class="col-md-3"><label class="form-label">Template</label>
+          <select class="ma-select w-100" id="sendTemplate"><option>Promotional Offer</option><option>Due Reminder</option><option>Custom Message</option></select>
+        </div>
+        <div class="col-md-3"><label class="form-label">Schedule</label>
+          <select class="ma-select w-100" id="sendSchedule"><option>Send Immediately</option><option>Schedule Later</option></select>
+        </div>
+        <div class="col-12"><label class="form-label">Message</label>
+          <textarea class="ma-textarea w-100" id="sendMsg" rows="4">Dear {customer_name}, 🎉 Special offer! Get 15% off on all purchases today. Use code: SAVE15 at Master Assist. Valid today only. - Team Master Assist</textarea>
+        </div>
+        <div class="col-md-6">
+          <div style="background:#f8f8fd;border-radius:8px;padding:14px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Send Preview</div>
+            <div style="font-size:12px;color:#555;">Recipients: <strong>248 customers</strong></div>
+            <div style="font-size:12px;color:#555;">SMS Credits needed: <strong>248</strong></div>
+            <div style="font-size:12px;color:#555;">Credits available: <strong>8,460</strong></div>
+          </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <button class="btn-ma-primary" style="width:100%;padding:12px;" onclick="confirmSend()"><i class="fas fa-paper-plane me-2"></i>Send Campaign</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logs View -->
+  <div id="view-logs" style="display:none;">
+    <div style="overflow-x:auto;">
+      <table class="ma-table">
+        <thead><tr><th>Date/Time</th><th>Channel</th><th>Template</th><th>Recipients</th><th>Sent</th><th>Delivered</th><th>Failed</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:12px;">18-Jul-2026 10:30</td><td><span class="badge-success">SMS</span></td><td>Sale Receipt</td><td>1</td><td>1</td><td>1</td><td>0</td><td><span class="badge-success">Delivered</span></td></tr>
+          <tr><td style="font-size:12px;">18-Jul-2026 09:15</td><td><span class="badge-processing">Email</span></td><td>Invoice Email</td><td>1</td><td>1</td><td>1</td><td>0</td><td><span class="badge-success">Delivered</span></td></tr>
+          <tr><td style="font-size:12px;">17-Jul-2026 18:00</td><td><span class="badge-success">SMS</span></td><td>Promotional Offer</td><td>248</td><td>248</td><td>245</td><td>3</td><td><span class="badge-success">Completed</span></td></tr>
+          <tr><td style="font-size:12px;">17-Jul-2026 11:20</td><td><span class="badge-success">SMS</span></td><td>Due Reminder</td><td>12</td><td>12</td><td>12</td><td>0</td><td><span class="badge-success">Delivered</span></td></tr>
+          <tr><td style="font-size:12px;">16-Jul-2026 20:00</td><td><span class="badge-error">Both</span></td><td>Weekend Offer</td><td>180</td><td>180</td><td>176</td><td>4</td><td><span class="badge-success">Completed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
+const templates = (function(){var t={};MA.getAll('smsTemplates').forEach(function(tmpl){t[tmpl.key]=tmpl;});return t;})();
+function loadTemplate(key,el){
+  document.querySelectorAll('.comm-sidebar-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const t=templates[key];if(!t) return;
+  document.getElementById('tplTitle').textContent=t.title;
+  document.getElementById('tplTrigger').textContent=t.trigger;
+  document.getElementById('tplBody').textContent=t.body;
+  document.getElementById('charCount').textContent=t.body.length;
+  document.getElementById('smsParts').textContent=Math.ceil(t.body.length/160);
+}
+function showView(v,btn){['templates','send','logs'].forEach(id=>document.getElementById('view-'+id).style.display='none');document.getElementById('view-'+v).style.display='';document.querySelectorAll('.comm-tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+function copyVar(v){navigator.clipboard.writeText(v).catch(()=>{});Swal2.fire({icon:'success',title:'Copied',text:v,toast:true,position:'top-end',timer:1200,showConfirmButton:false});}
+function openAdd(){Swal2.fire('New Template','Template editor would open here for a new template.','info');}
+function openEdit(){Swal2.fire('Edit Template','Template editor would open here.','info');}
+function testTemplate(){Swal2.fire({icon:'success',title:'Test SMS Sent',text:'Sent to admin mobile number',timer:1500,showConfirmButton:false});}
+function confirmSend(){Swal2.fire({title:'Send Campaign?',text:'This will send SMS to 248 customers.',icon:'warning',showCancelButton:true,confirmButtonText:'Send Now'}).then(r=>{if(r.isConfirmed){Swal2.fire({icon:'success',title:'Campaign Queued',text:'Your campaign has been queued for sending.',timer:2000,showConfirmButton:false});}});}
+document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
+document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
+document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
+loadTemplate('sale',null);
+
+
+(function(){
+  var log=MA.getAll('smsSendLog');
+  var today=MA.today();
+  var todayLog=log.filter(function(l){return (l.date||'').slice(0,10)===today;});
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('smsSent',todayLog.filter(function(l){return l.channel==='SMS';}).reduce(function(a,l){return a+(l.sent||0);},0));
+  el('emailsSent',todayLog.filter(function(l){return l.channel==='Email';}).reduce(function(a,l){return a+(l.sent||0);},0));
+  el('deliveryRate','—');el('smsCredits','—');
+})();
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

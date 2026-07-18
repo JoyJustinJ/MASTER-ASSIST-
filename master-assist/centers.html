@@ -1,0 +1,550 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Centers &amp; POS</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .center-card {
+      background:#fff; border:1px solid #e8e8f0; border-radius:10px;
+      margin-bottom:22px; overflow:hidden;
+    }
+    .center-card-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:15px 20px; background:#f8f8fd; border-bottom:1px solid #e8e8f0;
+    }
+    .center-name {
+      font-size:15px; font-weight:600; color:#252525; display:flex; align-items:center; gap:8px;
+    }
+    .center-name i { color:#696cff; font-size:16px; }
+    .center-meta { font-size:12px; color:#888; margin-top:2px; }
+    .center-actions { display:flex; gap:6px; }
+    .pos-grid { display:flex; flex-wrap:wrap; gap:12px; padding:16px 20px; }
+    .pos-chip {
+      display:flex; flex-direction:column; align-items:center;
+      background:#f8f8fd; border:1px solid #e0e0ea; border-radius:8px;
+      padding:12px 18px; min-width:120px; cursor:default;
+    }
+    .pos-chip.active { border-color:#696cff; background:#ededff; }
+    .pos-chip.inactive { border-color:#e0e0ea; background:#fafafa; opacity:0.75; }
+    .pos-chip-id { font-size:11px; font-weight:700; color:#696cff; letter-spacing:0.5px; }
+    .pos-chip.inactive .pos-chip-id { color:#aaa; }
+    .pos-chip-name { font-size:12px; font-weight:500; color:#333; margin:3px 0 1px; }
+    .pos-chip-cashier { font-size:11px; color:#888; }
+    .pos-chip-dot {
+      width:7px; height:7px; border-radius:50%; margin-top:5px;
+    }
+    .pos-chip.active .pos-chip-dot { background:#28a745; }
+    .pos-chip.inactive .pos-chip-dot { background:#ccc; }
+    .add-pos-chip {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:#fff; border:2px dashed #d0d0e8; border-radius:8px;
+      padding:12px 18px; min-width:120px; cursor:pointer; color:#696cff;
+      font-size:12px; font-weight:500; gap:5px; transition:all 0.15s;
+    }
+    .add-pos-chip:hover { background:#f0f0ff; border-color:#696cff; }
+    .stats-strip {
+      display:flex; gap:6px; align-items:center; padding:0 20px 14px;
+    }
+    .stats-strip-item {
+      font-size:11px; color:#666; background:#f0f0f5; border-radius:4px;
+      padding:2px 8px; display:flex; align-items:center; gap:4px;
+    }
+    .stats-strip-item strong { color:#333; }
+    .empty-centers {
+      text-align:center; padding:60px 20px; color:#aaa;
+    }
+    .empty-centers i { font-size:40px; margin-bottom:12px; display:block; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/>
+      <circle cx="21" cy="5" r="3" fill="#ff6b2b"/>
+    </svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" placeholder="Search centers..." id="globalSearch" />
+  </div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div>
+        <span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+          <div class="user-dropdown-name">Administrator</div>
+          <div class="user-dropdown-role">Master Assist — Super Admin</div>
+        </div>
+        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html" class="active"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+
+<!-- MAIN -->
+<main class="ma-main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Centers &amp; POS</div>
+      <div class="page-breadcrumb">Administration / Centers &amp; POS</div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn-ma-outline" onclick="exportCenters()"><i class="fas fa-download me-1"></i>Export</button>
+      <button class="btn-ma-primary" onclick="openAddCenter()"><i class="fas fa-plus me-1"></i>Add Center</button>
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#ededff;color:#696cff;"><i class="fas fa-building"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statTotal">5</div>
+          <div class="stat-label">Total Centers</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#e8f5e9;color:#28a745;"><i class="fas fa-store"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statActive">4</div>
+          <div class="stat-label">Active Centers</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fff3e0;color:#f57c00;"><i class="fas fa-cash-register"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statPos">14</div>
+          <div class="stat-label">Total POS</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#e3f2fd;color:#1976d2;"><i class="fas fa-circle" style="color:#28a745;font-size:10px;"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statPosActive">11</div>
+          <div class="stat-label">POS Online</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar mb-3">
+    <input type="text" class="ma-input" placeholder="Search center name..." id="centerSearch" style="max-width:240px;" oninput="renderCenters()" />
+    <select class="ma-select" id="statusFilter" onchange="renderCenters()" style="max-width:160px;">
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+    <button class="btn-ma-outline ms-auto" onclick="renderCenters()"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+  </div>
+
+  <!-- Centers list -->
+  <div id="centersContainer"></div>
+
+</main>
+
+<!-- ADD / EDIT CENTER MODAL -->
+<div class="modal fade" id="centerModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="centerModalTitle">Add Center</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editCenterId" value="" />
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Center Name <span style="color:red">*</span></label>
+            <input type="text" class="ma-input w-100" id="cName" placeholder="e.g. Main Branch" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Center Code <span style="color:red">*</span></label>
+            <input type="text" class="ma-input w-100" id="cCode" placeholder="e.g. CTR-01" />
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Address</label>
+            <input type="text" class="ma-input w-100" id="cAddress" placeholder="Full address" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">City</label>
+            <input type="text" class="ma-input w-100" id="cCity" placeholder="City" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Manager Name</label>
+            <input type="text" class="ma-input w-100" id="cManager" placeholder="Manager" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Mobile</label>
+            <input type="text" class="ma-input w-100" id="cMobile" placeholder="+91 XXXXX XXXXX" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select class="ma-select w-100" id="cStatus">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">No. of POS Terminals</label>
+            <input type="number" class="ma-input w-100" id="cPosCount" placeholder="0" min="0" max="20" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-ma-primary" onclick="saveCenter()">Save Center</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD POS MODAL -->
+<div class="modal fade" id="posModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="posModalTitle">Add POS Terminal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="posCenterId" value="" />
+        <input type="hidden" id="editPosId" value="" />
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">POS ID <span style="color:red">*</span></label>
+            <input type="text" class="ma-input w-100" id="posId" placeholder="e.g. POS-01" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">POS Name</label>
+            <input type="text" class="ma-input w-100" id="posName" placeholder="e.g. Counter 1" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Assigned Cashier</label>
+            <input type="text" class="ma-input w-100" id="posCashier" placeholder="Cashier name" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select class="ma-select w-100" id="posStatus">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-ma-primary" onclick="savePOS()">Save POS</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2 = Swal.mixin({ confirmButtonColor: '#696cff' });
+
+let centers = MA.getAll('centers');
+
+let nextCenterId = 6;
+let currentEditCenterId = null;
+let currentPOSCenterId = null;
+
+function renderCenters() {
+  const q = document.getElementById('centerSearch').value.toLowerCase();
+  const sf = document.getElementById('statusFilter').value;
+  const list = centers.filter(c => {
+    const matchName = c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q);
+    const matchStatus = !sf || c.status === sf;
+    return matchName && matchStatus;
+  });
+
+  const container = document.getElementById('centersContainer');
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-centers"><i class="fas fa-building"></i>No centers found.</div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(c => {
+    const totalPos = c.pos.length;
+    const activePos = c.pos.filter(p => p.status === 'active').length;
+    const statusBadge = c.status === 'active'
+      ? '<span class="badge-success">Active</span>'
+      : '<span class="badge-inactive">Inactive</span>';
+    const posChips = c.pos.map(p => `
+      <div class="pos-chip ${p.status}" title="${p.name} — ${p.cashier}">
+        <div class="pos-chip-id">${p.id}</div>
+        <div class="pos-chip-name">${p.name}</div>
+        <div class="pos-chip-cashier">${p.cashier}</div>
+        <div class="pos-chip-dot"></div>
+      </div>
+    `).join('');
+
+    return `
+    <div class="center-card">
+      <div class="center-card-header">
+        <div>
+          <div class="center-name">
+            <i class="fas fa-building"></i>
+            ${c.name}
+            <span style="font-size:11px;color:#888;font-weight:400;">${c.code}</span>
+            ${statusBadge}
+          </div>
+          <div class="center-meta">
+            <i class="fas fa-map-marker-alt me-1"></i>${c.address}, ${c.city} &nbsp;|&nbsp;
+            <i class="fas fa-user me-1"></i>${c.manager} &nbsp;|&nbsp;
+            <i class="fas fa-phone me-1"></i>${c.mobile}
+          </div>
+        </div>
+        <div class="center-actions">
+          <button class="btn-ma-sm btn-ma-outline" onclick="openAddPOS(${c.id})"><i class="fas fa-plus me-1"></i>Add POS</button>
+          <button class="btn-ma-sm btn-ma-outline" onclick="editCenter(${c.id})"><i class="fas fa-edit"></i></button>
+          <button class="btn-ma-sm btn-ma-danger" onclick="deleteCenter(${c.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="stats-strip">
+        <div class="stats-strip-item"><strong>${totalPos}</strong> POS Total</div>
+        <div class="stats-strip-item" style="color:#28a745;"><strong>${activePos}</strong> Online</div>
+        <div class="stats-strip-item" style="color:#aaa;"><strong>${totalPos - activePos}</strong> Offline</div>
+      </div>
+      <div class="pos-grid">
+        ${posChips}
+        <div class="add-pos-chip" onclick="openAddPOS(${c.id})">
+          <i class="fas fa-plus-circle" style="font-size:18px;"></i>
+          Add POS
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = centers.length;
+  document.getElementById('statActive').textContent = centers.filter(c => c.status === 'active').length;
+  const allPos = centers.flatMap(c => c.pos);
+  document.getElementById('statPos').textContent = allPos.length;
+  document.getElementById('statPosActive').textContent = allPos.filter(p => p.status === 'active').length;
+}
+
+function openAddCenter() {
+  currentEditCenterId = null;
+  document.getElementById('centerModalTitle').textContent = 'Add Center';
+  document.getElementById('editCenterId').value = '';
+  ['cName','cCode','cAddress','cCity','cManager','cMobile','cPosCount'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cStatus').value = 'active';
+  new bootstrap.Modal(document.getElementById('centerModal')).show();
+}
+
+function editCenter(id) {
+  const c = centers.find(x => x.id === id);
+  if (!c) return;
+  currentEditCenterId = id;
+  document.getElementById('centerModalTitle').textContent = 'Edit Center';
+  document.getElementById('editCenterId').value = id;
+  document.getElementById('cName').value = c.name;
+  document.getElementById('cCode').value = c.code;
+  document.getElementById('cAddress').value = c.address;
+  document.getElementById('cCity').value = c.city;
+  document.getElementById('cManager').value = c.manager;
+  document.getElementById('cMobile').value = c.mobile;
+  document.getElementById('cStatus').value = c.status;
+  document.getElementById('cPosCount').value = c.pos.length;
+  new bootstrap.Modal(document.getElementById('centerModal')).show();
+}
+
+function saveCenter() {
+  const name = document.getElementById('cName').value.trim();
+  const code = document.getElementById('cCode').value.trim();
+  if (!name || !code) { alert('Center Name and Code are required.'); return; }
+  const data = {
+    name, code,
+    address: document.getElementById('cAddress').value.trim(),
+    city: document.getElementById('cCity').value.trim(),
+    manager: document.getElementById('cManager').value.trim(),
+    mobile: document.getElementById('cMobile').value.trim(),
+    status: document.getElementById('cStatus').value
+  };
+  if (currentEditCenterId) {
+    const idx = centers.findIndex(c => c.id === currentEditCenterId);
+    centers[idx] = { ...centers[idx], ...data };
+  } else {
+    centers.push({ id: nextCenterId++, pos: [], ...data });
+  }
+  bootstrap.Modal.getInstance(document.getElementById('centerModal')).hide();
+  renderCenters();
+}
+
+function deleteCenter(id) {
+  Swal2.fire({
+    title: 'Delete Center?',
+    text: 'This will also remove all POS terminals in this center.',
+    icon: 'warning', showCancelButton: true,
+    confirmButtonText: 'Yes, Delete', cancelButtonText: 'Cancel'
+  }).then(r => {
+    if (r.isConfirmed) {
+      centers = centers.filter(c => c.id !== id);
+      renderCenters();
+      Swal2.fire('Deleted!', 'Center has been removed.', 'success');
+    }
+  });
+}
+
+function openAddPOS(centerId) {
+  currentPOSCenterId = centerId;
+  const c = centers.find(x => x.id === centerId);
+  document.getElementById('posModalTitle').textContent = `Add POS — ${c.name}`;
+  document.getElementById('posCenterId').value = centerId;
+  document.getElementById('editPosId').value = '';
+  ['posId','posName','posCashier'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('posStatus').value = 'active';
+  new bootstrap.Modal(document.getElementById('posModal')).show();
+}
+
+function savePOS() {
+  const posIdVal = document.getElementById('posId').value.trim();
+  if (!posIdVal) { alert('POS ID is required.'); return; }
+  const cIdx = centers.findIndex(c => c.id === currentPOSCenterId);
+  centers[cIdx].pos.push({
+    id: posIdVal,
+    name: document.getElementById('posName').value.trim() || posIdVal,
+    cashier: document.getElementById('posCashier').value.trim() || '—',
+    status: document.getElementById('posStatus').value
+  });
+  bootstrap.Modal.getInstance(document.getElementById('posModal')).hide();
+  renderCenters();
+}
+
+function exportCenters() {
+  Swal2.fire('Export', 'Centers data exported to CSV.', 'success');
+}
+
+// Sidebar toggle
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.querySelector('.ma-main').classList.toggle('expanded');
+});
+
+// User dropdown
+document.getElementById('userDropdownToggle').addEventListener('click', function(e) {
+  e.stopPropagation();
+  document.getElementById('userDropdown').classList.toggle('show');
+});
+document.addEventListener('click', () => document.getElementById('userDropdown').classList.remove('show'));
+
+// Init
+renderCenters();
+
+
+if(typeof saveCenter==='function'){var _origSaveC=saveCenter;saveCenter=function(){_origSaveC();MA.set('centers',centers);};}
+if(typeof deleteCenter==='function'){var _origDelC=deleteCenter;deleteCenter=function(id){_origDelC(id);MA.set('centers',centers);};}
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

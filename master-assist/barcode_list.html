@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Barcode Labels</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .barcode-label{background:#fff;border:1px solid #e0e0ea;border-radius:4px;padding:12px 14px;text-align:center;width:160px;font-family:monospace;}
+    .barcode-lines{height:48px;display:flex;align-items:flex-end;justify-content:center;gap:1.5px;margin:6px 0;}
+    .barcode-line{width:2px;background:#222;}
+    .barcode-num{font-size:10px;letter-spacing:1px;color:#333;}
+    .barcode-name{font-size:10px;font-weight:700;color:#252525;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
+    .barcode-price{font-size:13px;font-weight:800;color:#696cff;}
+    .label-grid{display:flex;flex-wrap:wrap;gap:12px;padding:16px;background:#f8f8fd;border-radius:8px;}
+    @media print{.ma-navbar,.ma-sidebar,.ma-main .page-header,.filter-bar,.print-actions{display:none!important;}.ma-main{margin:0!important;padding:0!important;}.label-grid{background:#fff;}}
+  </style>
+</head>
+<body>
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg><div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div></a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search items..." id="globalSearch" oninput="renderList()" /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;"><button class="navbar-user" id="userDropdownToggle"><div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span><i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i></button>
+    <div class="user-dropdown" id="userDropdown"><div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div><a href="profile.html"><i class="fas fa-user"></i> My Profile</a><a href="settings.html"><i class="fas fa-cog"></i> Settings</a><div class="user-dropdown-divider"></div><button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div>
+  </div>
+</nav>
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload</a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html" class="active"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<main class="ma-main" id="maMain">
+  <div class="page-header print-actions">
+    <div><div class="page-title">Barcode &amp; Label Printing</div><div class="page-breadcrumb">Inventory / Barcodes</div></div>
+    <div class="d-flex gap-2">
+      <button class="btn-ma-outline" onclick="selectAll()"><i class="fas fa-check-double me-1"></i>Select All</button>
+      <button class="btn-ma-outline" onclick="clearSel()"><i class="fas fa-times me-1"></i>Clear</button>
+      <button class="btn-ma-primary" onclick="printSelected()"><i class="fas fa-print me-1"></i>Print Labels (<span id="selCount">0</span>)</button>
+    </div>
+  </div>
+
+  <div class="filter-bar mb-3 print-actions">
+    <input type="text" class="ma-input" placeholder="Search item / SKU / barcode..." id="searchInput" style="max-width:280px;" oninput="renderList()" />
+    <select class="ma-select" id="filterCat" style="max-width:160px;" onchange="renderList()">
+      <option value="">All Categories</option>
+      <option>Grocery</option><option>Electronics</option><option>Clothing</option><option>FMCG</option><option>Pharma</option>
+    </select>
+    <select class="ma-select" id="labelType" style="max-width:160px;">
+      <option>Price Label (Small)</option><option>Shelf Label (Large)</option><option>QR Code</option>
+    </select>
+    <div style="display:flex;align-items:center;gap:6px;font-size:13px;">
+      Copies: <input type="number" class="ma-input" id="copies" value="1" min="1" max="100" style="width:60px;" />
+    </div>
+  </div>
+
+  <div class="row g-0">
+    <!-- Item Selection List -->
+    <div class="col-md-6 col-lg-7" style="padding-right:12px;">
+      <div style="overflow-x:auto;">
+        <table class="ma-table">
+          <thead><tr><th><input type="checkbox" id="checkAll" onchange="toggleAll(this.checked)" /></th><th>SKU</th><th>Item Name</th><th>Barcode</th><th>MRP</th></tr></thead>
+          <tbody id="itemList"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Label Preview -->
+    <div class="col-md-6 col-lg-5">
+      <div style="background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:16px;position:sticky;top:80px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;">
+          Label Preview <span id="labelCount" style="color:#696cff;font-weight:600;">0 labels</span>
+        </div>
+        <div class="label-grid" id="labelGrid">
+          <div style="text-align:center;color:#bbb;width:100%;padding:30px 0;"><i class="fas fa-barcode" style="font-size:40px;display:block;margin-bottom:10px;"></i>Select items to preview labels</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
+const items = MA.getAll('items').map(function(i){return {id:i.id,sku:i.sku,name:i.name,barcode:i.barcode||'',cat:i.cat,mrp:i.mrp||0};});
+let selected=new Set();
+function genBarcode(){const heights=[];for(let i=0;i<28;i++)heights.push(Math.random()>0.3?42:24);return heights.map(h=>`<div class="barcode-line" style="height:${h}px;"></div>`).join('');}
+function renderList(){
+  const q=(document.getElementById('searchInput').value||document.getElementById('globalSearch').value||'').toLowerCase();
+  const cat=document.getElementById('filterCat').value;
+  const filtered=items.filter(i=>(!q||(i.name+i.sku+i.barcode).toLowerCase().includes(q))&&(!cat||i.cat===cat));
+  document.getElementById('itemList').innerHTML=filtered.map(i=>`
+    <tr><td><input type="checkbox" class="item-check" data-id="${i.id}" ${selected.has(i.id)?'checked':''} onchange="toggleItem(${i.id},this.checked)" /></td>
+      <td><code style="font-size:11px;">${i.sku}</code></td>
+      <td style="font-size:12px;font-weight:500;">${i.name}</td>
+      <td><code style="font-size:10px;color:#888;">${i.barcode}</code></td>
+      <td style="font-weight:700;color:#696cff;">₹${i.mrp}</td>
+    </tr>`).join('');
+  renderLabels();
+}
+function toggleItem(id,checked){checked?selected.add(id):selected.delete(id);updateCount();renderLabels();}
+function toggleAll(checked){items.forEach(i=>checked?selected.add(i.id):selected.delete(i.id));renderList();}
+function selectAll(){items.forEach(i=>selected.add(i.id));renderList();}
+function clearSel(){selected.clear();renderList();}
+function updateCount(){document.getElementById('selCount').textContent=selected.size;}
+function renderLabels(){
+  updateCount();const copies=Math.max(1,parseInt(document.getElementById('copies').value)||1);
+  const selItems=items.filter(i=>selected.has(i.id));
+  document.getElementById('labelCount').textContent=(selItems.length*copies)+' labels';
+  if(!selItems.length){document.getElementById('labelGrid').innerHTML='<div style="text-align:center;color:#bbb;width:100%;padding:30px 0;"><i class="fas fa-barcode" style="font-size:40px;display:block;margin-bottom:10px;"></i>Select items to preview labels</div>';return;}
+  let html='';
+  selItems.forEach(i=>{for(let c=0;c<Math.min(copies,3);c++)html+=`<div class="barcode-label"><div style="font-size:9px;font-weight:700;color:#696cff;letter-spacing:.5px;">MASTER ASSIST</div><div class="barcode-lines">${genBarcode()}</div><div class="barcode-num">${i.barcode}</div><div class="barcode-name">${i.name}</div><div class="barcode-price">₹${i.mrp} MRP</div></div>`;});
+  document.getElementById('labelGrid').innerHTML=html;
+}
+function printSelected(){if(!selected.size){Swal2.fire('No Items','Select at least one item to print labels.','warning');return;}window.print();}
+document.getElementById('copies').addEventListener('input',renderLabels);
+document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
+document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
+document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
+renderList();
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

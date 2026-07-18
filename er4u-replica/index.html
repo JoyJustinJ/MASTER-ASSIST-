@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI outlet</title>
+
+  <!-- Favicon: red circular "e" logo on white background -->
+  <!-- <link rel="icon" type="image/jpeg" href="img/f.jpg"> -->
+
+  <!-- Bootstrap 5.0.2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+
+  <!-- FontAwesome 6.7.2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
+  <!-- Select2 4.x -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+
+  <!-- Google Font: Public Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       ER4U AI BILL UPLOAD — LOGIN PAGE STYLES
+       Extracted verbatim from er4uepplus.in/er4u/aibillupload/
+       Bootstrap 5.0.2 base + these custom overrides
+       ============================================================ */
+
+    body {
+      background: #fff;
+      font-family: 'Public Sans', sans-serif;
+    }
+
+    /* ---- Layout ---- */
+    #main { }
+    #middle { padding: 0; }
+    #center-column { background: #fff; }
+
+    .dg-color {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .dg-color:after {
+      display: block;
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      opacity: .15;
+      background: #fff;
+      /* background-image: url(img/download.png); */  /* commented out in source */
+    }
+
+    /* ---- Login card ---- */
+    .container-center.login {
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    .login-area {
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow:
+        0 5px 12px rgb(214, 212, 212),
+        0 4px 4px rgb(238, 238, 238);
+    }
+
+    /* ---- Panel (Bootstrap 3 shim) ---- */
+    .panel {
+      margin-bottom: 0px;
+      background-color: #fff;
+      border: 0px solid rgba(250, 217, 118, 0);
+      border-radius: 4px;
+      -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+      box-shadow: none;
+    }
+
+    .panel-heading {
+      padding: 10px 15px;
+      border-bottom: 1px solid transparent;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+    }
+
+    .panel-body { padding: 0px; }
+
+    .panel-custom > .panel-heading {
+      color: #060606;
+      background-color: #fff;
+      text-align: center;
+    }
+
+    /* ---- Logo ---- */
+    .logo-center {
+      display: block;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .logo-center1 {
+      display: block;
+      position: relative;
+      margin: 14% auto 10%;
+    }
+
+    /* ---- Header / Title ---- */
+    .header-title { text-align: center; }
+
+    .header-title small { color: #038098; font-size: 12px; }
+
+    .header-title h3 { font-size: 16px; }
+
+    .panel .panel-heading h3 {
+      font-weight: 600;
+      color: #252525;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 16px;
+      line-height: 27px;
+    }
+
+    h4.login {
+      text-align: center;
+      margin-bottom: 0;
+      font-weight: 500;
+      font-size: 16px;
+      color: #535353;
+    }
+
+    /* ---- Form groups ---- */
+    .form-group { margin-bottom: 2px; }
+
+    .master-icon { position: relative; }
+
+    .master-icon label {
+      transform: translate3d(15px, 12px, 0);
+      background: #ffffff;
+      display: inline-block;
+      padding: 0 10px;
+      text-align: left;
+      font-weight: 400;
+      font-size: 14px;
+      font-family: 'Public Sans', sans-serif;
+      color: #4e4b4b;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-group .fa {
+      left: 15px;
+      position: inherit;
+      margin-right: 4px;
+      top: 17px;
+      color: #868585;
+    }
+
+    /* ---- Input / select fields ---- */
+    .bar-form-control {
+      display: block;
+      width: 100%;
+      height: 44px !important;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1.42857143;
+      color: #555;
+      background-color: #fff;
+      background-image: none;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+      transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .bar-form-control:focus {
+      border-color: #7957fb;
+      outline: 0;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(121, 87, 251, 0.4);
+    }
+
+    /* ---- User / SVG icon inside field ---- */
+    .iconPosi {
+      height: 22px;
+      width: 22px;
+      position: absolute;
+      right: 22px;
+      top: 0;
+      bottom: 10px;
+      margin-top: auto;
+      display: inline-block;
+    }
+
+    svg.iconPosi { fill: #595959; }
+
+    /* ---- Password toggle button ---- */
+    .password-input { padding-right: 50px; }
+
+    .password-toggle {
+      background: transparent !important;
+      border: 0;
+      color: #595959;
+      cursor: pointer;
+      font-size: 15px;
+      line-height: 1;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .password-toggle.iconPosi {
+      align-items: center;
+      bottom: 5px;
+      display: flex;
+      height: 34px;
+      justify-content: center;
+      right: 14px;
+      top: auto;
+      width: 34px;
+    }
+
+    .password-toggle .fa-eye-slash { display: none; }
+
+    /* ---- Login button ---- */
+    input.btn.btn-save,
+    button.btn-save {
+      margin-top: 5px;
+      width: 100%;
+      font-size: 16px;
+      background: #7957fb;
+      border-color: #7957fb;
+    }
+
+    input.btn.btn-save:hover,
+    button.btn-save:hover {
+      background: #6644e8;
+      border-color: #6644e8;
+    }
+
+    /* ---- Forgot password link ---- */
+    .forgot-link {
+      font-size: 13px;
+      color: #0d6efd;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* ---- IP / Version footer ---- */
+    .ip-display {
+      text-align: center;
+      font-size: 12px;
+      color: #979797;
+      text-shadow: 1px 0px 0px #696cff;
+      margin-top: 8px;
+    }
+
+    .version-display {
+      text-align: center;
+      font-family: 'Public Sans', sans-serif;
+      margin-bottom: 0;
+      font-size: 14px;
+      font-weight: 400;
+      color: #979797;
+    }
+
+    /* ---- OTP popup overlay ---- */
+    .popup {
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      text-align: center;
+      z-index: 9998;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup.active { display: flex; }
+
+    .otp-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px 24px;
+      max-width: 380px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .otp-card h2 {
+      font-family: 'Public Sans', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: #222;
+      margin-bottom: 6px;
+    }
+
+    .otp-card p {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    /* OTP 4-digit input boxes */
+    .otp-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .otp__digit {
+      width: 52px;
+      height: 56px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      color: #222;
+      outline: none;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    .otp__digit:focus { border-color: #7957fb; }
+    .otp__digit::-webkit-inner-spin-button,
+    .otp__digit::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .otp-verify-btn {
+      background: #7957fb;
+      color: #fff;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      margin: 0 0 12px 0;
+    }
+
+    .otp-verify-btn:hover { background: #6644e8; }
+
+    .otp-timer {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .otp-close {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 22px;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      color: #555;
+      line-height: 1;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* ---- Forgot Password modal ---- */
+    .forgot-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .forgot-modal.active { display: flex; }
+
+    .forgot-modal-content {
+      width: 100%;
+      max-width: 520px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      position: relative;
+      max-height: 92vh;
+      overflow: auto;
+    }
+
+    .forgot-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 24px;
+      line-height: 1;
+      border: 0;
+      background: transparent !important;
+      color: #444 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      cursor: pointer;
+    }
+
+    .forgot-modal-title {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .forgot-wrap {
+      text-align: left;
+      margin-top: 10px;
+      border: 1px solid #e9e9e9;
+      border-radius: 6px;
+      padding: 12px;
+      background: #fbfbfb;
+    }
+
+    .forgot-msg {
+      font-size: 13px;
+      margin-bottom: 10px;
+      padding: 9px 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid transparent;
+    }
+
+    .forgot-msg-success {
+      color: #0f5132;
+      background: #d1e7dd;
+      border-color: #badbcc;
+    }
+
+    .forgot-msg-error {
+      color: #842029;
+      background: #f8d7da;
+      border-color: #f5c2c7;
+    }
+
+    .forgot-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+
+    .forgot-table th,
+    .forgot-table td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .forgot-table th { background: #f1f1f1; }
+
+    .forgot-btn {
+      background: #0d6efd !important;
+      color: #fff !important;
+      border: none;
+      padding: 8px 12px;
+      margin: 0;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .forgot-btn:hover { background: #0b5ed7 !important; }
+
+    .forgot-btn[disabled] {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    /* ---- Spinner animation for login button ---- */
+    @keyframes btnSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .fa-spin-custom {
+      animation: btnSpin 0.8s linear infinite;
+    }
+
+    /* ---- SweetAlert2 font size override ---- */
+    .swal2-popup { font-size: 0.7rem; }
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+    @media (max-width: 1280px) {
+      .container-center.login { margin: 0% auto 37px; }
+    }
+
+    @media (max-width: 991px) {
+      .container-center.login {
+        margin: 0;
+        max-width: 100%;
+        padding: 0;
+        width: 100%;
+      }
+
+      .logo-center { margin: 7% auto; }
+
+      .login-area {
+        padding: 0 12px;
+        box-shadow: none;
+      }
+
+      .dg-color {
+        align-items: flex-start;
+        height: 95vh;
+        margin-top: 5%;
+        width: 100%;
+      }
+
+      #center-column {
+        min-height: 100vh;
+        box-shadow: none;
+      }
+
+      .login-heading {
+        font-size: 20px;
+        display: block;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #5031c7;
+      }
+
+      input.btn.btn-save,
+      button.btn-save {
+        margin-top: 9%;
+        font-size: 18px;
+        text-transform: uppercase;
+        border-radius: 0.375rem;
+      }
+
+      .form-group { margin-bottom: 6px; }
+
+      body { background: #fff; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main">
+    <div id="middle">
+      <div id="center-column">
+
+        <!-- ============================================================
+             MAIN FLEX WRAPPER — centers card vertically/horizontally
+             ============================================================ -->
+        <div class="dg-color">
+          <div class="container-center login p-0 p-lg-4">
+            <div class="login-area">
+              <div class="panel panel-bd panel-custom">
+
+                <!-- LOGO — 286×66px, ER4U + ERP-23 -->
+                <!-- In production: <img src="img/login-logo.png" class="logo-center" style="width:286px;height:66px;" /> -->
+                <!-- Inline SVG recreation of the logo for standalone use: -->
+                <div class="logo-center mb-3" style="width:286px;height:66px;display:flex;align-items:center;justify-content:center;">
+                  <svg width="286" height="66" viewBox="0 0 286 66" xmlns="http://www.w3.org/2000/svg">
+                    <!-- "eR4U" purple text logo left side -->
+                    <text x="8" y="40" font-family="'Arial Black', Arial, sans-serif" font-size="36" font-weight="900" fill="#7957fb">e</text>
+                    <text x="30" y="40" font-family="'Arial Black', Arial, sans-serif" font-size="36" font-weight="900" fill="#7957fb">R</text>
+                    <!-- "4" in orange -->
+                    <text x="52" y="40" font-family="'Arial Black', Arial, sans-serif" font-size="36" font-weight="900" fill="#ff6b2b">4</text>
+                    <text x="72" y="40" font-family="'Arial Black', Arial, sans-serif" font-size="36" font-weight="900" fill="#7957fb">U</text>
+                    <!-- dots decorative -->
+                    <circle cx="12" cy="10" r="3" fill="#7957fb" opacity="0.5"/>
+                    <circle cx="20" cy="6" r="2" fill="#7957fb" opacity="0.4"/>
+                    <!-- tagline -->
+                    <text x="8" y="58" font-family="Arial, sans-serif" font-size="10" fill="#999">easy retail for you</text>
+                    <!-- vertical divider -->
+                    <line x1="115" y1="5" x2="115" y2="61" stroke="#ccc" stroke-width="1.5"/>
+                    <!-- ERP-23 right side -->
+                    <text x="125" y="42" font-family="'Arial Black', Arial, sans-serif" font-size="30" font-weight="900" fill="#7957fb">ERP-23</text>
+                  </svg>
+                </div>
+
+                <!-- PANEL BODY -->
+                <div class="panel-body">
+
+                  <!-- HEADING -->
+                  <div class="panel-heading">
+                    <div class="view-header">
+                      <div class="header-title">
+                        <h3 class="mb-0">
+                          <span class="login-heading">Login</span> to continue
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ================================================
+                       LOGIN FORM
+                       action="login1.php" method="POST"
+                       ================================================ -->
+                  <form id="form" name="form1" method="post" action="login1.php">
+                    <div class="row">
+
+                      <!-- USERNAME -->
+                      <div class="form-group col-lg-12 master-icon">
+                        <label>Username</label>
+                        <input
+                          type="text"
+                          name="txtUserName"
+                          id="txtUserName"
+                          class="textbox bar-form-control"
+                          required="required"
+                          autocomplete="username"
+                        />
+                        <!-- User SVG icon (right side) -->
+                        <svg class="iconPosi" height="25px" viewBox="0 0 20 25" width="20px" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M18.57,23.48c-1.37,1.36-3.43,1.52-6,1.52H8.65C5.5,25,3,25,1.43,23.48A6,6,0,0,1,0,19.06a6.06,6.06,0,0,1,1.55-4,1.07,1.07,0,1,1,1.62,1.39,3.92,3.92,0,0,0-1,2.61,4,4,0,0,0,.8,2.9c.94.94,3,.92,5.69.9h2.74c2.66,0,4.75,0,5.69-.9a4,4,0,0,0,.8-2.9,4.35,4.35,0,0,0-1.15-2.49,1.07,1.07,0,0,1,1.4-1.62A6.34,6.34,0,0,1,20,19.06,6,6,0,0,1,18.57,23.48ZM10,14.18c-3.33,0-6-3.18-6-7.09S6.67,0,10,0s6,3.18,6,7.09S13.34,14.18,10,14.18Zm0-12c-2.16,0-3.91,2.22-3.91,4.95S7.85,12,10,12s3.91-2.22,3.91-4.95S12.16,2.14,10,2.14Z"/>
+                        </svg>
+                      </div>
+
+                      <!-- PASSWORD -->
+                      <div class="form-group col-lg-12 master-icon" style="margin-bottom: 20px;">
+                        <label>Password</label>
+                        <input
+                          type="password"
+                          id="txtPassword"
+                          name="txtPassword"
+                          class="textbox bar-form-control password-input"
+                          required="required"
+                          autocomplete="current-password"
+                        />
+                        <!-- Eye toggle button -->
+                        <button
+                          type="button"
+                          class="password-toggle iconPosi js-password-toggle"
+                          data-target="txtPassword"
+                          aria-label="Show password"
+                          title="Show password"
+                        >
+                          <i class="fas fa-eye"></i>
+                          <i class="fas fa-eye-slash"></i>
+                        </button>
+                      </div>
+
+                      <!-- CENTER (hidden by default — shown via JS after user lookup) -->
+                      <div class="form-group col-lg-12 master-icon d-none" id="centerDiv" style="margin-bottom: 20px;">
+                        <label>Center</label>
+                        <select name="center" id="center" class="bar-form-control">
+                          <option value="1">ER4U</option>
+                        </select>
+                      </div>
+
+                      <!-- POS / STORE (hidden by default — shown via JS) -->
+                      <div class="form-group col-lg-12 master-icon d-none" id="posDiv" style="margin-bottom: 20px;">
+                        <label>POS</label>
+                        <select name="store_pos" id="store_pos" class="bar-form-control">
+                          <option value="36">Th-7</option>
+                          <option value="127">A4-7</option>
+                          <option value="133">CH-A4-2</option>
+                          <option value="156">CH-Th-5</option>
+                          <option value="170">Est-A5-3</option>
+                          <option value="180">Est-Th-2</option>
+                          <option value="194">SO-A4-9</option>
+                          <option value="200">SO-A5-6</option>
+                          <option value="201">SO-A5-7</option>
+                          <option value="214">Approval-1</option>
+                          <option value="215">Booking-1</option>
+                          <option value="216">A5_11</option>
+                          <option value="217">A4_11</option>
+                          <option value="218">SO-A4-1-Static</option>
+                        </select>
+                      </div>
+
+                    </div><!-- /.row -->
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="text-center">
+                      <button
+                        type="submit"
+                        name="submit2"
+                        value="Login"
+                        class="btn btn-primary btn-save text-white py-2 m-0 my-2 btn-er4u-login d-block w-100"
+                        id="loginBtn"
+                      >
+                        <i class="fas fa-sign-in-alt"></i> Login
+                      </button>
+                      <!-- Hidden token field -->
+                      <input type="hidden" name="o_token" id="o_token" value="N" />
+                    </div>
+                  </form>
+
+                  <!-- FORGOT PASSWORD LINK -->
+                  <div class="text-center mt-2">
+                    <a href="javascript:void(0)" id="forgotPasswordToggle" class="forgot-link">Forgot Password?</a>
+                  </div>
+
+                  <!-- IP ADDRESS DISPLAY -->
+                  <div class="ip-display">103.39.133.123</div>
+
+                  <!-- VERSION -->
+                  <p class="mt-2 version-display">Version : 4.1.9</p>
+
+                </div><!-- /.panel-body -->
+              </div><!-- /.panel -->
+            </div><!-- /.login-area -->
+          </div><!-- /.container-center -->
+        </div><!-- /.dg-color -->
+
+      </div><!-- /#center-column -->
+    </div><!-- /#middle -->
+  </div><!-- /#main -->
+
+
+  <!-- ================================================================
+       OTP VERIFICATION POPUP
+       Hidden by default (display:none), fades in via jQuery .fadeIn(500)
+       when login response status === "203"
+       ================================================================ -->
+  <section class="popup" id="otpPopup">
+    <div class="otp-card">
+      <button type="button" class="otp-close" id="otpClose" aria-label="Close">×</button>
+      <h2>OTP VERIFICATION</h2>
+      <p>
+        An otp has been sent to <strong id="replace_mobno"></strong><br/>
+        Please enter OTP to verify
+      </p>
+
+      <!-- 4 individual digit boxes -->
+      <div class="otp-inputs">
+        <input type="number" class="otp__digit otp__field__1" id="otp1" maxlength="1" min="0" max="9" />
+        <input type="number" class="otp__digit otp__field__2" id="otp2" maxlength="1" min="0" max="9" />
+        <input type="number" class="otp__digit otp__field__3" id="otp3" maxlength="1" min="0" max="9" />
+        <input type="number" class="otp__digit otp__field__4" id="otp4" maxlength="1" min="0" max="9" />
+      </div>
+
+      <!-- Hidden token storage -->
+      <input type="hidden" id="tokenid" value="" />
+
+      <!-- Verify button -->
+      <button type="button" class="otp-verify-btn" id="otpVerifyBtn">Verify OTP</button>
+
+      <!-- Resend timer -->
+      <div class="otp-timer">
+        Resend Otp After: <span id="timer">02:00</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================================================================
+       FORGOT PASSWORD MODAL
+       Fixed overlay, z-index 9999
+       Hidden by default, shown when #forgotPasswordToggle is clicked
+       ================================================================ -->
+  <div class="forgot-modal" id="forgotPasswordModal">
+    <div class="forgot-modal-content">
+      <button class="forgot-modal-close" id="forgotModalClose" aria-label="Close">×</button>
+      <h2 class="forgot-modal-title">Forgot Password</h2>
+
+      <div class="forgot-wrap">
+
+        <!-- Alert message area (hidden until response) -->
+        <div id="forgotMsg" class="forgot-msg" style="display:none;"></div>
+
+        <!-- Step 1: Mobile number + Send OTP -->
+        <div id="forgotStep1">
+          <div class="mb-2">
+            <label style="font-size:13px;font-weight:500;color:#333;">Registered Mobile No.</label>
+            <div class="d-flex gap-2 mt-1">
+              <input
+                type="text"
+                id="forgotMobile"
+                class="bar-form-control"
+                placeholder="Enter registered mobile number"
+                maxlength="10"
+              />
+              <button type="button" class="forgot-btn" id="sendOtpBtn" style="white-space:nowrap;">
+                Send OTP
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: OTP input + Verify (hidden until OTP is sent) -->
+        <div id="forgotStep2" style="display:none;">
+          <div class="mb-2 mt-2">
+            <label style="font-size:13px;font-weight:500;color:#333;">Enter OTP</label>
+            <div class="d-flex gap-2 mt-1">
+              <input
+                type="text"
+                id="forgotOtp"
+                class="bar-form-control"
+                placeholder="Enter OTP received on mobile"
+                maxlength="6"
+              />
+              <button type="button" class="forgot-btn" id="verifyOtpBtn" style="white-space:nowrap;">
+                Verify OTP
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Users table (shown after OTP verified) -->
+        <div id="forgotUsersSection" style="display:none;">
+          <p style="font-size:13px;color:#333;margin-bottom:6px;">
+            Active users found for mobile : <span id="forgotMobileDisplay"></span>
+          </p>
+          <table class="forgot-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Password</th>
+              </tr>
+            </thead>
+            <tbody id="forgotUsersBody"></tbody>
+          </table>
+        </div>
+
+      </div><!-- /.forgot-wrap -->
+    </div><!-- /.forgot-modal-content -->
+  </div><!-- /.forgot-modal -->
+
+
+  <!-- ================================================================
+       SCRIPTS
+       ================================================================ -->
+
+  <!-- jQuery 2.1.4 (as used in production) -->
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+  <!-- Bootstrap 5.0.2 Bundle (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Select2 4.x -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <!-- SweetAlert2 v11.14.5 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+
+  <!-- ================================================================
+       INLINE LOGIN LOGIC
+       Extracted from login_js/login-api.js + inline <script> on page
+       ================================================================ -->
+  <script>
+    /* ----------------------------------------------------------------
+       Global state
+       ---------------------------------------------------------------- */
+    let timerOn = true;
+
+    /* ----------------------------------------------------------------
+       loginLaravelAppThenContinue()
+       Parallel call to newapp/auth/login (Laravel API) — fires and
+       forgets; main login still uses login1.php PHP session flow.
+       ---------------------------------------------------------------- */
+    async function loginLaravelAppThenContinue() {
+      const data = {
+        username: $("input[name='txtUserName']").val(),
+        password: $("input[name='txtPassword']").val()
+      };
+
+      try {
+        const response = await fetch('newapp/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          console.log("App Login Success");
+          continueAfterLogin(result.user);
+        } else {
+          console.log("App Login Failed");
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+      }
+    }
+
+    function continueAfterLogin(user) {
+      /* reserved for post-login app hook */
+    }
+
+    /* ----------------------------------------------------------------
+       userLogin()
+       Main login handler — called on form submit.
+       1. Spins login button icon
+       2. Fires parallel Laravel auth call
+       3. After 1500ms delay, POSTs to login1.php via AJAX
+       4. Handles responses:
+          "200" → success → redirect to welcome.php
+          "203" → OTP required → call api-loginotp.php → show popup
+          "209" → already logged in elsewhere → confirm logout from all
+          other → error message
+       ---------------------------------------------------------------- */
+    function userLogin() {
+      /* Spinner on */
+      $(".btn-er4u-login").find("i")
+        .removeClass("fa-sign-in-alt")
+        .addClass("fa-cog fa-spin");
+
+      /* Parallel Laravel app login */
+      loginLaravelAppThenContinue();
+
+      /* Main PHP login — 1500ms delay */
+      setTimeout(function() {
+        $.ajax({
+          url: "login1.php",
+          method: "POST",
+          data: new FormData($("#form")[0]),
+          contentType: false,
+          processData: false,
+          success: function(response) {
+            /* Spinner off */
+            $(".btn-er4u-login").find("i")
+              .removeClass("fa-cog fa-spin")
+              .addClass("fa-sign-in-alt");
+
+            try {
+              response = $.parseJSON(response);
+
+              if (response.status === "200") {
+                /* SUCCESS */
+                Swal.fire({
+                  title: response.message,
+                  icon: "success",
+                  draggable: true
+                });
+                /* Clear localStorage caches */
+                ["get_pay_mode_1", "country_state", "state_district"].forEach(function(key) {
+                  if (localStorage.getItem(key) !== null) {
+                    localStorage.removeItem(key);
+                  }
+                });
+                window.location.href = "welcome.php";
+
+              } else if (response.status === "203") {
+                /* OTP REQUIRED */
+                $.ajax({
+                  url: "api-loginotp.php",
+                  method: "GET",
+                  data: { Token: response.Token },
+                  success: function(response_os) {
+                    try {
+                      var response_otp = $.parseJSON(response_os);
+                      if (response_otp.status === "200") {
+                        Swal.fire({
+                          title: response_otp.message,
+                          icon: "success",
+                          draggable: true
+                        });
+                        $("#tokenid").val(response_otp.token);
+                        $("#replace_mobno").html(response_otp.mobile);
+                        $(".popup").fadeIn(500);
+                        timer(120);
+                      } else {
+                        Swal.fire({
+                          icon: "error",
+                          text: response_otp.message
+                        });
+                      }
+                    } catch (err2) {
+                      console.log(err2);
+                      alert(response_os);
+                    }
+                  }
+                });
+
+              } else if (response.status === "209") {
+                /* MULTI-DEVICE CONFLICT */
+                Swal.fire({
+                  icon: "error",
+                  text: response.message,
+                  showDenyButton: false,
+                  showCancelButton: true,
+                  confirmButtonText: "Logout from all device"
+                }).then(function(result) {
+                  if (result.isConfirmed) {
+                    $.ajax({
+                      url: "logout_from_all_device.php",
+                      method: "GET",
+                      data: { Token: response.Token, status: "Ajax" },
+                      success: function(response_os) {
+                        try {
+                          var response_otp = $.parseJSON(response_os);
+                          if (response_otp.status === "200") {
+                            Swal.fire("Successfully Logout From All Devices! Login Again.", "", "success");
+                          }
+                        } catch (err2) {
+                          console.log(err2);
+                          alert(response_os);
+                        }
+                      }
+                    });
+                  }
+                });
+
+              } else {
+                /* OTHER ERROR */
+                Swal.fire({
+                  icon: "error",
+                  text: response.message
+                });
+              }
+
+            } catch (err2) {
+              console.log(err2);
+              alert(response);
+            }
+          }
+        });
+      }, 1500);
+    }
+
+    /* ----------------------------------------------------------------
+       timer(remaining)
+       Counts down from `remaining` seconds. Shows MM:SS.
+       When reaches 0: replaces with "Resend OTP" link.
+       ---------------------------------------------------------------- */
+    function timer(remaining) {
+      var m = Math.floor(remaining / 60);
+      var s = remaining % 60;
+      m = m < 10 ? '0' + m : m;
+      s = s < 10 ? '0' + s : s;
+      document.getElementById('timer').innerHTML = m + ':' + s;
+      remaining -= 1;
+
+      if (remaining >= 0 && timerOn) {
+        setTimeout(function() { timer(remaining); }, 1000);
+        return;
+      }
+      if (!timerOn) { return; }
+      document.getElementById('timer').innerHTML =
+        "<a href='javascript:void(0)' class='resend_otp' style='color:#7957fb;'>Resend OTP</a>";
+    }
+
+    /* ----------------------------------------------------------------
+       Document ready
+       ---------------------------------------------------------------- */
+    $(document).ready(function() {
+
+      /* ---- Form submit → userLogin() ---- */
+      $("#form").submit(function(e) {
+        e.preventDefault();
+        userLogin();
+      });
+
+      /* ---- OTP digit auto-focus (advance to next box) ---- */
+      $(".otp__digit").on("input", function() {
+        var val = $(this).val();
+        if (val.length >= 1) {
+          var nextInput = $(this).closest(".otp-inputs").find(".otp__digit").eq(
+            $(this).index(".otp__digit") + 1
+          );
+          if (nextInput.length) { nextInput.focus(); }
+        }
+      });
+
+      /* ---- OTP Verify button ---- */
+      $("#otpVerifyBtn").on("click", function() {
+        var otp = $("#otp1").val() + $("#otp2").val() + $("#otp3").val() + $("#otp4").val();
+        if (otp.length < 4) {
+          Swal.fire({ icon: "warning", text: "Please enter complete OTP" });
+          return;
+        }
+        $.ajax({
+          url: "api-loginotpcheck.php",
+          method: "POST",
+          data: { otp: otp, token: $("#tokenid").val() },
+          success: function(res) {
+            try {
+              var r = $.parseJSON(res);
+              if (r.status === "200") {
+                $(".popup").fadeOut(300);
+                window.location.href = "welcome.php";
+              } else {
+                Swal.fire({ icon: "error", text: r.message || "Invalid OTP" });
+              }
+            } catch(e) {
+              alert(res);
+            }
+          }
+        });
+      });
+
+      /* ---- OTP close button ---- */
+      $("#otpClose").on("click", function() {
+        $(".popup").fadeOut(300);
+        timerOn = false;
+      });
+
+      /* ---- Resend OTP (delegated, rendered by timer()) ---- */
+      $(document).on("click", ".resend_otp", function() {
+        $.ajax({
+          url: "api-loginotp.php",
+          type: "POST",
+          data: { Token: $("#tokenid").val(), status: "resend" },
+          success: function(data) {
+            try {
+              var response_os = $.parseJSON(data);
+              if (response_os.status === "200") {
+                Swal.fire({ title: response_os.message, icon: "success", draggable: true });
+              } else {
+                Swal.fire({ icon: "error", text: response_os.message });
+              }
+            } catch(err2) {
+              console.log(err2);
+              alert(data);
+            }
+          }
+        });
+        timerOn = true;
+        timer(120);
+      });
+
+      /* ---- Password show/hide toggle ---- */
+      $(document).on("click", ".js-password-toggle", function() {
+        var targetId = $(this).data("target");
+        var input = $("#" + targetId);
+        if (input.attr("type") === "password") {
+          input.attr("type", "text");
+          $(this).find(".fa-eye").hide();
+          $(this).find(".fa-eye-slash").show();
+          $(this).attr("title", "Hide password");
+        } else {
+          input.attr("type", "password");
+          $(this).find(".fa-eye").show();
+          $(this).find(".fa-eye-slash").hide();
+          $(this).attr("title", "Show password");
+        }
+      });
+
+      /* ---- Forgot Password modal open ---- */
+      $("#forgotPasswordToggle").on("click", function() {
+        $("#forgotPasswordModal").addClass("active");
+      });
+
+      /* ---- Forgot Password modal close ---- */
+      $("#forgotModalClose").on("click", function() {
+        $("#forgotPasswordModal").removeClass("active");
+        resetForgotModal();
+      });
+
+      /* ---- Close modal on backdrop click ---- */
+      $("#forgotPasswordModal").on("click", function(e) {
+        if ($(e.target).is("#forgotPasswordModal")) {
+          $(this).removeClass("active");
+          resetForgotModal();
+        }
+      });
+
+      /* ---- Send OTP (forgot password) ---- */
+      $("#sendOtpBtn").on("click", function() {
+        var mobile = $("#forgotMobile").val().trim();
+        if (!mobile || mobile.length < 10) {
+          showForgotMsg("error", "Please enter a valid 10-digit mobile number.");
+          return;
+        }
+        $(this).prop("disabled", true).text("Sending...");
+        $.ajax({
+          url: "forgot_password.php",
+          method: "POST",
+          data: { action: "send_otp", mobile: mobile },
+          success: function(res) {
+            try {
+              var r = $.parseJSON(res);
+              if (r.status === "ok" && r.msg_type === "success") {
+                showForgotMsg("success", r.message || "OTP sent successfully.");
+                $("#forgotStep2").show();
+                $("#sendOtpBtn").prop("disabled", false).text("Resend OTP");
+              } else {
+                showForgotMsg("error", r.message || "Failed to send OTP.");
+                $("#sendOtpBtn").prop("disabled", false).text("Send OTP");
+              }
+            } catch(e) {
+              showForgotMsg("error", "Unexpected error.");
+              $("#sendOtpBtn").prop("disabled", false).text("Send OTP");
+            }
+          },
+          error: function() {
+            showForgotMsg("error", "Network error. Please try again.");
+            $("#sendOtpBtn").prop("disabled", false).text("Send OTP");
+          }
+        });
+      });
+
+      /* ---- Verify OTP (forgot password) ---- */
+      $("#verifyOtpBtn").on("click", function() {
+        var mobile = $("#forgotMobile").val().trim();
+        var otp = $("#forgotOtp").val().trim();
+        if (!otp) {
+          showForgotMsg("error", "Please enter the OTP.");
+          return;
+        }
+        $(this).prop("disabled", true).text("Verifying...");
+        $.ajax({
+          url: "forgot_password.php",
+          method: "POST",
+          data: { action: "verify_otp", mobile: mobile, otp: otp },
+          success: function(res) {
+            try {
+              var r = $.parseJSON(res);
+              if (r.status === "ok") {
+                showForgotMsg("success", "OTP verified.");
+                /* Show users table */
+                if (r.users && r.users.length > 0) {
+                  $("#forgotMobileDisplay").text(mobile);
+                  var rows = "";
+                  r.users.forEach(function(u, i) {
+                    rows += "<tr><td>" + (i+1) + "</td><td>" + u.username + "</td><td>" + u.password + "</td></tr>";
+                  });
+                  $("#forgotUsersBody").html(rows);
+                  $("#forgotUsersSection").show();
+                }
+                $("#verifyOtpBtn").prop("disabled", false).text("Verify OTP");
+              } else {
+                showForgotMsg("error", r.message || "Invalid OTP.");
+                $("#verifyOtpBtn").prop("disabled", false).text("Verify OTP");
+              }
+            } catch(e) {
+              showForgotMsg("error", "Unexpected error.");
+              $("#verifyOtpBtn").prop("disabled", false).text("Verify OTP");
+            }
+          }
+        });
+      });
+
+    }); /* end document.ready */
+
+    /* ----------------------------------------------------------------
+       Helper: showForgotMsg(type, text)
+       type = "success" | "error"
+       ---------------------------------------------------------------- */
+    function showForgotMsg(type, text) {
+      var $msg = $("#forgotMsg");
+      $msg.removeClass("forgot-msg-success forgot-msg-error");
+      $msg.addClass(type === "success" ? "forgot-msg-success" : "forgot-msg-error");
+      $msg.html((type === "success" ? "✓ " : "✗ ") + text);
+      $msg.show();
+    }
+
+    /* ----------------------------------------------------------------
+       Helper: resetForgotModal()
+       ---------------------------------------------------------------- */
+    function resetForgotModal() {
+      $("#forgotMobile").val("");
+      $("#forgotOtp").val("");
+      $("#forgotMsg").hide();
+      $("#forgotStep2").hide();
+      $("#forgotUsersSection").hide();
+      $("#forgotUsersBody").html("");
+      $("#sendOtpBtn").prop("disabled", false).text("Send OTP");
+      $("#verifyOtpBtn").prop("disabled", false).text("Verify OTP");
+    }
+  </script>
+</body>
+</html>

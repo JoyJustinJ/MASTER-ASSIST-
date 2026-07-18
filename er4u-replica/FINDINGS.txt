@@ -1,0 +1,368 @@
+================================================================================
+ER4U AI BILL UPLOAD — COMPLETE APPLICATION ANALYSIS
+URL: https://er4uepplus.in/er4u/aibillupload/
+Credentials: admin / admin
+Extracted: 2026-07-18
+================================================================================
+
+
+1. APPLICATION OVERVIEW
+=======================
+- Name: "AI outlet" (browser title)
+- Brand: ER4U (Easy Retail For You) / ERP-23
+- Type: PHP web application — POS/ERP retail management system
+- Version: 4.1.9
+- Server IP (shown on login): 103.39.133.123
+- Authentication: PHP session-based + optional Laravel API parallel auth
+
+
+2. TECHNOLOGY STACK
+===================
+Framework:      PHP (server-side), sessions
+CSS Framework:  Bootstrap 5.0.2 (MIT)
+JS Library:     jQuery 2.1.4 (production) — CDN: jquery-2.2.4 also works
+Modals/Alerts:  SweetAlert2 v11.14.5
+Select boxes:   Select2 4.x (jQuery plugin)
+Icons:          FontAwesome 6.7.2 (Free)
+Font:           'Public Sans' (Google Fonts), weights 300/400/500/600/700
+DocType:        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"...>
+Meta viewport:  width=device-width, initial-scale=1
+
+
+3. FILE/ASSET PATHS (confirmed)
+================================
+Login page:         index.php  (also /  and login.php)
+Login handler:      login1.php  (POST — returns JSON)
+OTP send:           api-loginotp.php  (GET — returns JSON)
+OTP verify:         api-loginotpcheck.php  (POST — returns JSON)
+Forgot password:    forgot_password.php  (POST — returns JSON)
+Logout all:         logout_from_all_device.php  (GET — returns JSON/empty)
+Post-login:         welcome.php
+Laravel auth:       newapp/auth/login  (POST — returns JSON, GET=405)
+Session expired:    Redirects to index.php with "Session Expired" message
+
+Logo image:         img/login-logo.png  (286×66px, PNG)
+Favicon:            img/f.jpg  (red circular "e" icon)
+Background img:     img/download.png  (COMMENTED OUT in source — not used)
+
+Login JS:           login_js/login-api.js
+Bootstrap CSS:      css/bootstrap.min.css
+Bootstrap JS:       js/bootstrap.bundle.min.js
+FontAwesome CSS:    css/font-awesome/font-awesome-6.7.2-web/css/all.min.css
+Select2 CSS:        select2/select2.min.css
+SweetAlert2 JS:     sweetalert2/sweetalert2.all.min.js
+jQuery:             datagrid/jquery.min.js  (jQuery 2.1.4)
+Master CSS:         css/er4u_master.css  (loaded on all pages, not just login)
+
+
+4. COLORS (ALL HEX VALUES)
+===========================
+Primary / Login button bg:    #7957fb  (purple-violet)
+Primary hover:                #6644e8
+Primary (Bootstrap):          #0d6efd  (blue — used for links/forgot-btn)
+Forgot btn bg:                #0d6efd  (Bootstrap primary)
+IP text shadow:               #696cff  (light purple)
+IP + Version text:            #979797  (medium gray)
+Header title accent:          #038098  (teal — .header-title small)
+Mobile breakpoint heading:    #5031c7  (dark purple)
+Label text:                   #4e4b4b  (dark gray)
+Body text / inputs:           #555
+Icon fills:                   #595959  (dark gray-charcoal)
+Placeholder/icon muted:       #868585  (light gray)
+Border default:               #ccc
+Panel heading text:           #252525 (near-black)
+Card heading color:           #060606 (very dark)
+Heading sub text:             #535353 (medium dark gray)
+Body background:              #ffffff (white)
+Card/panel bg:                #ffffff
+Login area shadow 1:          rgb(214, 212, 212)
+Login area shadow 2:          rgb(238, 238, 238)
+OTP overlay bg:               rgba(0, 0, 0, 0.4)
+Forgot modal overlay bg:      rgba(0, 0, 0, 0.45)
+Forgot wrap bg:               #fbfbfb
+Forgot wrap border:           #e9e9e9
+Forgot table th bg:           #f1f1f1
+Forgot table border:          #ddd
+Success msg bg:               #d1e7dd  /  text: #0f5132  /  border: #badbcc
+Error msg bg:                 #f8d7da  /  text: #842029  /  border: #f5c2c7
+Link color:                   #0d6efd (Bootstrap blue)
+OTP popup general button:     #099ccc (teal/cyan — legacy inline style)
+SweetAlert font:              0.7rem override
+
+
+5. TYPOGRAPHY
+=============
+Primary font:     'Public Sans', sans-serif  (Google Fonts)
+  - Weights used: 400 (normal), 500, 600 (panel heading)
+
+Panel heading:    font-weight:600, color:#252525, font-size:16px, line-height:27px
+h4.login:         font-weight:500, font-size:16px, color:#535353
+Login heading:    font-size:20px (mobile), uppercase (mobile), color:#5031c7 (mobile)
+Label text:       font-size:14px, font-weight:400, color:#4e4b4b
+Input text:       font-size:14px, color:#555
+IP address:       font-size:12px, color:#979797
+Version text:     font-size:14px, font-weight:400, color:#979797, font-family:'Public Sans'
+OTP popup fonts:  "Poppins", 'Antonio' (in inline popup styles)
+Forgot title:     font-size:18px, font-weight:600, color:#222
+
+
+6. LAYOUT & DIMENSIONS
+=======================
+Page layout:        Full-viewport flex centering
+  .dg-color:        display:flex; align-items:center; justify-content:center; height:100vh
+  Background:       solid white (#fff) — background image commented out
+
+Login card:
+  Max-width:        450px
+  Padding:          40px (desktop), 0 12px (mobile ≤991px)
+  Border-radius:    10px
+  Box-shadow:       0 5px 12px rgb(214,212,212), 0 4px 4px rgb(238,238,238)
+  Background:       #fff
+
+Logo:
+  Width:            286px
+  Height:           66px
+  Class:            .logo-center (display:block; margin:0 auto)
+  Description:      Purple "eR4U" with orange "4", tagline "easy retail for you",
+                    vertical divider line, purple "ERP-23" text
+
+Input fields:
+  Height:           44px (overrides Bootstrap with !important)
+  Border:           1px solid #ccc
+  Border-radius:    4px
+  Padding:          6px 12px
+  Font-size:        14px
+  Focus border:     #7957fb
+
+Login button:
+  Width:            100% (d-block w-100)
+  Background:       #7957fb
+  Color:            white
+  Font-size:        16px (desktop), 18px uppercase (mobile)
+  Border-radius:    0.375rem (mobile), 4px (desktop)
+  Padding:          py-2 (Bootstrap = 8px top/bottom)
+  Icon:             fas fa-sign-in-alt (spins to fa-cog fa-spin during loading)
+  Classes:          btn btn-primary btn-save text-white py-2 m-0 my-2 btn-er4u-login d-block w-100
+
+Label floating effect:
+  transform: translate3d(15px, 12px, 0)
+  Appears above field border
+
+Password field:
+  Has padding-right:50px for toggle button room
+  Eye icon toggle: fas fa-eye / fas fa-eye-slash (toggle on click)
+
+
+7. FORM FIELDS (LOGIN FORM)
+============================
+Form ID:    #form
+Form name:  form1
+Method:     POST
+Action:     login1.php
+
+Fields:
+  name="txtUserName"   type="text"      — Username
+  name="txtPassword"   type="password"  id="txtPassword" — Password
+  name="center"        type="select"    id="center"       — HIDDEN (d-none) — Center dropdown
+  name="store_pos"     type="select"    id="store_pos"    — HIDDEN (d-none) — POS dropdown
+  name="o_token"       type="hidden"    id="o_token"      value="N"
+  name="submit2"       type="submit"    value="Login"     (the login button)
+
+Center dropdown values (hidden):
+  value=1 → "ER4U"
+
+POS dropdown values (hidden):
+  value=36  → "Th-7"
+  value=127 → "A4-7"
+  value=133 → "CH-A4-2"
+  value=156 → "CH-Th-5"
+  value=170 → "Est-A5-3"
+  value=180 → "Est-Th-2"
+  value=194 → "SO-A4-9"
+  value=200 → "SO-A5-6"
+  value=201 → "SO-A5-7"
+  value=214 → "Approval-1"
+  value=215 → "Booking-1"
+  value=216 → "A5_11"
+  value=217 → "A4_11"
+  value=218 → "SO-A4-1-Static"
+
+
+8. JAVASCRIPT BEHAVIOR
+========================
+
+A. Form Submit (login-api.js):
+   - Prevents default
+   - Changes button icon to spinning cog (fa-cog fa-spin)
+   - Fires parallel POST to newapp/auth/login (Laravel API) — async/await
+   - After 1500ms delay: AJAX POST to login1.php
+   - Handles responses:
+     status "200" → SweetAlert success → redirect to welcome.php
+                  → clears localStorage: get_pay_mode_1, country_state, state_district
+     status "203" → OTP required → GET api-loginotp.php?Token=X
+                  → On success: set #tokenid, set #replace_mobno, fadeIn popup, start timer(120)
+     status "209" → Multi-device conflict → SweetAlert confirm "Logout from all device"
+                  → If confirmed: GET logout_from_all_device.php?Token=X&status=Ajax
+     other        → SweetAlert error with response.message
+
+B. OTP Timer:
+   - Starts at 120 seconds (2 minutes)
+   - Counts down MM:SS format
+   - When reaches 0: shows "Resend OTP" link
+   - timerOn flag stops timer when popup is closed
+
+C. Password Toggle:
+   - Click .js-password-toggle → toggles type="password"/"text"
+   - Shows/hides fa-eye and fa-eye-slash icons
+
+D. Forgot Password Modal:
+   - #forgotPasswordToggle click → show modal
+   - Modal close button → hide modal + reset
+   - Step 1: Enter mobile → POST to forgot_password.php action="send_otp"
+   - Step 2: (shown after OTP sent) Enter OTP → POST action="verify_otp"
+   - Step 3: (shown after verify) Table of users (username/password)
+
+
+9. API ENDPOINTS (JSON responses)
+===================================
+
+login1.php (POST):
+  Request: FormData (txtUserName, txtPassword, center, store_pos, o_token)
+  Response: {"status":"200","message":"..."} — success
+            {"status":"201","message":"Please fill user name and password to proceed."}
+            {"status":"203","Token":"..."} — OTP required
+            {"status":"209","Token":"...","message":"..."} — multi-device
+            {"status":"4xx","message":"..."} — error
+
+api-loginotp.php (GET):
+  Request: ?Token=...
+  Response: {"status":"203","message":"Login Type Not Detected."}
+  GET with resend: POST {"Token":"...","status":"resend"}
+
+api-loginotpcheck.php (POST):
+  Response: {"status":"error","message":"Invalid OTP"} (unauthenticated)
+
+forgot_password.php (POST):
+  Response: {"status":"ok","msg_type":"success","message":"","mobile":"","show_otp_form":false,"wait_seconds":0,"users":[]}
+
+logout_from_all_device.php (GET):
+  Response: empty (200 OK)
+
+newapp/auth/login (POST, JSON):
+  Request: {"username":"...","password":"..."}
+  Response: 405 on GET; JSON {"success":true/false,"user":{...}} on POST
+
+
+10. MODALS
+===========
+
+A. OTP VERIFICATION POPUP (.popup):
+   Structure: Fixed overlay, white card, 4 OTP digit inputs
+   Title: "OTP VERIFICATION"
+   Message: "An otp has been sent to {mobile}"
+            "Please enter OTP to verify"
+   Inputs: 4x type="number" boxes (.otp__digit .otp__field__1..4)
+   Hidden: #tokenid (stores OTP token)
+   Display: #replace_mobno (mobile number)
+   Button: "Verify OTP" → POST api-loginotpcheck.php
+   Timer: #timer — counts down 02:00, then shows "Resend OTP" link
+   Close: × button → fadeOut popup, sets timerOn=false
+
+B. FORGOT PASSWORD MODAL (#forgotPasswordModal):
+   Structure: Fixed overlay (.forgot-modal), white card
+   Title: "Forgot Password"
+   Step 1: Mobile input + "Send OTP" button
+   Step 2: OTP input + "Verify OTP" button (hidden until OTP sent)
+   Step 3: Users table (#/Username/Password) (hidden until OTP verified)
+   Message area: #forgotMsg — success (green) or error (red)
+   CSS classes: .forgot-modal, .forgot-modal-content, .forgot-modal-title,
+                .forgot-wrap, .forgot-msg, .forgot-msg-success, .forgot-msg-error,
+                .forgot-table, .forgot-btn, .forgot-modal-close
+
+C. SWEETALERT2 DIALOGS:
+   Used for: success messages, error messages, confirm dialogs
+   Custom style: .swal2-popup { font-size: 0.7rem }
+   Version: SweetAlert2 v11.14.5
+
+
+11. RESPONSIVE BREAKPOINTS
+============================
+Desktop (>991px):
+  - card max-width: 450px, centered, with shadow
+  - padding: 40px
+  - login button: font-size 16px
+
+Tablet/Mobile (≤991px):
+  - card: full-width, no shadow, padding 0 12px
+  - flex container: align-items flex-start, margin-top 5%
+  - login button: font-size 18px, uppercase, full border-radius
+  - .login-heading: shown as block, uppercase, color #5031c7
+
+Small desktop (≤1280px):
+  - margin: 0% auto 37px (slight bottom margin adjustment)
+
+
+12. IMAGES
+===========
+img/login-logo.png:
+  - Size: 286×66px
+  - Created with: Adobe Photoshop 22.2 (Windows)
+  - Content: Purple "eR4U" logotype (e in lowercase, R and U uppercase, 4 in orange)
+             + small dots above the e
+             + "easy retail for you" tagline in small gray text below
+             + vertical separator line
+             + "ERP-23" in bold purple on right side
+
+img/f.jpg:
+  - Content: Red/coral circular stylized "e" icon on white background
+             (letter "e" formed as a circle with a horizontal bar)
+             Clean, modern logo mark
+  - Used as: favicon
+
+img/download.png:
+  - Referenced in CSS as background-image but COMMENTED OUT
+  - Not visually active — background is pure white
+
+
+13. SESSION STATES
+===================
+Not logged in:
+  / → login form (index.php)
+  welcome.php → "Session Expired" + "You must log in first!" + link to index.php
+  Any protected page → redirect to index.php
+
+After successful login:
+  → welcome.php (the main dashboard)
+
+
+14. NOTES FOR PIXEL-PERFECT RECREATION
+========================================
+- The form uses floating labels via CSS transform trick (not Bootstrap floating labels)
+  Labels sit ABOVE the input border, created by translate3d(15px,12px,0) + background:#fff
+  so the label appears to cut through the top border of the input
+
+- The Center and POS dropdowns are d-none (Bootstrap hidden) by default
+  They are presumably revealed by JS after username lookup validates user type
+
+- The login button initially shows fa-sign-in-alt icon
+  During AJAX: switches to fa-cog + fa-spin (spinning gear)
+  After response: switches back to fa-sign-in-alt
+
+- Body background is pure white (#fff) — no background image despite CSS reference
+  to img/download.png (that code is commented out in source)
+
+- SweetAlert2 dialogs replace all alert() calls for better UX
+  The .swal2-popup { font-size: 0.7rem } makes them smaller than default
+
+- The page doctype is XHTML 1.0 Transitional (legacy), but content is HTML5-compatible
+
+- jQuery version is 2.1.4 (quite old, loaded from datagrid/jquery.min.js)
+
+- Bootstrap 5.0.2 is loaded from css/bootstrap.min.css (local)
+
+- FontAwesome 6.7.2 is loaded from the verbose path:
+  css/font-awesome/font-awesome-6.7.2-web/css/all.min.css
+
+- The parallel Laravel API call (newapp/auth/login) fires before the main PHP login
+  but is non-blocking — the PHP session flow continues regardless of its result
+================================================================================

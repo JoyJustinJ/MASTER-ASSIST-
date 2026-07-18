@@ -1,0 +1,484 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Approvals</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .appr-card {
+      background:#fff; border:1px solid #f0f0f5; border-radius:10px;
+      padding:16px 18px; margin-bottom:12px; transition:all 0.15s;
+    }
+    .appr-card:hover { box-shadow:0 4px 16px rgba(105,108,255,0.09); border-color:#c8c9f9; }
+    .appr-card.pending-card { border-left:4px solid #ffc107; }
+    .appr-card.approved-card { border-left:4px solid #28a745; }
+    .appr-card.rejected-card { border-left:4px solid #dc3545; }
+
+    .appr-meta { display:flex; flex-wrap:wrap; gap:18px; font-size:12px; color:#666; margin-top:8px; }
+    .appr-meta-item { display:flex; align-items:center; gap:5px; }
+    .appr-meta-item i { color:#aaa; font-size:11px; }
+
+    .tab-bar { display:flex; gap:0; border-bottom:2px solid #f0f0f5; margin-bottom:0; padding:0 18px; background:#fff; }
+    .tab-btn {
+      background:transparent; border:0; padding:12px 18px; font-size:13px; font-weight:500;
+      color:#888; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px;
+      font-family:'Public Sans',sans-serif; transition:color 0.15s;
+    }
+    .tab-btn.active { color:#696cff; border-bottom-color:#696cff; }
+    .tab-btn:hover:not(.active) { color:#444; }
+    .tab-badge { display:inline-flex; align-items:center; justify-content:center; background:#f0f0f5; color:#666; font-size:10px; font-weight:700; border-radius:99px; padding:1px 7px; margin-left:5px; }
+    .tab-btn.active .tab-badge { background:#ededff; color:#696cff; }
+
+    .bulk-bar { display:none; align-items:center; gap:10px; padding:10px 18px; background:#ededff; border-bottom:1px solid #c8c9f9; font-size:13px; color:#444; }
+    .bulk-bar.show { display:flex; }
+    .bulk-count { font-weight:600; color:#696cff; }
+
+    .pos-tag { background:#f0f0f5; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; color:#555; }
+    .amount-val { font-size:18px; font-weight:700; color:#696cff; }
+
+    .timeline { padding:0; margin:0; list-style:none; }
+    .timeline-item { display:flex; gap:12px; padding-bottom:16px; position:relative; }
+    .timeline-item:not(:last-child)::before { content:''; position:absolute; left:15px; top:32px; bottom:0; width:2px; background:#f0f0f5; }
+    .tl-dot { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+    .tl-body { flex:1; padding-top:4px; }
+    .tl-title { font-size:13px; font-weight:600; color:#333; }
+    .tl-time  { font-size:11px; color:#aaa; margin-top:2px; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/>
+      <circle cx="21" cy="5" r="3" fill="#ff6b2b"/>
+    </svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" placeholder="Search approvals..." id="globalSearch" />
+  </div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn"><i class="fas fa-bell"></i><span class="navbar-badge" id="pendingBadge">8</span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div>
+        <span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+          <div class="user-dropdown-name">Administrator</div>
+          <div class="user-dropdown-role">Master Assist — Super Admin</div>
+        </div>
+        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html" class="active"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+
+<!-- MAIN -->
+<main class="ma-main" id="maMain">
+
+  <div class="page-header">
+    <div>
+      <h1>Bill Approvals</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="welcome.html" style="color:#696cff;">Home</a></li>
+          <li class="breadcrumb-item active">Approvals</li>
+        </ol>
+      </nav>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-ma-outline" id="bulkApproveAllBtn"><i class="fas fa-check-double"></i> Approve All Pending</button>
+    </div>
+  </div>
+
+  <div id="alertArea"></div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntAll">0</div><div class="stat-label">Total</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntPending">0</div><div class="stat-label">Pending</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntApproved">0</div><div class="stat-label">Approved</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntRejected">0</div><div class="stat-label">Rejected</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ma-card">
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="pending">Pending <span class="tab-badge" id="tabPending">0</span></button>
+      <button class="tab-btn" data-tab="approved">Approved <span class="tab-badge" id="tabApproved">0</span></button>
+      <button class="tab-btn" data-tab="rejected">Rejected <span class="tab-badge" id="tabRejected">0</span></button>
+      <button class="tab-btn" data-tab="all">All <span class="tab-badge" id="tabAll">0</span></button>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <span class="filter-bar-label">Filter:</span>
+      <input type="text" class="ma-input" style="width:180px;height:32px;font-size:12px;" placeholder="Bill No. / Party..." id="searchInput" />
+      <select class="ma-select" style="width:130px;height:32px;font-size:12px;" id="filterPOS">
+        <option value="">All POS</option>
+        <option>Th-7</option><option>A4-7</option><option>CH-A4-2</option>
+        <option>SO-A4-9</option><option>Est-A5-3</option><option>Approval-1</option>
+      </select>
+      <input type="date" class="ma-input" style="width:140px;height:32px;font-size:12px;" id="filterDate" />
+      <button class="btn-ma-primary btn-ma-sm" id="applyFilter"><i class="fas fa-search"></i> Search</button>
+      <button class="btn-ma-outline btn-ma-sm" id="clearFilter"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Bulk bar -->
+    <div class="bulk-bar" id="bulkBar">
+      <span><span class="bulk-count" id="bulkCount">0</span> selected</span>
+      <button class="btn-ma-success btn-ma-sm" id="bulkApprove"><i class="fas fa-check"></i> Approve</button>
+      <button class="btn-ma-danger btn-ma-sm" id="bulkReject"><i class="fas fa-times"></i> Reject</button>
+    </div>
+
+    <!-- List -->
+    <div class="ma-card-body" id="approvalList"></div>
+
+    <div class="ma-pagination">
+      <div class="ma-pagination-info" id="pageInfo">Showing 0</div>
+      <div class="ma-pagination-btns" id="paginationBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Detail + Approve/Reject Modal -->
+<div class="ma-modal-overlay" id="detailModal">
+  <div class="ma-modal ma-modal-lg">
+    <div class="ma-modal-header">
+      <h5><i class="fas fa-file-invoice" style="color:#696cff;margin-right:7px;"></i>Bill Review</h5>
+      <button class="ma-modal-close" id="detailClose">×</button>
+    </div>
+    <div class="ma-modal-body">
+      <div class="row g-3">
+        <div class="col-md-7" id="detailLeft"></div>
+        <div class="col-md-5">
+          <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:10px;"><i class="fas fa-history" style="color:#696cff;margin-right:6px;"></i>Audit Trail</div>
+          <ul class="timeline" id="detailTimeline"></ul>
+          <div style="margin-top:12px;">
+            <label class="ma-label">Remarks</label>
+            <textarea class="ma-textarea" id="detailRemarks" rows="2" placeholder="Optional remarks..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ma-modal-footer">
+      <button class="btn-ma-outline" id="detailCloseBtn">Close</button>
+      <button class="btn-ma-danger" id="detailRejectBtn"><i class="fas fa-times"></i> Reject</button>
+      <button class="btn-ma-success" id="detailApproveBtn"><i class="fas fa-check"></i> Approve</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+  /* ---- Data ---- */
+  var parties = MA.getAll('suppliers').map(function(s){return s.name;});
+  var posList = MA.getAll('posTerminals').map(function(p){return p.name;});
+  var types    = ['Purchase Bill','Expense Bill','Return Bill','Sales Bill'];
+  var statuses = ['pending','pending','pending','approved','approved','approved','approved','rejected','rejected','approved'];
+
+  var allBills = MA.getAll('bills').filter(function(b){return b.status==='pending';});
+function renderList(){
+    var start=(currentPage-1)*rowsPerPage;
+    var page=filtered.slice(start,Math.min(start+rowsPerPage,filtered.length));
+    var html='';
+    if(!page.length){
+      html='<div style="text-align:center;padding:40px;color:#aaa;"><i class="fas fa-tasks" style="font-size:40px;display:block;margin-bottom:12px;"></i>No bills in this category</div>';
+    } else {
+      page.forEach(function(b){
+        var chk=selected.has(b.id)?'checked':'';
+        var cls=b.status==='pending'?'pending-card':b.status==='approved'?'approved-card':'rejected-card';
+        html+='<div class="appr-card '+cls+'">'+
+          '<div style="display:flex;align-items:flex-start;gap:12px;">'+
+            '<input type="checkbox" class="row-check" data-id="'+b.id+'" '+chk+' style="width:16px;height:16px;margin-top:3px;flex-shrink:0;"/>'+
+            '<div style="flex:1;">'+
+              '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
+                '<strong style="font-size:15px;color:#252525;">'+b.billNo+'</strong>'+
+                statusBadge(b.status)+
+                '<span class="pos-tag">'+b.pos+'</span>'+
+                '<span style="font-size:12px;color:#888;">'+b.type+'</span>'+
+                '<span class="amount-val" style="margin-left:auto;">'+fmtAmt(b.amount)+'</span>'+
+              '</div>'+
+              '<div class="appr-meta">'+
+                '<span class="appr-meta-item"><i class="fas fa-building"></i> '+b.party+'</span>'+
+                '<span class="appr-meta-item"><i class="fas fa-calendar"></i> '+b.date+'</span>'+
+                '<span class="appr-meta-item"><i class="fas fa-user"></i> '+b.uploadedBy+'</span>'+
+                '<span class="appr-meta-item"><i class="fas fa-file-pdf" style="color:#dc3545;"></i> '+b.file+'</span>'+
+              '</div>'+
+            '</div>'+
+            '<div style="display:flex;gap:6px;flex-shrink:0;align-items:center;">'+
+              '<button class="btn-icon view-appr-btn" data-id="'+b.id+'" title="View Details"><i class="fas fa-eye"></i></button>'+
+              (b.status==='pending'?
+                '<button class="btn-icon success approve-btn" data-id="'+b.id+'" title="Approve"><i class="fas fa-check"></i></button>'+
+                '<button class="btn-icon danger reject-btn" data-id="'+b.id+'" title="Reject"><i class="fas fa-times"></i></button>':'')+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      });
+    }
+    document.getElementById('approvalList').innerHTML=html;
+    var total=filtered.length;
+    document.getElementById('pageInfo').textContent='Showing '+(total?start+1:0)+'–'+Math.min(start+rowsPerPage,total)+' of '+total;
+    renderPagination();
+  }
+
+  /* ---- Pagination ---- */
+  function renderPagination(){
+    var maxPage=Math.ceil(filtered.length/rowsPerPage)||1;
+    var html='<button class="page-btn" id="prevPage"><i class="fas fa-chevron-left"></i></button>';
+    for(var p=Math.max(1,currentPage-2);p<=Math.min(maxPage,currentPage+2);p++){
+      html+='<button class="page-btn'+(p===currentPage?' active':'')+'" data-page="'+p+'">'+p+'</button>';
+    }
+    html+='<button class="page-btn" id="nextPage"><i class="fas fa-chevron-right"></i></button>';
+    var el=document.getElementById('paginationBtns'); el.innerHTML=html;
+    el.querySelector('#prevPage').addEventListener('click',function(){if(currentPage>1){currentPage--;renderList();}});
+    el.querySelector('#nextPage').addEventListener('click',function(){if(currentPage<maxPage){currentPage++;renderList();}});
+    el.querySelectorAll('[data-page]').forEach(function(btn){
+      btn.addEventListener('click',function(){currentPage=parseInt(this.dataset.page);renderList();});
+    });
+  }
+
+  /* ---- Checkbox ---- */
+  document.getElementById('approvalList').addEventListener('change',function(e){
+    if(!e.target.classList.contains('row-check')) return;
+    var id=parseInt(e.target.dataset.id);
+    if(e.target.checked) selected.add(id); else selected.delete(id);
+    updateBulkBar();
+  });
+
+  function updateBulkBar(){
+    document.getElementById('bulkCount').textContent=selected.size;
+    document.getElementById('bulkBar').classList.toggle('show',selected.size>0);
+  }
+
+  /* ---- List action delegation ---- */
+  document.getElementById('approvalList').addEventListener('click',function(e){
+    var vBtn=e.target.closest('.view-appr-btn');
+    var aBtn=e.target.closest('.approve-btn');
+    var rBtn=e.target.closest('.reject-btn');
+
+    if(vBtn){
+      viewingId=parseInt(vBtn.dataset.id);
+      var b=allBills.find(function(x){return x.id===viewingId;});
+      document.getElementById('detailLeft').innerHTML=
+        '<div class="row g-3">'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">BILL NO.</div><div style="font-size:16px;font-weight:700;">'+b.billNo+'</div></div>'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">STATUS</div>'+statusBadge(b.status)+'</div>'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">PARTY</div><div style="font-weight:500;">'+b.party+'</div></div>'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">POS</div><span class="pos-tag">'+b.pos+'</span></div>'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">BILL TYPE</div><div>'+b.type+'</div></div>'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">AMOUNT</div><div style="font-size:22px;font-weight:700;color:#696cff;">'+fmtAmt(b.amount)+'</div></div>'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">BILL DATE</div><div>'+b.date+'</div></div>'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:3px;">UPLOADED BY</div><div>'+b.uploadedBy+'</div></div>'+
+          '<div class="col-12">'+
+            '<div style="font-size:11px;color:#888;margin-bottom:6px;">ATTACHED FILE</div>'+
+            '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fafaff;border:1px solid #e8e8f0;border-radius:8px;">'+
+              '<i class="fas fa-file-pdf" style="color:#dc3545;font-size:20px;"></i>'+
+              '<span style="flex:1;font-size:13px;">'+b.file+'</span>'+
+              '<button class="btn-ma-outline btn-ma-sm"><i class="fas fa-eye"></i> Preview</button>'+
+              '<button class="btn-ma-outline btn-ma-sm"><i class="fas fa-download"></i></button>'+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      document.getElementById('detailTimeline').innerHTML=
+        '<li class="timeline-item"><div class="tl-dot" style="background:#ededff;color:#696cff;"><i class="fas fa-upload"></i></div><div class="tl-body"><div class="tl-title">Uploaded by '+b.uploadedBy+'</div><div class="tl-time">'+b.date+' 10:25 AM</div></div></li>'+
+        (b.status!=='pending'?'<li class="timeline-item"><div class="tl-dot" style="background:'+(b.status==='approved'?'#e8f8f0;color:#28a745':'#fdecea;color:#dc3545')+'"><i class="fas fa-'+(b.status==='approved'?'check':'times')+'"></i></div><div class="tl-body"><div class="tl-title">'+(b.status==='approved'?'Approved':'Rejected')+' by Admin</div><div class="tl-time">'+b.date+' 11:40 AM</div></div></li>':'<li class="timeline-item"><div class="tl-dot" style="background:#fff3ec;color:#ff6b2b;"><i class="fas fa-clock"></i></div><div class="tl-body"><div class="tl-title">Awaiting approval</div><div class="tl-time">Pending since '+b.date+'</div></div></li>');
+      var apprBtn=document.getElementById('detailApproveBtn');
+      var rejBtn=document.getElementById('detailRejectBtn');
+      apprBtn.style.display=b.status==='pending'?'inline-flex':'none';
+      rejBtn.style.display=b.status==='pending'?'inline-flex':'none';
+      document.getElementById('detailModal').classList.add('open');
+    }
+
+    if(aBtn) doAction(parseInt(aBtn.dataset.id),'approved');
+    if(rBtn) doAction(parseInt(rBtn.dataset.id),'rejected');
+  });
+
+  function doAction(id,status){
+    var b=allBills.find(function(x){return x.id===id;});
+    if(!b) return;
+    b.status=status;
+    applyFilters();
+    showAlert('success','Bill '+b.billNo+' '+(status==='approved'?'approved':'rejected')+'.');
+  }
+
+  /* ---- Detail modal actions ---- */
+  document.getElementById('detailApproveBtn').addEventListener('click',function(){
+    if(!viewingId) return;
+    doAction(viewingId,'approved');
+    document.getElementById('detailModal').classList.remove('open');
+  });
+  document.getElementById('detailRejectBtn').addEventListener('click',function(){
+    if(!viewingId) return;
+    doAction(viewingId,'rejected');
+    document.getElementById('detailModal').classList.remove('open');
+  });
+
+  /* ---- Bulk actions ---- */
+  document.getElementById('bulkApprove').addEventListener('click',function(){
+    selected.forEach(function(id){
+      var b=allBills.find(function(x){return x.id===id;});
+      if(b&&b.status==='pending') b.status='approved';
+    });
+    selected.clear(); applyFilters(); showAlert('success','Selected bills approved.');
+  });
+  document.getElementById('bulkReject').addEventListener('click',function(){
+    selected.forEach(function(id){
+      var b=allBills.find(function(x){return x.id===id;});
+      if(b&&b.status==='pending') b.status='rejected';
+    });
+    selected.clear(); applyFilters(); showAlert('success','Selected bills rejected.');
+  });
+  document.getElementById('bulkApproveAllBtn').addEventListener('click',function(){
+    Swal.fire({title:'Approve all pending?',text:'This will approve all '+allBills.filter(function(b){return b.status==='pending';}).length+' pending bills.',icon:'question',showCancelButton:true,confirmButtonColor:'#28a745',confirmButtonText:'Approve All'}).then(function(r){
+      if(r.isConfirmed){
+        allBills.forEach(function(b){if(b.status==='pending') b.status='approved';});
+        applyFilters(); showAlert('success','All pending bills approved.');
+      }
+    });
+  });
+
+  /* ---- Modal close ---- */
+  document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this) this.classList.remove('open');});
+  document.getElementById('detailClose').addEventListener('click',function(){document.getElementById('detailModal').classList.remove('open');});
+  document.getElementById('detailCloseBtn').addEventListener('click',function(){document.getElementById('detailModal').classList.remove('open');});
+
+  /* ---- Alert ---- */
+  function showAlert(type,msg){
+    var icons={success:'check-circle',error:'times-circle',warning:'exclamation-triangle'};
+    var cls={success:'ma-alert-success',error:'ma-alert-error',warning:'ma-alert-warning'};
+    document.getElementById('alertArea').innerHTML='<div class="ma-alert '+cls[type]+'"><i class="fas fa-'+(icons[type]||'info-circle')+' ma-alert-icon"></i><div>'+msg+'</div><button class="ma-alert-close" onclick="this.parentElement.remove()">×</button></div>';
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(function(){var a=document.getElementById('alertArea');if(a)a.innerHTML='';},5000);
+  }
+
+  /* ---- Sidebar ---- */
+  var collapsed=false;
+  document.getElementById('sidebarToggle').addEventListener('click',function(){
+    collapsed=!collapsed;
+    if(window.innerWidth>991){document.getElementById('sidebar').classList.toggle('collapsed',collapsed);document.getElementById('maMain').classList.toggle('expanded',collapsed);}
+    else document.getElementById('sidebar').classList.toggle('mobile-open');
+  });
+  document.getElementById('userDropdownToggle').addEventListener('click',function(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('open');});
+  document.addEventListener('click',function(){document.getElementById('userDropdown').classList.remove('open');});
+  document.getElementById('approvalMenu').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('approvalSubmenu').classList.toggle('open');});
+
+  /* ---- Init ---- */
+  applyFilters();
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

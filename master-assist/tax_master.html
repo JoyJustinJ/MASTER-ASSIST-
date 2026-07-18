@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Tax Master</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .tax-rate-card{background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:20px;text-align:center;transition:box-shadow .15s;}
+    .tax-rate-card:hover{box-shadow:0 4px 16px rgba(105,108,255,.12);}
+    .tax-rate-pct{font-size:36px;font-weight:800;color:#696cff;line-height:1;}
+    .tax-rate-label{font-size:12px;color:#888;margin-top:4px;}
+    .tax-rate-items{font-size:13px;color:#333;font-weight:600;margin-top:8px;}
+    .gst-slab-pill{display:inline-block;padding:4px 16px;border-radius:99px;font-size:14px;font-weight:700;margin:4px;}
+  </style>
+</head>
+<body>
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg><div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div></a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search..." /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;"><button class="navbar-user" id="userDropdownToggle"><div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span><i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i></button>
+    <div class="user-dropdown" id="userDropdown"><div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div><a href="profile.html"><i class="fas fa-user"></i> My Profile</a><a href="settings.html"><i class="fas fa-cog"></i> Settings</a><div class="user-dropdown-divider"></div><button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div>
+  </div>
+</nav>
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload</a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html" class="active"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div><div class="page-title">Tax Master</div><div class="page-breadcrumb">Finance / Tax Master</div></div>
+    <button class="btn-ma-primary" onclick="openAdd()"><i class="fas fa-plus me-1"></i>Add Tax Rate</button>
+  </div>
+
+  <!-- GST Slabs Overview -->
+  <div style="background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:20px;margin-bottom:20px;">
+    <div style="font-size:14px;font-weight:700;color:#252525;margin-bottom:12px;"><i class="fas fa-info-circle me-2" style="color:#696cff;"></i>GST Slabs in India</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <span class="gst-slab-pill" style="background:#e8f5e9;color:#28a745;">0% — Essentials</span>
+      <span class="gst-slab-pill" style="background:#fff3e0;color:#f57c00;">5% — Basic Goods</span>
+      <span class="gst-slab-pill" style="background:#e3f2fd;color:#1976d2;">12% — Standard</span>
+      <span class="gst-slab-pill" style="background:#ededff;color:#696cff;">18% — Most Goods</span>
+      <span class="gst-slab-pill" style="background:#fce4ec;color:#c2185b;">28% — Luxury / Sin</span>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-2"><div class="tax-rate-card"><div class="tax-rate-pct">0%</div><div class="tax-rate-label">GST Exempt</div><div class="tax-rate-items" data-taxitems="1">0 items</div></div></div>
+    <div class="col-6 col-md-2"><div class="tax-rate-card"><div class="tax-rate-pct" style="color:#f57c00;">5%</div><div class="tax-rate-label">Basic Goods</div><div class="tax-rate-items" data-taxitems="1">0 items</div></div></div>
+    <div class="col-6 col-md-2"><div class="tax-rate-card"><div class="tax-rate-pct" style="color:#1976d2;">12%</div><div class="tax-rate-label">Standard Rate</div><div class="tax-rate-items" data-taxitems="1">0 items</div></div></div>
+    <div class="col-6 col-md-2"><div class="tax-rate-card"><div class="tax-rate-pct">18%</div><div class="tax-rate-label">Most Goods</div><div class="tax-rate-items" data-taxitems="1">0 items</div></div></div>
+    <div class="col-6 col-md-2"><div class="tax-rate-card"><div class="tax-rate-pct" style="color:#c2185b;">28%</div><div class="tax-rate-label">Luxury / Sin</div><div class="tax-rate-items" data-taxitems="1">0 items</div></div></div>
+    <div class="col-6 col-md-2"><div class="tax-rate-card"><div class="tax-rate-pct" style="color:#28a745;">CESS</div><div class="tax-rate-label">Additional Cess</div><div class="tax-rate-items" data-taxitems="1">0 items</div></div></div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="ma-table">
+      <thead><tr><th>#</th><th>Tax Name</th><th>Rate %</th><th>CGST</th><th>SGST</th><th>IGST</th><th>CESS</th><th>HSN Range</th><th>Applicable On</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="taxBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<div class="modal fade" id="taxModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="modalTitle">Add Tax Rate</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="editId" />
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Tax Name <span style="color:red">*</span></label><input type="text" class="ma-input w-100" id="tName" /></div>
+          <div class="col-md-3"><label class="form-label">Total Rate %</label><input type="number" class="ma-input w-100" id="tRate" min="0" max="100" step="0.1" oninput="autoSplit()" /></div>
+          <div class="col-md-3"><label class="form-label">Status</label><select class="ma-select w-100" id="tStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+          <div class="col-md-3"><label class="form-label">CGST %</label><input type="number" class="ma-input w-100" id="tCGST" min="0" step="0.1" /></div>
+          <div class="col-md-3"><label class="form-label">SGST %</label><input type="number" class="ma-input w-100" id="tSGST" min="0" step="0.1" /></div>
+          <div class="col-md-3"><label class="form-label">IGST %</label><input type="number" class="ma-input w-100" id="tIGST" min="0" step="0.1" /></div>
+          <div class="col-md-3"><label class="form-label">CESS %</label><input type="number" class="ma-input w-100" id="tCESS" min="0" step="0.1" value="0" /></div>
+          <div class="col-md-6"><label class="form-label">HSN Code Range</label><input type="text" class="ma-input w-100" id="tHSN" placeholder="e.g. 1001–1099" /></div>
+          <div class="col-md-6"><label class="form-label">Applicable On</label><input type="text" class="ma-input w-100" id="tApply" placeholder="e.g. Grocery, Pharma" /></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button><button class="btn-ma-primary" onclick="saveTax()">Save</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
+let taxes=[
+  {id:1,name:'GST 0%',rate:0,cgst:0,sgst:0,igst:0,cess:0,hsn:'0001–2099',apply:'Essentials, Fresh produce',status:'active'},
+  {id:2,name:'GST 5%',rate:5,cgst:2.5,sgst:2.5,igst:5,cess:0,hsn:'2100–2999',apply:'Basic food, edible oils',status:'active'},
+  {id:3,name:'GST 12%',rate:12,cgst:6,sgst:6,igst:12,cess:0,hsn:'3000–5999',apply:'Processed foods, clothing',status:'active'},
+  {id:4,name:'GST 18%',rate:18,cgst:9,sgst:9,igst:18,cess:0,hsn:'6000–8999',apply:'Electronics, services',status:'active'},
+  {id:5,name:'GST 28%',rate:28,cgst:14,sgst:14,igst:28,cess:0,hsn:'9000–9999',apply:'Luxury goods, tobacco',status:'active'},
+  {id:6,name:'GST 28% + CESS 12%',rate:28,cgst:14,sgst:14,igst:28,cess:12,hsn:'2401–2402',apply:'Cigarettes, tobacco',status:'active'},
+  {id:7,name:'GST 28% + CESS 15%',rate:28,cgst:14,sgst:14,igst:28,cess:15,hsn:'2203–2206',apply:'Aerated drinks, beer',status:'active'},
+],nextId=8;
+function renderTaxes(){
+  document.getElementById('taxBody').innerHTML=taxes.map((t,i)=>`
+    <tr><td style="color:#aaa;font-size:12px;">${i+1}</td>
+      <td style="font-weight:600;">${t.name}</td>
+      <td><span style="background:#ededff;color:#696cff;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700;">${t.rate}%</span></td>
+      <td style="font-size:12px;">${t.cgst}%</td>
+      <td style="font-size:12px;">${t.sgst}%</td>
+      <td style="font-size:12px;">${t.igst}%</td>
+      <td style="font-size:12px;">${t.cess?t.cess+'%':'—'}</td>
+      <td style="font-size:11px;color:#888;">${t.hsn||'—'}</td>
+      <td style="font-size:12px;">${t.apply||'—'}</td>
+      <td>${t.status==='active'?'<span class="badge-success">Active</span>':'<span class="badge-inactive">Inactive</span>'}</td>
+      <td><button class="btn-icon" onclick="editTax(${t.id})"><i class="fas fa-edit"></i></button><button class="btn-icon danger" onclick="deleteTax(${t.id})"><i class="fas fa-trash-alt"></i></button></td>
+    </tr>`).join('');
+}
+function autoSplit(){const r=parseFloat(document.getElementById('tRate').value)||0;const half=(r/2).toFixed(1);document.getElementById('tCGST').value=half;document.getElementById('tSGST').value=half;document.getElementById('tIGST').value=r;}
+function openAdd(){document.getElementById('modalTitle').textContent='Add Tax Rate';document.getElementById('editId').value='';['tName','tHSN','tApply'].forEach(id=>document.getElementById(id).value='');['tRate','tCGST','tSGST','tIGST','tCESS'].forEach(id=>document.getElementById(id).value=0);document.getElementById('tStatus').value='active';new bootstrap.Modal(document.getElementById('taxModal')).show();}
+function editTax(id){const t=taxes.find(x=>x.id===id);document.getElementById('modalTitle').textContent='Edit Tax Rate';document.getElementById('editId').value=id;document.getElementById('tName').value=t.name;document.getElementById('tRate').value=t.rate;document.getElementById('tCGST').value=t.cgst;document.getElementById('tSGST').value=t.sgst;document.getElementById('tIGST').value=t.igst;document.getElementById('tCESS').value=t.cess;document.getElementById('tHSN').value=t.hsn||'';document.getElementById('tApply').value=t.apply||'';document.getElementById('tStatus').value=t.status;new bootstrap.Modal(document.getElementById('taxModal')).show();}
+function saveTax(){const name=document.getElementById('tName').value.trim();if(!name){alert('Name required');return;}const data={name,rate:parseFloat(document.getElementById('tRate').value)||0,cgst:parseFloat(document.getElementById('tCGST').value)||0,sgst:parseFloat(document.getElementById('tSGST').value)||0,igst:parseFloat(document.getElementById('tIGST').value)||0,cess:parseFloat(document.getElementById('tCESS').value)||0,hsn:document.getElementById('tHSN').value,apply:document.getElementById('tApply').value,status:document.getElementById('tStatus').value};const eid=document.getElementById('editId').value;if(eid){const idx=taxes.findIndex(t=>t.id===parseInt(eid));taxes[idx]={...taxes[idx],...data};}else{taxes.push({id:nextId++,...data});}bootstrap.Modal.getInstance(document.getElementById('taxModal')).hide();renderTaxes();}
+function deleteTax(id){const t=taxes.find(x=>x.id===id);Swal2.fire({title:`Delete "${t.name}"?`,icon:'warning',showCancelButton:true,confirmButtonText:'Delete',confirmButtonColor:'#dc3545'}).then(r=>{if(r.isConfirmed){taxes=taxes.filter(x=>x.id!==id);renderTaxes();}});}
+document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
+document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
+document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
+renderTaxes();
+
+
+(function(){
+  var items=MA.getAll('items');
+  document.querySelectorAll('[data-taxitems]').forEach(function(el,i){
+    var slabs=[0,5,12,18,28,28];var cnt=items.filter(function(it){return parseInt(it.gst||0)===slabs[i];}).length;
+    el.textContent=cnt+' items';
+  });
+})();
+if(typeof saveTax==='function'){var _origSaveTax=saveTax;saveTax=function(){_origSaveTax();MA.set('taxes',taxes);};}
+if(typeof deleteTax==='function'){var _origDelTax=deleteTax;deleteTax=function(id){_origDelTax(id);MA.set('taxes',taxes);};}
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

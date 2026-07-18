@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Stock Transfer</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .transfer-flow{display:flex;align-items:center;gap:8px;}
+    .center-pill{display:inline-flex;align-items:center;gap:5px;background:#f0f0f5;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600;color:#444;}
+    .center-pill i{font-size:11px;color:#696cff;}
+    .flow-arrow{color:#696cff;font-size:14px;}
+    .item-count{display:inline-block;background:#ededff;color:#696cff;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600;}
+    .transfer-status-draft{background:#f0f0f5;color:#888;}
+    .transfer-status-sent{background:#e8f1ff;color:#0d6efd;}
+    .transfer-status-received{background:#e8f5e9;color:#28a745;}
+    .transfer-status-partial{background:#fff3e0;color:#f57c00;}
+    .transfer-status-cancelled{background:#fdecea;color:#dc3545;}
+    .items-line-table{width:100%;border-collapse:collapse;font-size:12px;}
+    .items-line-table th{background:#f8f8fd;padding:7px 10px;font-weight:600;color:#555;text-align:left;border-bottom:1px solid #e8e8f0;}
+    .items-line-table td{padding:7px 10px;border-bottom:1px solid #f0f0f5;}
+    .dyn-item-row td{padding:5px 6px;}
+  </style>
+</head>
+<body>
+<!-- NAVBAR -->
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search transfers..." id="globalSearch" oninput="applyFilters()" /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div>
+        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- SIDEBAR -->
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html" class="active"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<!-- MAIN -->
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Stock Transfer</div>
+      <div class="page-breadcrumb">Retail / POS / Stock Transfer</div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn-ma-outline" onclick="exportTx()"><i class="fas fa-download me-1"></i>Export</button>
+      <button class="btn-ma-primary" onclick="openCreate()"><i class="fas fa-plus me-1"></i>New Transfer</button>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#ededff;color:#696cff;"><i class="fas fa-dolly"></i></div><div class="stat-info"><div class="stat-value" id="stTotal">0</div><div class="stat-label">Total Transfers</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e8f1ff;color:#0d6efd;"><i class="fas fa-paper-plane"></i></div><div class="stat-info"><div class="stat-value" id="stSent">0</div><div class="stat-label">In Transit</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e8f5e9;color:#28a745;"><i class="fas fa-check-circle"></i></div><div class="stat-info"><div class="stat-value" id="stDone">0</div><div class="stat-label">Received</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#fff3e0;color:#f57c00;"><i class="fas fa-boxes"></i></div><div class="stat-info"><div class="stat-value" id="stItems">0</div><div class="stat-label">Items Moved</div></div></div></div>
+  </div>
+
+  <div style="overflow-x:auto;" class="ma-card">
+    <div class="filter-bar" style="border:0;padding:14px 18px 10px;">
+      <input type="text" class="ma-input" placeholder="Search transfer no. / center..." id="searchInput" style="max-width:220px;" oninput="applyFilters()" />
+      <select class="ma-select" id="filterFrom" style="max-width:160px;" onchange="applyFilters()">
+        <option value="">All Origins</option>
+        <option>Head Office</option><option>South Branch</option><option>North Branch</option><option>West Centre</option>
+      </select>
+      <select class="ma-select" id="filterStatus" style="max-width:150px;" onchange="applyFilters()">
+        <option value="">All Status</option>
+        <option value="draft">Draft</option><option value="sent">Sent</option>
+        <option value="received">Received</option><option value="partial">Partial</option><option value="cancelled">Cancelled</option>
+      </select>
+      <button class="btn-ma-outline btn-ma-sm" onclick="clearFilters()"><i class="fas fa-times"></i></button>
+    </div>
+    <table class="ma-table">
+      <thead><tr><th>#</th><th>Transfer No.</th><th>From → To</th><th>Date</th><th>Expected</th><th>Items</th><th>Status</th><th>Initiated By</th><th>Action</th></tr></thead>
+      <tbody id="txBody"></tbody>
+    </table>
+    <div class="ma-pagination"><div class="ma-pagination-info" id="pageInfo"></div><div class="ma-pagination-btns" id="pagBtns"></div></div>
+  </div>
+</main>
+
+<!-- Create Transfer Modal -->
+<div class="modal fade" id="txModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="txModalTitle">New Stock Transfer</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">From Center <span style="color:red">*</span></label>
+            <select class="ma-select w-100" id="txFrom">
+              <option>Head Office</option><option>South Branch</option><option>North Branch</option><option>West Centre</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">To Center <span style="color:red">*</span></label>
+            <select class="ma-select w-100" id="txTo">
+              <option>South Branch</option><option>Head Office</option><option>North Branch</option><option>West Centre</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Expected Delivery</label>
+            <input type="date" class="ma-input w-100" id="txExpected" />
+          </div>
+          <div class="col-12"><label class="form-label">Notes</label><input type="text" class="ma-input w-100" id="txNotes" placeholder="Reason or remarks..." /></div>
+        </div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:10px;color:#333;"><i class="fas fa-boxes me-2" style="color:#696cff;"></i>Items to Transfer</div>
+        <table class="items-line-table" id="txItemsTable">
+          <thead><tr><th>SKU / Item Name</th><th style="width:120px;">Quantity</th><th style="width:100px;">Unit</th><th style="width:80px;"></th></tr></thead>
+          <tbody id="txItemsBody"></tbody>
+        </table>
+        <button class="btn-ma-outline btn-ma-sm mt-2" onclick="addItemRow()"><i class="fas fa-plus me-1"></i>Add Item</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-ma-outline" onclick="saveTransfer('draft')"><i class="fas fa-save me-1"></i>Save Draft</button>
+        <button class="btn-ma-primary" onclick="saveTransfer('sent')"><i class="fas fa-paper-plane me-1"></i>Send Transfer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Transfer Modal -->
+<div class="modal fade" id="viewTxModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Transfer Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body" id="viewTxBody"></div>
+      <div class="modal-footer">
+        <button class="btn-ma-outline" data-bs-dismiss="modal">Close</button>
+        <button class="btn-ma-success" id="markReceivedBtn" style="display:none;"><i class="fas fa-check me-1"></i>Mark Received</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
+const STATUS_CLASS={draft:'transfer-status-draft',sent:'transfer-status-sent',received:'transfer-status-received',partial:'transfer-status-partial',cancelled:'transfer-status-cancelled'};
+
+let transfers = MA.getAll('stockTransfers');
+let nextId=9,nextNo=9,currentPage=1,rowsPerPage=10,filtered=[],viewingId=null;
+
+function totalItems(items){return items.reduce((a,i)=>a+i.qty,0);}
+function statusBadge(s){return `<span class="status-badge ${STATUS_CLASS[s]||''}">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`;}
+
+function applyFilters(){
+  const q=(document.getElementById('searchInput').value||document.getElementById('globalSearch').value||'').toLowerCase();
+  const from=document.getElementById('filterFrom').value;
+  const st=document.getElementById('filterStatus').value;
+  filtered=transfers.filter(t=>{
+    if(q&&!t.no.toLowerCase().includes(q)&&!t.from.toLowerCase().includes(q)&&!t.to.toLowerCase().includes(q)) return false;
+    if(from&&t.from!==from) return false;
+    if(st&&t.status!==st) return false;
+    return true;
+  });
+  currentPage=1;renderTable();updateStats();
+}
+
+function updateStats(){
+  document.getElementById('stTotal').textContent=transfers.length;
+  document.getElementById('stSent').textContent=transfers.filter(t=>t.status==='sent').length;
+  document.getElementById('stDone').textContent=transfers.filter(t=>t.status==='received').length;
+  document.getElementById('stItems').textContent=transfers.reduce((a,t)=>a+totalItems(t.items),0);
+}
+
+function renderTable(){
+  const start=(currentPage-1)*rowsPerPage;
+  const page=filtered.slice(start,start+rowsPerPage);
+  let html='';
+  if(!page.length){html='<tr><td colspan="9" style="text-align:center;padding:40px;color:#aaa;"><i class="fas fa-dolly" style="font-size:32px;display:block;margin-bottom:10px;"></i>No transfers found</td></tr>';}
+  else page.forEach((t,i)=>{
+    html+=`<tr>
+      <td style="color:#aaa;font-size:12px;">${start+i+1}</td>
+      <td><code style="background:#f0f0f5;padding:2px 7px;border-radius:4px;font-size:11px;">${t.no}</code></td>
+      <td>
+        <div class="transfer-flow">
+          <div class="center-pill"><i class="fas fa-building"></i>${t.from}</div>
+          <span class="flow-arrow"><i class="fas fa-arrow-right"></i></span>
+          <div class="center-pill"><i class="fas fa-store"></i>${t.to}</div>
+        </div>
+      </td>
+      <td style="font-size:12px;color:#666;">${t.date}</td>
+      <td style="font-size:12px;color:#666;">${t.expected}</td>
+      <td><span class="item-count">${t.items.length} SKU · ${totalItems(t.items)} units</span></td>
+      <td>${statusBadge(t.status)}</td>
+      <td style="font-size:12px;">${t.by}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn-icon" onclick="viewTransfer(${t.id})" title="View"><i class="fas fa-eye"></i></button>
+        ${t.status==='sent'?`<button class="btn-icon success" onclick="markReceived(${t.id})" title="Mark Received"><i class="fas fa-check"></i></button>`:''}
+        ${t.status==='draft'?`<button class="btn-icon" onclick="sendTransfer(${t.id})" title="Send"><i class="fas fa-paper-plane"></i></button>`:''}
+        <button class="btn-icon danger" onclick="cancelTransfer(${t.id})" title="Cancel"><i class="fas fa-ban"></i></button>
+      </td></tr>`;
+  });
+  document.getElementById('txBody').innerHTML=html;
+  const total=filtered.length;
+  document.getElementById('pageInfo').textContent=`Showing ${total?start+1:0}–${Math.min(start+rowsPerPage,total)} of ${total}`;
+  let phtml='<button class="page-btn" id="pp"><i class="fas fa-chevron-left"></i></button>';
+  const max=Math.ceil(total/rowsPerPage)||1;
+  for(let p=Math.max(1,currentPage-2);p<=Math.min(max,currentPage+2);p++)phtml+=`<button class="page-btn${p===currentPage?' active':''}" data-p="${p}">${p}</button>`;
+  phtml+='<button class="page-btn" id="pn"><i class="fas fa-chevron-right"></i></button>';
+  const pel=document.getElementById('pagBtns');pel.innerHTML=phtml;
+  pel.querySelector('#pp').onclick=()=>{if(currentPage>1){currentPage--;renderTable();}};
+  pel.querySelector('#pn').onclick=()=>{if(currentPage<max){currentPage++;renderTable();}};
+  pel.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{currentPage=parseInt(b.dataset.p);renderTable();});
+}
+
+function openCreate(){
+  document.getElementById('txModalTitle').textContent='New Stock Transfer';
+  document.getElementById('txNotes').value='';
+  const d=new Date(); d.setDate(d.getDate()+2);
+  document.getElementById('txExpected').value=d.toISOString().split('T')[0];
+  document.getElementById('txItemsBody').innerHTML='';
+  addItemRow();addItemRow();
+  new bootstrap.Modal(document.getElementById('txModal')).show();
+}
+
+let itemRowId=0;
+function addItemRow(){
+  const id='ir'+(itemRowId++);
+  const tr=document.createElement('tr');tr.className='dyn-item-row';tr.id=id;
+  tr.innerHTML=`<td><input type="text" class="ma-input" placeholder="SKU or item name" style="width:100%;font-size:12px;" /></td>
+    <td><input type="number" class="ma-input" placeholder="Qty" min="1" style="width:100%;font-size:12px;" /></td>
+    <td><select class="ma-select" style="font-size:12px;padding:5px 8px;">
+      <option>Pcs</option><option>Bags</option><option>Btls</option><option>Boxes</option><option>Kgs</option>
+    </select></td>
+    <td><button class="btn-icon danger" onclick="document.getElementById('${id}').remove()" style="padding:4px 8px;"><i class="fas fa-times"></i></button></td>`;
+  document.getElementById('txItemsBody').appendChild(tr);
+}
+
+function saveTransfer(status){
+  const from=document.getElementById('txFrom').value;
+  const to=document.getElementById('txTo').value;
+  if(from===to){alert('From and To centers must be different.');return;}
+  const rows=document.querySelectorAll('#txItemsBody tr');
+  const items=[];
+  rows.forEach(r=>{
+    const name=r.cells[0].querySelector('input').value.trim();
+    const qty=parseInt(r.cells[1].querySelector('input').value)||0;
+    const unit=r.cells[2].querySelector('select').value;
+    if(name&&qty>0) items.push({sku:'',name,qty,unit});
+  });
+  if(!items.length){alert('Add at least one item.');return;}
+  const d=new Date().toISOString().split('T')[0];
+  transfers.unshift({id:nextId++,no:'TRF-'+String(nextNo++).padStart(4,'0'),from,to,date:d,expected:document.getElementById('txExpected').value,items,status,by:'Admin',notes:document.getElementById('txNotes').value.trim()});
+  bootstrap.Modal.getInstance(document.getElementById('txModal')).hide();
+  applyFilters();
+  Swal2.fire({icon:'success',title:status==='sent'?'Transfer Sent!':'Draft Saved',timer:1500,showConfirmButton:false});
+}
+
+function viewTransfer(id){
+  const t=transfers.find(x=>x.id===id);viewingId=id;
+  const itemRows=t.items.map(i=>`<tr><td>${i.sku||'—'}</td><td>${i.name}</td><td>${i.qty} ${i.unit}</td></tr>`).join('');
+  document.getElementById('viewTxBody').innerHTML=`
+    <div class="row g-3">
+      <div class="col-12" style="display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #f0f0f5;">
+        <div><code style="background:#f0f0f5;padding:3px 10px;border-radius:6px;font-size:14px;">${t.no}</code></div>
+        ${statusBadge(t.status)}
+      </div>
+      <div class="col-12"><div style="display:flex;align-items:center;gap:16px;background:#f8f8fd;border-radius:8px;padding:14px 18px;">
+        <div><div style="font-size:11px;color:#888;">FROM</div><div style="font-weight:700;font-size:15px;">${t.from}</div></div>
+        <div style="font-size:22px;color:#696cff;"><i class="fas fa-long-arrow-alt-right"></i></div>
+        <div><div style="font-size:11px;color:#888;">TO</div><div style="font-weight:700;font-size:15px;">${t.to}</div></div>
+      </div></div>
+      <div class="col-md-4"><div style="font-size:11px;color:#888;">TRANSFER DATE</div><div style="font-weight:500;">${t.date}</div></div>
+      <div class="col-md-4"><div style="font-size:11px;color:#888;">EXPECTED DELIVERY</div><div style="font-weight:500;">${t.expected}</div></div>
+      <div class="col-md-4"><div style="font-size:11px;color:#888;">INITIATED BY</div><div style="font-weight:500;">${t.by}</div></div>
+      ${t.notes?`<div class="col-12"><div style="font-size:11px;color:#888;">NOTES</div><div style="background:#fffbec;border-radius:6px;padding:8px 12px;font-size:13px;">${t.notes}</div></div>`:''}
+      <div class="col-12">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Items (${t.items.length} SKU · ${totalItems(t.items)} units)</div>
+        <table class="items-line-table"><thead><tr><th>SKU</th><th>Item Name</th><th>Quantity</th></tr></thead><tbody>${itemRows}</tbody></table>
+      </div>
+    </div>`;
+  const btn=document.getElementById('markReceivedBtn');
+  btn.style.display=t.status==='sent'?'inline-flex':'none';
+  btn.onclick=()=>markReceived(id);
+  new bootstrap.Modal(document.getElementById('viewTxModal')).show();
+}
+
+function markReceived(id){
+  const t=transfers.find(x=>x.id===id);if(!t) return;
+  Swal2.fire({title:'Mark as Received?',text:`Confirm receipt of ${t.no}`,icon:'question',showCancelButton:true,confirmButtonText:'Yes, Received'}).then(r=>{
+    if(r.isConfirmed){t.status='received';bootstrap.Modal.getOrCreateInstance(document.getElementById('viewTxModal')).hide();applyFilters();Swal2.fire({icon:'success',title:'Received!',timer:1500,showConfirmButton:false});}
+  });
+}
+
+function sendTransfer(id){
+  const t=transfers.find(x=>x.id===id);if(!t) return;
+  t.status='sent';applyFilters();
+  Swal2.fire({icon:'success',title:'Transfer Sent',timer:1500,showConfirmButton:false});
+}
+
+function cancelTransfer(id){
+  const t=transfers.find(x=>x.id===id);
+  if(t.status==='received'){Swal2.fire('Cannot Cancel','Already received.','info');return;}
+  Swal2.fire({title:`Cancel ${t.no}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Yes, Cancel',confirmButtonColor:'#dc3545'}).then(r=>{
+    if(r.isConfirmed){t.status='cancelled';applyFilters();Swal2.fire({icon:'success',title:'Cancelled',timer:1500,showConfirmButton:false});}
+  });
+}
+
+function clearFilters(){['searchInput','filterFrom','filterStatus'].forEach(id=>document.getElementById(id).value='');document.getElementById('globalSearch').value='';applyFilters();}
+function exportTx(){Swal2.fire('Export','Stock transfer report exported.','success');}
+
+document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
+document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
+document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
+applyFilters();
+
+
+(function(){
+  var centers=MA.getAll('centers');
+  ['filterFrom','filterTo','tFrom','tTo'].forEach(function(id){
+    var s=document.getElementById(id);
+    if(!s) return;
+    var first=s.options[0]?s.options[0].outerHTML:'<option value="">Select</option>';
+    s.innerHTML=first+centers.map(function(c){return '<option>'+c.name+'</option>';}).join('');
+  });
+})();
+if(typeof saveTransfer==='function'){var _origSaveTrf=saveTransfer;saveTransfer=function(){_origSaveTrf();MA.set('stockTransfers',transfers);};}
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

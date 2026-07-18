@@ -1,0 +1,441 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Reports</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .report-card {
+      background:#fff; border:1px solid #f0f0f5; border-radius:10px;
+      padding:20px; cursor:pointer; transition:all 0.15s; text-decoration:none; display:block;
+    }
+    .report-card:hover { border-color:#b8b9f9; box-shadow:0 4px 16px rgba(105,108,255,0.1); transform:translateY(-2px); }
+    .report-icon {
+      width:48px; height:48px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:12px;
+    }
+    .report-title { font-size:14px; font-weight:600; color:#252525; margin-bottom:4px; }
+    .report-desc  { font-size:12px; color:#888; }
+
+    /* Chart placeholder */
+    .chart-area {
+      background:#fafaff; border:1px dashed #c8c9f9;
+      border-radius:8px; display:flex; align-items:center; justify-content:center;
+      flex-direction:column; gap:8px; color:#aaa; font-size:13px;
+    }
+
+    /* Bar chart (CSS-only) */
+    .bar-chart { display:flex; align-items:flex-end; gap:8px; height:160px; padding:0 0 0 0; }
+    .bar-col { display:flex; flex-direction:column; align-items:center; flex:1; }
+    .bar-fill { width:100%; border-radius:4px 4px 0 0; min-height:4px; transition:height 0.4s; }
+    .bar-label { font-size:10px; color:#888; margin-top:5px; text-align:center; white-space:nowrap; }
+    .bar-val   { font-size:10px; font-weight:600; color:#696cff; margin-bottom:3px; }
+
+    /* Donut chart (CSS) */
+    .donut-wrap { position:relative; width:140px; height:140px; flex-shrink:0; }
+    .donut-legend { font-size:12px; }
+    .donut-legend-item { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+    .donut-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+    .summary-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px; }
+    .summary-item {
+      flex:1; min-width:140px; background:#fff; border:1px solid #f0f0f5;
+      border-radius:8px; padding:14px 16px;
+    }
+    .summary-item .s-val   { font-size:22px; font-weight:700; color:#252525; }
+    .summary-item .s-label { font-size:11px; color:#888; margin-top:2px; }
+    .summary-item .s-sub   { font-size:11px; color:#28a745; margin-top:3px; font-weight:600; }
+
+    .report-filter { background:#f8f8f8; border-top-left-radius:4px; box-shadow:0 0 1px #a5a3a3; padding:12px 18px; margin-bottom:0; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/>
+      <circle cx="21" cy="5" r="3" fill="#ff6b2b"/>
+    </svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" placeholder="Search..." />
+  </div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div>
+        <span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+          <div class="user-dropdown-name">Administrator</div>
+          <div class="user-dropdown-role">Master Assist — Super Admin</div>
+        </div>
+        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html" class="active"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+
+<!-- MAIN -->
+<main class="ma-main" id="maMain">
+
+  <div class="page-header">
+    <div>
+      <h1>Reports</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="welcome.html" style="color:#696cff;">Home</a></li>
+          <li class="breadcrumb-item active">Reports</li>
+        </ol>
+      </nav>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-ma-outline"><i class="fas fa-file-pdf"></i> Export PDF</button>
+      <button class="btn-ma-primary"><i class="fas fa-file-excel"></i> Export Excel</button>
+    </div>
+  </div>
+
+  <!-- Report type cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <a href="#" class="report-card" onclick="showReport('daily');return false;">
+        <div class="report-icon" style="background:#ededff;color:#696cff;"><i class="fas fa-chart-bar"></i></div>
+        <div class="report-title">Daily Sales</div>
+        <div class="report-desc">Day-wise sales summary per POS</div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="#" class="report-card" onclick="showReport('monthly');return false;">
+        <div class="report-icon" style="background:#e8f1ff;color:#0d6efd;"><i class="fas fa-calendar-alt"></i></div>
+        <div class="report-title">Monthly Summary</div>
+        <div class="report-desc">Month-wise consolidated report</div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="#" class="report-card" onclick="showReport('billwise');return false;">
+        <div class="report-icon" style="background:#e8f8f0;color:#28a745;"><i class="fas fa-file-invoice"></i></div>
+        <div class="report-title">Bill Wise Report</div>
+        <div class="report-desc">Detailed bill-level data with status</div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="#" class="report-card" onclick="showReport('stock');return false;">
+        <div class="report-icon" style="background:#fff3ec;color:#ff6b2b;"><i class="fas fa-boxes"></i></div>
+        <div class="report-title">Stock Report</div>
+        <div class="report-desc">Current inventory levels per store</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Report filter + output area -->
+  <div class="ma-card" id="reportOutputCard">
+
+    <div class="ma-card-header">
+      <h5 id="reportTitle"><i class="fas fa-chart-bar" style="color:#696cff;margin-right:7px;"></i>Daily Sales Report</h5>
+      <div class="card-header-actions">
+        <button class="btn-icon" title="Print"><i class="fas fa-print"></i></button>
+        <button class="btn-icon" title="Export PDF"><i class="fas fa-file-pdf"></i></button>
+        <button class="btn-icon" title="Export Excel"><i class="fas fa-file-excel"></i></button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="report-filter">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <label class="ma-label" style="margin:0;white-space:nowrap;">Date Range:</label>
+        <input type="date" class="ma-input" style="width:140px;height:32px;font-size:12px;" id="rptFrom" />
+        <span style="font-size:13px;color:#888;">to</span>
+        <input type="date" class="ma-input" style="width:140px;height:32px;font-size:12px;" id="rptTo" />
+        <select class="ma-select" style="width:130px;height:32px;font-size:12px;" id="rptPOS">
+          <option value="">All POS</option>
+          <option>Th-7</option><option>A4-7</option><option>CH-A4-2</option>
+          <option>SO-A4-9</option><option>Est-A5-3</option>
+        </select>
+        <button class="btn-ma-primary btn-ma-sm" onclick="generateReport()"><i class="fas fa-search"></i> Generate</button>
+      </div>
+    </div>
+
+    <div class="ma-card-body">
+
+      <!-- Summary row -->
+      <div class="summary-row" id="summaryRow">
+        <div class="summary-item">
+          <div class="s-val">₹4,82,300</div>
+          <div class="s-label">Total Sales</div>
+          <div class="s-sub"><i class="fas fa-arrow-up"></i> 18% vs last period</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-val">248</div>
+          <div class="s-label">Total Bills</div>
+          <div class="s-sub"><i class="fas fa-arrow-up"></i> 12% vs last period</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-val">₹1,945</div>
+          <div class="s-label">Avg Bill Value</div>
+          <div class="s-sub" style="color:#696cff;">Across all POS</div>
+        </div>
+        <div class="summary-item">
+          <div class="s-val">14</div>
+          <div class="s-label">Active POS</div>
+          <div class="s-sub" style="color:#888;">All operational</div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+          <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:12px;">Sales by Day (Last 7 Days)</div>
+          <div class="bar-chart" id="barChart"></div>
+        </div>
+        <div class="col-lg-4">
+          <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:12px;">Bill Status Distribution</div>
+          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+            <div class="donut-wrap">
+              <svg viewBox="0 0 36 36" width="140" height="140">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f0f0f5" stroke-width="3.2"/>
+                <!-- approved: 66% -->
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#28a745" stroke-width="3.2"
+                  stroke-dasharray="66 34" stroke-dashoffset="25" transform="rotate(-90 18 18)"/>
+                <!-- pending: 20% -->
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#ffc107" stroke-width="3.2"
+                  stroke-dasharray="20 80" stroke-dashoffset="-41" transform="rotate(-90 18 18)"/>
+                <!-- rejected: 14% -->
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#dc3545" stroke-width="3.2"
+                  stroke-dasharray="14 86" stroke-dashoffset="-61" transform="rotate(-90 18 18)"/>
+                <text x="18" y="20" text-anchor="middle" style="font-size:5px;font-weight:700;fill:#252525;">248</text>
+                <text x="18" y="24" text-anchor="middle" style="font-size:3px;fill:#888;">bills</text>
+              </svg>
+            </div>
+            <div class="donut-legend">
+              <div class="donut-legend-item"><div class="donut-dot" style="background:#28a745;"></div><span>Approved — 198 (66%)</span></div>
+              <div class="donut-legend-item"><div class="donut-dot" style="background:#ffc107;"></div><span>Pending — 34 (20%)</span></div>
+              <div class="donut-legend-item"><div class="donut-dot" style="background:#dc3545;"></div><span>Rejected — 16 (14%)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Report table -->
+      <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:10px;">Detailed Report</div>
+      <div style="overflow-x:auto;">
+        <table class="ma-table" id="reportTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>POS</th>
+              <th>Bills Count</th>
+              <th>Total Amount</th>
+              <th>Approved</th>
+              <th>Pending</th>
+              <th>Rejected</th>
+              <th>Avg Value</th>
+            </tr>
+          </thead>
+          <tbody id="reportBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script src="js/store.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+  /* ---- Build bar chart ---- */
+  var days=(function(){var d=[];for(var i=6;i>=0;i--){var dt=new Date();dt.setDate(dt.getDate()-i);d.push(dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short'}));}return d;})();
+  var vals=(function(){var sales=MA.getAll('sales');var out=Array(7).fill(0);sales.forEach(function(s){var dt=new Date(s.date);var now=new Date();var diff=Math.round((now-dt)/(1000*86400));if(diff>=0&&diff<7)out[6-diff]+=(s.total||0);});return out;})();
+  var maxV  = Math.max.apply(null, vals);
+
+  function buildBarChart() {
+    var html = '';
+    days.forEach(function(d,i) {
+      var h = Math.round((vals[i]/maxV)*140);
+      var formatted = vals[i]>=1000 ? '₹'+(vals[i]/1000).toFixed(0)+'k' : '₹'+vals[i];
+      html += '<div class="bar-col">' +
+        '<div class="bar-val">'+formatted+'</div>' +
+        '<div class="bar-fill" style="height:'+h+'px;background:linear-gradient(180deg,#696cff,#9a9cff);"></div>' +
+        '<div class="bar-label">'+d+'</div>' +
+      '</div>';
+    });
+    document.getElementById('barChart').innerHTML = html;
+  }
+
+  /* ---- Build report table ---- */
+  var reportRows = MA.getAll('bills').slice(0,10);
+
+  function buildReportTable() {
+    var html = '';
+    reportRows.forEach(function(r,i) {
+      html += '<tr>' +
+        '<td>'+(i+1)+'</td>' +
+        '<td>'+r.date+'</td>' +
+        '<td><span style="background:#f0f0f5;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">'+r.pos+'</span></td>' +
+        '<td>'+r.count+'</td>' +
+        '<td style="font-weight:600;">₹'+r.total.toLocaleString('en-IN')+'</td>' +
+        '<td><span class="status-badge badge-success">'+r.approved+'</span></td>' +
+        '<td><span class="status-badge badge-pending">'+r.pending+'</span></td>' +
+        '<td><span class="status-badge badge-error">'+r.rejected+'</span></td>' +
+        '<td>₹'+Math.round(r.total/r.count).toLocaleString('en-IN')+'</td>' +
+      '</tr>';
+    });
+    document.getElementById('reportBody').innerHTML = html;
+  }
+
+  function generateReport() {
+    Swal && Swal.fire({icon:'success',title:'Report Generated',text:'Report data updated.',timer:1500,timerProgressBar:true});
+    buildBarChart();
+    buildReportTable();
+  }
+
+  function showReport(type) {
+    var titles = {
+      daily:'Daily Sales Report', monthly:'Monthly Summary Report',
+      billwise:'Bill Wise Report', stock:'Stock Report'
+    };
+    var icons = {daily:'chart-bar',monthly:'calendar-alt',billwise:'file-invoice',stock:'boxes'};
+    document.getElementById('reportTitle').innerHTML =
+      '<i class="fas fa-'+icons[type]+'" style="color:#696cff;margin-right:7px;"></i>'+titles[type];
+    document.getElementById('reportOutputCard').scrollIntoView({behavior:'smooth'});
+  }
+
+  /* ---- Set default dates ---- */
+  (function() {
+    var d  = new Date();
+    var to = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    var fd = new Date(d); fd.setDate(fd.getDate()-7);
+    var from = fd.getFullYear()+'-'+String(fd.getMonth()+1).padStart(2,'0')+'-'+String(fd.getDate()).padStart(2,'0');
+    document.getElementById('rptFrom').value = from;
+    document.getElementById('rptTo').value   = to;
+  })();
+
+  /* ---- Sidebar / dropdown ---- */
+  var collapsed = false;
+  document.getElementById('sidebarToggle').addEventListener('click', function() {
+    collapsed = !collapsed;
+    if (window.innerWidth>991) {
+      document.getElementById('sidebar').classList.toggle('collapsed',collapsed);
+      document.getElementById('maMain').classList.toggle('expanded',collapsed);
+    } else { document.getElementById('sidebar').classList.toggle('mobile-open'); }
+  });
+  document.getElementById('userDropdownToggle').addEventListener('click', function(e){
+    e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('open');
+  });
+  document.addEventListener('click', function(){ document.getElementById('userDropdown').classList.remove('open'); });
+  document.getElementById('approvalMenu').addEventListener('click', function(){
+    this.classList.toggle('open'); document.getElementById('approvalSubmenu').classList.toggle('open');
+  });
+  document.getElementById('reportsMenu').addEventListener('click', function(){
+    this.classList.toggle('open'); document.getElementById('reportsSubmenu').classList.toggle('open');
+  });
+
+  buildBarChart();
+  buildReportTable();
+
+
+(function(){
+  var bills=MA.getAll('bills');
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('rTotalBills',bills.length);
+  var total=bills.reduce(function(a,b){return a+(b.amount||0);},0);
+  el('rTotalSales',MA.fmt(total));
+})();
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

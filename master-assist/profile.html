@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — My Profile</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .profile-avatar-wrap{position:relative;display:inline-block;}
+    .profile-avatar{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#696cff,#9a9cff);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:#fff;flex-shrink:0;}
+    .avatar-edit-btn{position:absolute;bottom:2px;right:2px;width:28px;height:28px;background:#696cff;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:12px;}
+    .profile-tab-btn{background:transparent;border:0;padding:10px 16px;font-size:13px;font-weight:500;color:#888;cursor:pointer;border-bottom:2px solid transparent;font-family:'Public Sans',sans-serif;transition:color 0.15s;margin-bottom:-2px;}
+    .profile-tab-btn.active{color:#696cff;border-bottom-color:#696cff;}
+    .profile-panel{display:none;}
+    .profile-panel.active{display:block;}
+    .info-row{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid #f5f5fa;align-items:center;}
+    .info-row:last-child{border-bottom:0;}
+    .info-label{font-size:12px;color:#888;width:140px;flex-shrink:0;}
+    .info-val{font-size:13px;color:#333;font-weight:500;}
+    .activity-dot2{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+    .pref-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f5f5fa;}
+    .pref-row:last-child{border-bottom:0;}
+    .toggle-wrap{position:relative;display:inline-flex;align-items:center;cursor:pointer;}
+    .toggle-wrap input{opacity:0;width:0;height:0;position:absolute;}
+    .toggle-track{width:40px;height:22px;background:#ddd;border-radius:11px;transition:background 0.2s;}
+    .toggle-wrap input:checked + .toggle-track{background:#696cff;}
+    .toggle-thumb{position:absolute;left:3px;top:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+    .toggle-wrap input:checked ~ .toggle-thumb{transform:translateX(18px);}
+  </style>
+</head>
+<body>
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search..." /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div>
+        <span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div>
+        <a href="profile.html" style="color:#696cff;background:#fafaff;"><i class="fas fa-user"></i> My Profile</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div>
+      <h1>My Profile</h1>
+      <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="welcome.html" style="color:#696cff;">Home</a></li><li class="breadcrumb-item active">Profile</li></ol></nav>
+    </div>
+  </div>
+  <div id="alertArea"></div>
+
+  <div class="row g-4">
+    <!-- Left: avatar + summary card -->
+    <div class="col-lg-4">
+      <div class="ma-card">
+        <div class="ma-card-body" style="text-align:center;padding:28px 20px;">
+          <div style="display:flex;justify-content:center;margin-bottom:16px;">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar">A</div>
+              <div class="avatar-edit-btn" title="Change photo"><i class="fas fa-camera"></i></div>
+            </div>
+          </div>
+          <div style="font-size:20px;font-weight:700;color:#252525;margin-bottom:4px;">Administrator</div>
+          <div style="font-size:13px;color:#696cff;font-weight:500;margin-bottom:4px;">Super Admin</div>
+          <div style="font-size:12px;color:#888;margin-bottom:16px;">admin@masterassist.in</div>
+          <span class="status-badge badge-success">Active Account</span>
+          <div style="margin-top:20px;display:flex;justify-content:center;gap:24px;text-align:center;padding-top:16px;border-top:1px solid #f0f0f5;">
+            <div><div style="font-size:18px;font-weight:700;color:#252525;">248</div><div style="font-size:11px;color:#888;">Bills Uploaded</div></div>
+            <div><div style="font-size:18px;font-weight:700;color:#252525;">186</div><div style="font-size:11px;color:#888;">Approved</div></div>
+            <div><div style="font-size:18px;font-weight:700;color:#252525;">12</div><div style="font-size:11px;color:#888;">Rejected</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick info card -->
+      <div class="ma-card">
+        <div class="ma-card-header"><h5><i class="fas fa-info-circle" style="color:#696cff;margin-right:7px;"></i>Account Info</h5></div>
+        <div class="ma-card-body">
+          <div class="info-row"><div class="info-label">Username</div><div class="info-val"><code style="background:#f0f0f5;padding:2px 8px;border-radius:4px;">admin</code></div></div>
+          <div class="info-row"><div class="info-label">Role</div><div class="info-val"><span class="status-badge badge-processing">Super Admin</span></div></div>
+          <div class="info-row"><div class="info-label">Mobile</div><div class="info-val">+91 98765 43210</div></div>
+          <div class="info-row"><div class="info-label">Last Login</div><div class="info-val">2026-07-18 10:32 AM</div></div>
+          <div class="info-row"><div class="info-label">Member Since</div><div class="info-val">January 2025</div></div>
+          <div class="info-row"><div class="info-label">POS Access</div><div class="info-val">All Centers</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: tabbed sections -->
+    <div class="col-lg-8">
+      <div class="ma-card">
+        <div style="display:flex;gap:0;border-bottom:2px solid #f0f0f5;padding:0 18px;">
+          <button class="profile-tab-btn active" data-panel="info"><i class="fas fa-user"></i> Personal Info</button>
+          <button class="profile-tab-btn" data-panel="security"><i class="fas fa-lock"></i> Password</button>
+          <button class="profile-tab-btn" data-panel="prefs"><i class="fas fa-sliders-h"></i> Preferences</button>
+          <button class="profile-tab-btn" data-panel="activity"><i class="fas fa-history"></i> Activity</button>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="profile-panel active ma-card-body" id="panel-info">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="ma-label">Full Name</label>
+              <input type="text" class="ma-input" id="pName" value="" id="pName" />
+            </div>
+            <div class="col-md-6">
+              <label class="ma-label">Username</label>
+              <input type="text" class="ma-input" id="pUsername" value="" readonly readonly style="background:#f8f8fc;" />
+            </div>
+            <div class="col-md-6">
+              <label class="ma-label">Email Address</label>
+              <input type="email" class="ma-input" id="pEmail" value="" id="pEmail" />
+            </div>
+            <div class="col-md-6">
+              <label class="ma-label">Mobile Number</label>
+              <input type="tel" class="ma-input" id="pMobile" value="" id="pMobile" maxlength="10" />
+            </div>
+            <div class="col-md-6">
+              <label class="ma-label">Department</label>
+              <input type="text" class="ma-input" value="Administration" id="pDept" />
+            </div>
+            <div class="col-md-6">
+              <label class="ma-label">Location</label>
+              <input type="text" class="ma-input" value="Head Office" id="pLocation" />
+            </div>
+            <div class="col-12">
+              <label class="ma-label">Bio / Notes</label>
+              <textarea class="ma-textarea" rows="2" id="pBio">System administrator with full access to all modules.</textarea>
+            </div>
+            <div class="col-12" style="display:flex;justify-content:flex-end;gap:10px;">
+              <button class="btn-ma-outline">Cancel</button>
+              <button class="btn-ma-primary" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="profile-panel ma-card-body" id="panel-security">
+          <div class="row g-3">
+            <div class="col-12">
+              <div style="background:#ededff;border-radius:8px;padding:12px 14px;font-size:13px;color:#555;margin-bottom:6px;">
+                <i class="fas fa-shield-alt" style="color:#696cff;margin-right:6px;"></i>
+                Use a strong password with at least 8 characters, including numbers and symbols.
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="ma-label">Current Password <span class="req">*</span></label>
+              <div style="position:relative;">
+                <input type="password" class="ma-input" id="currentPwd" placeholder="Enter current password" />
+                <button onclick="togglePwd('currentPwd',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#aaa;cursor:pointer;"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="ma-label">New Password <span class="req">*</span></label>
+              <div style="position:relative;">
+                <input type="password" class="ma-input" id="newPwd" placeholder="Enter new password" />
+                <button onclick="togglePwd('newPwd',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#aaa;cursor:pointer;"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="ma-label">Confirm New Password <span class="req">*</span></label>
+              <div style="position:relative;">
+                <input type="password" class="ma-input" id="confirmPwd" placeholder="Confirm new password" />
+                <button onclick="togglePwd('confirmPwd',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#aaa;cursor:pointer;"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+            <!-- Password strength -->
+            <div class="col-12">
+              <div style="font-size:11px;color:#888;margin-bottom:4px;">Password strength</div>
+              <div style="background:#f0f0f5;border-radius:3px;height:6px;overflow:hidden;">
+                <div id="pwdStrengthBar" style="height:100%;width:0%;border-radius:3px;background:#dc3545;transition:width 0.3s,background 0.3s;"></div>
+              </div>
+              <div id="pwdStrengthLabel" style="font-size:11px;color:#aaa;margin-top:3px;"></div>
+            </div>
+            <div class="col-12" style="display:flex;justify-content:flex-end;">
+              <button class="btn-ma-primary" onclick="changePassword()"><i class="fas fa-key"></i> Update Password</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preferences -->
+        <div class="profile-panel ma-card-body" id="panel-prefs">
+          <div class="pref-row">
+            <div><div style="font-size:13px;font-weight:500;color:#333;">Email Notifications</div><div style="font-size:11px;color:#999;">Receive email alerts for bill approvals</div></div>
+            <label class="toggle-wrap"><input type="checkbox" checked /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          </div>
+          <div class="pref-row">
+            <div><div style="font-size:13px;font-weight:500;color:#333;">SMS Alerts</div><div style="font-size:11px;color:#999;">Receive SMS for critical actions</div></div>
+            <label class="toggle-wrap"><input type="checkbox" /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          </div>
+          <div class="pref-row">
+            <div><div style="font-size:13px;font-weight:500;color:#333;">Daily Summary Email</div><div style="font-size:11px;color:#999;">Receive daily sales report at 7 PM</div></div>
+            <label class="toggle-wrap"><input type="checkbox" checked /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          </div>
+          <div class="pref-row">
+            <div><div style="font-size:13px;font-weight:500;color:#333;">Show Dashboard Welcome Banner</div><div style="font-size:11px;color:#999;">Display greeting banner on login</div></div>
+            <label class="toggle-wrap"><input type="checkbox" checked /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          </div>
+          <div class="pref-row">
+            <div><div style="font-size:13px;font-weight:500;color:#333;">Compact Sidebar</div><div style="font-size:11px;color:#999;">Collapse sidebar to icons by default</div></div>
+            <label class="toggle-wrap"><input type="checkbox" /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          </div>
+          <div style="padding-top:16px;" class="row g-3">
+            <div class="col-md-6">
+              <label class="ma-label">Language</label>
+              <select class="ma-select"><option>English</option><option>Hindi</option><option>Marathi</option></select>
+            </div>
+            <div class="col-md-6">
+              <label class="ma-label">Date Format</label>
+              <select class="ma-select"><option>YYYY-MM-DD</option><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option></select>
+            </div>
+            <div class="col-12" style="display:flex;justify-content:flex-end;">
+              <button class="btn-ma-primary" onclick="saveProfile()"><i class="fas fa-save"></i> Save Preferences</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity -->
+        <div class="profile-panel ma-card-body" id="panel-activity">
+          <div id="activityList"></div>
+        </div>
+
+      </div><!-- ma-card -->
+    </div>
+  </div>
+</main>
+
+<script src="js/store.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+/* ---- Tabs ---- */
+document.querySelectorAll('.profile-tab-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.profile-tab-btn').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.profile-panel').forEach(function(p){p.classList.remove('active');});
+    this.classList.add('active');
+    var panel=document.getElementById('panel-'+this.dataset.panel);
+    if(panel) panel.classList.add('active');
+  });
+});
+
+/* ---- Password toggle ---- */
+function togglePwd(id,btn){
+  var inp=document.getElementById(id);
+  var show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.querySelector('i').className='fas fa-eye'+(show?'-slash':'');
+}
+
+/* ---- Password strength ---- */
+document.getElementById('newPwd').addEventListener('input',function(){
+  var v=this.value;
+  var score=0;
+  if(v.length>=8) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  var bar=document.getElementById('pwdStrengthBar');
+  var lbl=document.getElementById('pwdStrengthLabel');
+  var pct=[0,25,50,75,100][score];
+  var colors=['#dc3545','#dc3545','#ffc107','#28a745','#696cff'];
+  var labels=['','Weak','Fair','Good','Strong'];
+  bar.style.width=pct+'%';
+  bar.style.background=colors[score]||'#dc3545';
+  lbl.textContent=labels[score]||'';
+  lbl.style.color=colors[score]||'#dc3545';
+});
+
+/* ---- Save profile ---- */
+function saveProfile(){
+  Swal.fire({icon:'success',title:'Profile Updated',text:'Your changes have been saved.',timer:1800,timerProgressBar:true,showConfirmButton:false});
+}
+
+/* ---- Change password ---- */
+function changePassword(){
+  var cur=document.getElementById('currentPwd').value;
+  var np=document.getElementById('newPwd').value;
+  var cp=document.getElementById('confirmPwd').value;
+  if(!cur||!np||!cp){showAlert('error','All password fields are required.');return;}
+  if(np!==cp){showAlert('error','New passwords do not match.');return;}
+  if(np.length<8){showAlert('error','Password must be at least 8 characters.');return;}
+  Swal.fire({icon:'success',title:'Password Updated',text:'Your password has been changed.',timer:1800,timerProgressBar:true,showConfirmButton:false});
+  document.getElementById('currentPwd').value='';
+  document.getElementById('newPwd').value='';
+  document.getElementById('confirmPwd').value='';
+  document.getElementById('pwdStrengthBar').style.width='0%';
+}
+
+/* ---- Activity feed ---- */
+var activities=[
+  {icon:'sign-in-alt',color:'#696cff',bg:'#ededff',text:'Logged in from 192.168.1.1',time:'2026-07-18 10:32 AM'},
+  {icon:'check-circle',color:'#28a745',bg:'#e8f8f0',text:'Approved Bill BILL-2266',time:'2026-07-18 09:58 AM'},
+  {icon:'times-circle',color:'#dc3545',bg:'#fdecea',text:'Rejected Bill BILL-2260',time:'2026-07-17 06:30 PM'},
+  {icon:'user-plus',color:'#ff6b2b',bg:'#fff3ec',text:'Created user "neha"',time:'2026-07-17 03:12 PM'},
+  {icon:'cloud-upload-alt',color:'#0d6efd',bg:'#e8f1ff',text:'Uploaded Bill BILL-2255',time:'2026-07-16 11:40 AM'},
+  {icon:'check-double',color:'#28a745',bg:'#e8f8f0',text:'Bulk approved 5 bills',time:'2026-07-16 04:45 PM'},
+  {icon:'edit',color:'#696cff',bg:'#ededff',text:'Updated user "vijay" role',time:'2026-07-15 02:05 PM'},
+  {icon:'sign-in-alt',color:'#696cff',bg:'#ededff',text:'Logged in from 192.168.1.1',time:'2026-07-15 09:00 AM'},
+  {icon:'trash-alt',color:'#dc3545',bg:'#fdecea',text:'Deleted Bill BILL-2250',time:'2026-07-14 05:22 PM'},
+  {icon:'sign-out-alt',color:'#888',bg:'#f0f0f5',text:'Logged out',time:'2026-07-14 06:00 PM'},
+];
+(function(){
+  var html='';
+  activities.forEach(function(a){
+    html+='<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f5f5fa;align-items:flex-start;">'+
+      '<div style="width:34px;height:34px;border-radius:50%;background:'+a.bg+';color:'+a.color+';display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">'+
+        '<i class="fas fa-'+a.icon+'"></i></div>'+
+      '<div style="flex:1;"><div style="font-size:13px;color:#333;">'+a.text+'</div>'+
+        '<div style="font-size:11px;color:#aaa;margin-top:2px;">'+a.time+'</div></div>'+
+    '</div>';
+  });
+  document.getElementById('activityList').innerHTML=html;
+})();
+
+function showAlert(type,msg){var icons={success:'check-circle',error:'times-circle'};var cls={success:'ma-alert-success',error:'ma-alert-error'};document.getElementById('alertArea').innerHTML='<div class="ma-alert '+cls[type]+'"><i class="fas fa-'+(icons[type])+' ma-alert-icon"></i><div>'+msg+'</div><button class="ma-alert-close" onclick="this.parentElement.remove()">×</button></div>';window.scrollTo({top:0,behavior:'smooth'});setTimeout(function(){var a=document.getElementById('alertArea');if(a)a.innerHTML='';},5000);}
+
+var collapsed=false;
+document.getElementById('sidebarToggle').addEventListener('click',function(){collapsed=!collapsed;if(window.innerWidth>991){document.getElementById('sidebar').classList.toggle('collapsed',collapsed);document.getElementById('maMain').classList.toggle('expanded',collapsed);}else document.getElementById('sidebar').classList.toggle('mobile-open');});
+document.getElementById('userDropdownToggle').addEventListener('click',function(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('open');});
+document.addEventListener('click',function(){document.getElementById('userDropdown').classList.remove('open');});
+
+
+(function(){
+  var u=MA.getAll('users').find(function(x){return x.username==='admin';})||{};
+  var ef=function(id,v){var e=document.getElementById(id);if(e)e.value=v||'';};
+  ef('pName',u.name);ef('pUsername',u.username||'admin');ef('pEmail',u.email);ef('pMobile',u.mobile);
+  // stats from bills
+  var bills=MA.getAll('bills');
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('pUploaded',bills.length);
+  el('pApproved',bills.filter(function(b){return b.status==='approved';}).length);
+  el('pRejected',bills.filter(function(b){return b.status==='rejected';}).length);
+  // save profile
+  var saveBtn=document.querySelector('button[onclick*="saveProfile"]');
+  if(!saveBtn){
+    var forms=document.querySelectorAll('form');
+    forms.forEach(function(f){f.addEventListener('submit',function(e){e.preventDefault();var users=MA.getAll('users');var idx=users.findIndex(function(x){return x.username==='admin';});if(idx>=0){users[idx].name=document.getElementById('pName').value;users[idx].email=document.getElementById('pEmail').value;users[idx].mobile=document.getElementById('pMobile').value;MA.set('users',users);if(typeof Swal2!=='undefined')Swal2.fire({icon:'success',title:'Saved',timer:1200,showConfirmButton:false});}});});
+  }
+})();
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

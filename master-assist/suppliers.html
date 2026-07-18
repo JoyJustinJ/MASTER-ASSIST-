@@ -1,0 +1,443 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Suppliers</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .supplier-avatar{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,#696cff,#9a9cff);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+    .tag-chip{display:inline-block;background:#f0f0f5;color:#555;font-size:11px;font-weight:600;border-radius:4px;padding:2px 8px;margin:1px;}
+    .view-toggle{display:flex;border:1px solid #e0e0ea;border-radius:6px;overflow:hidden;}
+    .view-btn{background:#fff;border:0;padding:6px 12px;font-size:13px;color:#888;cursor:pointer;transition:all 0.15s;}
+    .view-btn.active{background:#696cff;color:#fff;}
+    .supplier-card{background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:18px;height:100%;}
+    .supplier-card-name{font-size:14px;font-weight:600;color:#252525;margin-bottom:2px;}
+    .supplier-card-meta{font-size:11px;color:#888;margin-bottom:10px;}
+    .supplier-card-stat{display:flex;justify-content:space-between;background:#f8f8fd;border-radius:6px;padding:8px 12px;font-size:12px;}
+  </style>
+</head>
+<body>
+<!-- NAVBAR -->
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search suppliers..." id="globalSearch" oninput="applyFilters()" /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div>
+        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- SIDEBAR -->
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html" class="active"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<!-- MAIN -->
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Suppliers</div>
+      <div class="page-breadcrumb">Bill Management / Suppliers</div>
+    </div>
+    <div class="d-flex gap-2">
+      <div class="view-toggle">
+        <button class="view-btn active" id="listViewBtn" onclick="setView('list')"><i class="fas fa-list"></i></button>
+        <button class="view-btn" id="cardViewBtn" onclick="setView('card')"><i class="fas fa-th-large"></i></button>
+      </div>
+      <button class="btn-ma-outline" onclick="exportSuppliers()"><i class="fas fa-download me-1"></i>Export</button>
+      <button class="btn-ma-primary" onclick="openAdd()"><i class="fas fa-plus me-1"></i>Add Supplier</button>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#ededff;color:#696cff;"><i class="fas fa-truck"></i></div><div class="stat-info"><div class="stat-value" id="stTotal">0</div><div class="stat-label">Total Suppliers</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e8f5e9;color:#28a745;"><i class="fas fa-check-circle"></i></div><div class="stat-info"><div class="stat-value" id="stActive">0</div><div class="stat-label">Active</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#fff3e0;color:#f57c00;"><i class="fas fa-file-invoice"></i></div><div class="stat-info"><div class="stat-value" id="stPOs">0</div><div class="stat-label">Total POs</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e3f2fd;color:#1976d2;"><i class="fas fa-rupee-sign"></i></div><div class="stat-info"><div class="stat-value" id="stValue">₹0</div><div class="stat-label">Total Payable</div></div></div></div>
+  </div>
+
+  <div class="filter-bar mb-3">
+    <input type="text" class="ma-input" placeholder="Search name / GSTIN..." id="searchInput" style="max-width:220px;" oninput="applyFilters()" />
+    <select class="ma-select" id="filterCategory" style="max-width:160px;" onchange="applyFilters()">
+      <option value="">All Categories</option>
+      <option>Electronics</option><option>Grocery</option><option>Clothing</option>
+      <option>FMCG</option><option>Pharma</option><option>Stationery</option>
+    </select>
+    <select class="ma-select" id="filterStatus" style="max-width:140px;" onchange="applyFilters()">
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+    <button class="btn-ma-outline btn-ma-sm" onclick="clearFilters()"><i class="fas fa-times me-1"></i>Clear</button>
+  </div>
+
+  <div id="listView">
+    <div style="overflow-x:auto;">
+      <table class="ma-table">
+        <thead><tr><th>#</th><th>Supplier</th><th>GSTIN</th><th>Category</th><th>Mobile</th><th>City</th><th>POs</th><th>Payable</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="supplierBody"></tbody>
+      </table>
+    </div>
+    <div class="ma-pagination"><div class="ma-pagination-info" id="pageInfo"></div><div class="ma-pagination-btns" id="pagBtns"></div></div>
+  </div>
+  <div id="cardView" style="display:none;">
+    <div class="row g-3" id="cardContainer"></div>
+    <div class="ma-pagination"><div class="ma-pagination-info" id="pageInfo2"></div><div class="ma-pagination-btns" id="pagBtns2"></div></div>
+  </div>
+</main>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="supplierModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="modalTitle">Add Supplier</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="editId" />
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Supplier Name <span style="color:red">*</span></label><input type="text" class="ma-input w-100" id="sName" /></div>
+          <div class="col-md-6"><label class="form-label">Contact Person</label><input type="text" class="ma-input w-100" id="sContact" /></div>
+          <div class="col-md-6"><label class="form-label">Mobile <span style="color:red">*</span></label><input type="text" class="ma-input w-100" id="sMobile" /></div>
+          <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="ma-input w-100" id="sEmail" /></div>
+          <div class="col-md-6"><label class="form-label">GSTIN</label><input type="text" class="ma-input w-100" id="sGST" placeholder="22AAAAA0000A1Z5" /></div>
+          <div class="col-md-6"><label class="form-label">Category</label>
+            <select class="ma-select w-100" id="sCategory">
+              <option>Electronics</option><option>Grocery</option><option>Clothing</option><option>FMCG</option><option>Pharma</option><option>Stationery</option>
+            </select>
+          </div>
+          <div class="col-md-8"><label class="form-label">Address</label><input type="text" class="ma-input w-100" id="sAddress" /></div>
+          <div class="col-md-4"><label class="form-label">City</label><input type="text" class="ma-input w-100" id="sCity" /></div>
+          <div class="col-md-6"><label class="form-label">Opening Balance (₹)</label><input type="number" class="ma-input w-100" id="sBalance" placeholder="0" /></div>
+          <div class="col-md-6"><label class="form-label">Status</label><select class="ma-select w-100" id="sStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+          <div class="col-12"><label class="form-label">Notes</label><textarea class="ma-textarea w-100" id="sNotes" rows="2"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-ma-primary" onclick="saveSupplier()">Save Supplier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Supplier Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body" id="viewBody"></div>
+      <div class="modal-footer">
+        <button class="btn-ma-outline" data-bs-dismiss="modal">Close</button>
+        <button class="btn-ma-primary" id="editFromView">Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2 = Swal.mixin({confirmButtonColor:'#696cff'});
+let suppliers = MA.getAll('suppliers');
+let nextId = MA.nextId(suppliers), viewingId = null, currentView = 'list', currentPage = 1, rowsPerPage = 10, filtered = [];
+
+function fmtAmt(n){return '₹'+Number(n).toLocaleString('en-IN');}
+function initials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+
+function applyFilters(){
+  const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  const cat = document.getElementById('filterCategory').value;
+  const st = document.getElementById('filterStatus').value;
+  filtered = suppliers.filter(s=>{
+    if(q && !s.name.toLowerCase().includes(q) && !(s.gst||'').toLowerCase().includes(q) && !(s.city||'').toLowerCase().includes(q)) return false;
+    if(cat && s.category !== cat) return false;
+    if(st && s.status !== st) return false;
+    return true;
+  });
+  currentPage = 1;
+  render();
+  updateStats();
+}
+
+function updateStats(){
+  document.getElementById('stTotal').textContent = suppliers.length;
+  document.getElementById('stActive').textContent = suppliers.filter(s=>s.status==='active').length;
+  document.getElementById('stPOs').textContent = suppliers.reduce((a,s)=>a+s.pos,0);
+  document.getElementById('stValue').textContent = fmtAmt(suppliers.reduce((a,s)=>a+s.balance,0));
+}
+
+function render(){
+  if(currentView==='list') renderList();
+  else renderCards();
+}
+
+function renderList(){
+  const start=(currentPage-1)*rowsPerPage;
+  const page=filtered.slice(start,start+rowsPerPage);
+  let html='';
+  if(!page.length){html='<tr><td colspan="10" style="text-align:center;padding:40px;color:#aaa;"><i class="fas fa-truck" style="font-size:32px;display:block;margin-bottom:10px;"></i>No suppliers found</td></tr>';}
+  else page.forEach((s,i)=>{
+    const badge=s.status==='active'?'<span class="badge-success">Active</span>':'<span class="badge-inactive">Inactive</span>';
+    html+=`<tr>
+      <td style="color:#aaa;font-size:12px;">${start+i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:10px;">
+        <div class="supplier-avatar">${initials(s.name)}</div>
+        <div><div style="font-weight:600;font-size:13px;">${s.name}</div><div style="font-size:11px;color:#888;">${s.contact}</div></div>
+      </div></td>
+      <td><code style="background:#f0f0f5;padding:2px 7px;border-radius:4px;font-size:11px;">${s.gst||'—'}</code></td>
+      <td><span class="tag-chip">${s.category}</span></td>
+      <td style="font-size:12px;">${s.mobile}</td>
+      <td style="font-size:12px;">${s.city}</td>
+      <td style="font-weight:600;">${s.pos}</td>
+      <td style="font-weight:600;color:#696cff;">${fmtAmt(s.balance)}</td>
+      <td>${badge}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn-icon" onclick="viewSupplier(${s.id})" title="View"><i class="fas fa-eye"></i></button>
+        <button class="btn-icon" onclick="editSupplier(${s.id})" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon danger" onclick="deleteSupplier(${s.id})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+      </td></tr>`;
+  });
+  document.getElementById('supplierBody').innerHTML=html;
+  const total=filtered.length;
+  document.getElementById('pageInfo').textContent=`Showing ${total?start+1:0}–${Math.min(start+rowsPerPage,total)} of ${total}`;
+  renderPag('pagBtns', currentPage, Math.ceil(total/rowsPerPage)||1, p=>{currentPage=p;renderList();});
+}
+
+function renderCards(){
+  const start=(currentPage-1)*rowsPerPage;
+  const page=filtered.slice(start,start+rowsPerPage);
+  const container=document.getElementById('cardContainer');
+  container.innerHTML=page.map(s=>`
+    <div class="col-md-4 col-sm-6">
+      <div class="supplier-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div class="supplier-avatar">${initials(s.name)}</div>
+          <div><div class="supplier-card-name">${s.name}</div><div class="supplier-card-meta">${s.contact} &bull; ${s.city}</div></div>
+        </div>
+        <div style="margin-bottom:8px;"><span class="tag-chip">${s.category}</span> ${s.status==='active'?'<span class="badge-success">Active</span>':'<span class="badge-inactive">Inactive</span>'}</div>
+        <div class="supplier-card-stat">
+          <span><i class="fas fa-receipt me-1" style="color:#696cff;"></i>${s.pos} POs</span>
+          <span style="font-weight:600;color:#696cff;">${fmtAmt(s.balance)}</span>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:6px;">
+          <button class="btn-ma-sm btn-ma-outline" style="flex:1;" onclick="viewSupplier(${s.id})"><i class="fas fa-eye me-1"></i>View</button>
+          <button class="btn-ma-sm btn-ma-outline" onclick="editSupplier(${s.id})"><i class="fas fa-edit"></i></button>
+          <button class="btn-ma-sm btn-ma-danger" onclick="deleteSupplier(${s.id})"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+  const total=filtered.length;
+  document.getElementById('pageInfo2').textContent=`Showing ${total?start+1:0}–${Math.min(start+rowsPerPage,total)} of ${total}`;
+  renderPag('pagBtns2', currentPage, Math.ceil(total/rowsPerPage)||1, p=>{currentPage=p;renderCards();});
+}
+
+function renderPag(containerId, cur, max, cb){
+  let html='<button class="page-btn" id="p_prev"><i class="fas fa-chevron-left"></i></button>';
+  for(let p=Math.max(1,cur-2);p<=Math.min(max,cur+2);p++) html+=`<button class="page-btn${p===cur?' active':''}" data-p="${p}">${p}</button>`;
+  html+='<button class="page-btn" id="p_next"><i class="fas fa-chevron-right"></i></button>';
+  const el=document.getElementById(containerId); el.innerHTML=html;
+  el.querySelector('#p_prev').onclick=()=>{if(cur>1)cb(cur-1);};
+  el.querySelector('#p_next').onclick=()=>{if(cur<max)cb(cur+1);};
+  el.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>cb(parseInt(b.dataset.p)));
+}
+
+function setView(v){
+  currentView=v; currentPage=1;
+  document.getElementById('listView').style.display=v==='list'?'':'none';
+  document.getElementById('cardView').style.display=v==='card'?'':'none';
+  document.getElementById('listViewBtn').classList.toggle('active',v==='list');
+  document.getElementById('cardViewBtn').classList.toggle('active',v==='card');
+  render();
+}
+
+function openAdd(){
+  document.getElementById('modalTitle').textContent='Add Supplier';
+  document.getElementById('editId').value='';
+  ['sName','sContact','sMobile','sEmail','sGST','sAddress','sCity','sNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sBalance').value='0';
+  document.getElementById('sStatus').value='active';
+  new bootstrap.Modal(document.getElementById('supplierModal')).show();
+}
+
+function editSupplier(id){
+  const s=suppliers.find(x=>x.id===id); if(!s) return;
+  document.getElementById('modalTitle').textContent='Edit Supplier';
+  document.getElementById('editId').value=id;
+  document.getElementById('sName').value=s.name;
+  document.getElementById('sContact').value=s.contact;
+  document.getElementById('sMobile').value=s.mobile;
+  document.getElementById('sEmail').value=s.email;
+  document.getElementById('sGST').value=s.gst||'';
+  document.getElementById('sCategory').value=s.category;
+  document.getElementById('sAddress').value=s.address;
+  document.getElementById('sCity').value=s.city;
+  document.getElementById('sBalance').value=s.balance;
+  document.getElementById('sStatus').value=s.status;
+  document.getElementById('sNotes').value=s.notes||'';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('viewModal')).hide();
+  new bootstrap.Modal(document.getElementById('supplierModal')).show();
+}
+
+function saveSupplier(){
+  const name=document.getElementById('sName').value.trim();
+  const mobile=document.getElementById('sMobile').value.trim();
+  if(!name||!mobile){alert('Name and Mobile are required.');return;}
+  const data={name,contact:document.getElementById('sContact').value.trim(),mobile,email:document.getElementById('sEmail').value.trim(),gst:document.getElementById('sGST').value.trim(),category:document.getElementById('sCategory').value,address:document.getElementById('sAddress').value.trim(),city:document.getElementById('sCity').value.trim(),balance:parseFloat(document.getElementById('sBalance').value)||0,status:document.getElementById('sStatus').value,notes:document.getElementById('sNotes').value.trim(),pos:0};
+  const eid=document.getElementById('editId').value;
+  if(eid){const idx=suppliers.findIndex(s=>s.id===parseInt(eid));suppliers[idx]={...suppliers[idx],...data};}
+  else{suppliers.push({id:nextId++,pos:0,...data});}
+  bootstrap.Modal.getInstance(document.getElementById('supplierModal')).hide();
+  applyFilters();
+}
+
+function viewSupplier(id){
+  viewingId=id;
+  const s=suppliers.find(x=>x.id===id);
+  document.getElementById('viewBody').innerHTML=`
+    <div class="row g-3">
+      <div class="col-12" style="display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid #f0f0f5;">
+        <div class="supplier-avatar" style="width:52px;height:52px;font-size:18px;">${initials(s.name)}</div>
+        <div><div style="font-size:18px;font-weight:700;">${s.name}</div><div style="color:#888;font-size:12px;">${s.contact} &bull; ${s.category}</div></div>
+        <div class="ms-auto">${s.status==='active'?'<span class="badge-success">Active</span>':'<span class="badge-inactive">Inactive</span>'}</div>
+      </div>
+      <div class="col-md-6"><div style="font-size:11px;color:#888;">MOBILE</div><div style="font-weight:500;">${s.mobile}</div></div>
+      <div class="col-md-6"><div style="font-size:11px;color:#888;">EMAIL</div><div style="font-weight:500;">${s.email||'—'}</div></div>
+      <div class="col-md-6"><div style="font-size:11px;color:#888;">GSTIN</div><div><code style="background:#f0f0f5;padding:2px 8px;border-radius:4px;">${s.gst||'—'}</code></div></div>
+      <div class="col-md-6"><div style="font-size:11px;color:#888;">CITY</div><div style="font-weight:500;">${s.city}</div></div>
+      <div class="col-12"><div style="font-size:11px;color:#888;">ADDRESS</div><div style="font-weight:500;">${s.address||'—'}</div></div>
+      <div class="col-md-4"><div style="background:#f8f8fd;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:20px;font-weight:700;color:#696cff;">${s.pos}</div><div style="font-size:11px;color:#888;">Purchase Orders</div></div></div>
+      <div class="col-md-4"><div style="background:#f8f8fd;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:20px;font-weight:700;color:#f57c00;">${fmtAmt(s.balance)}</div><div style="font-size:11px;color:#888;">Outstanding</div></div></div>
+      <div class="col-md-4"><div style="background:#f8f8fd;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:20px;font-weight:700;color:#28a745;">${s.category}</div><div style="font-size:11px;color:#888;">Category</div></div></div>
+      ${s.notes?`<div class="col-12"><div style="font-size:11px;color:#888;">NOTES</div><div style="background:#fffbec;border-radius:6px;padding:8px 12px;font-size:13px;">${s.notes}</div></div>`:''}
+    </div>`;
+  document.getElementById('editFromView').onclick=()=>editSupplier(id);
+  new bootstrap.Modal(document.getElementById('viewModal')).show();
+}
+
+function deleteSupplier(id){
+  const s=suppliers.find(x=>x.id===id);
+  Swal2.fire({title:`Delete ${s.name}?`,text:'This action cannot be undone.',icon:'warning',showCancelButton:true,confirmButtonText:'Delete',confirmButtonColor:'#dc3545'}).then(r=>{
+    if(r.isConfirmed){suppliers=suppliers.filter(x=>x.id!==id);applyFilters();Swal2.fire('Deleted!','Supplier removed.','success');}
+  });
+}
+
+function clearFilters(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('filterCategory').value='';
+  document.getElementById('filterStatus').value='';
+  document.getElementById('globalSearch').value='';
+  applyFilters();
+}
+function exportSuppliers(){Swal2.fire('Export','Supplier list exported to CSV.','success');}
+
+document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
+document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
+document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
+
+applyFilters();
+
+
+// suppliers — save on mutation
+var _origSave=typeof saveSupplier!=='undefined'?saveSupplier:null;
+if(typeof saveSupplier==='function'){
+  var _origSaveSupp=saveSupplier;
+  saveSupplier=function(){_origSaveSupp();MA.set('suppliers',suppliers);};
+}
+if(typeof deleteSupplier==='function'){
+  var _origDelSupp=deleteSupplier;
+  deleteSupplier=function(id){_origDelSupp(id);MA.set('suppliers',suppliers);};
+}
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

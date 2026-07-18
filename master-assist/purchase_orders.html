@@ -1,0 +1,531 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Purchase Orders</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .tab-bar { display:flex; gap:0; border-bottom:2px solid #f0f0f5; margin-bottom:0; padding:0 18px; background:#fff; }
+    .tab-btn  { background:transparent; border:0; padding:12px 18px; font-size:13px; font-weight:500; color:#888; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; font-family:'Public Sans',sans-serif; transition:color 0.15s; }
+    .tab-btn.active { color:#696cff; border-bottom-color:#696cff; }
+    .tab-btn:hover:not(.active) { color:#444; }
+    .tab-badge { display:inline-flex; align-items:center; justify-content:center; background:#f0f0f5; color:#666; font-size:10px; font-weight:700; border-radius:99px; padding:1px 7px; margin-left:5px; }
+    .tab-btn.active .tab-badge { background:#ededff; color:#696cff; }
+
+    .po-status-draft     { background:#f0f0f5; color:#555; }
+    .po-status-sent      { background:#e8f1ff; color:#0d6efd; }
+    .po-status-received  { background:#e8f8f0; color:#28a745; }
+    .po-status-cancelled { background:#fdecea; color:#dc3545; }
+    .po-status-partial   { background:#fff3ec; color:#ff6b2b; }
+
+    .supplier-tag { background:#f0f0f5; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; color:#555; }
+
+    .po-items-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+    .po-items-table th { background:#f8f8fc; padding:6px 10px; text-align:left; color:#555; font-weight:600; border-bottom:1px solid #f0f0f5; }
+    .po-items-table td { padding:7px 10px; border-bottom:1px solid #f5f5fa; color:#444; }
+    .po-items-table tr:last-child td { border-bottom:0; }
+
+    .po-total-row { display:flex; justify-content:flex-end; margin-top:10px; gap:30px; font-size:13px; }
+    .po-total-label { color:#888; }
+    .po-total-val   { font-weight:700; color:#252525; min-width:80px; text-align:right; }
+    .po-grand-total { color:#696cff; font-size:16px; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/>
+      <circle cx="21" cy="5" r="3" fill="#ff6b2b"/>
+    </svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" placeholder="Search PO..." id="globalSearch" />
+  </div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div>
+        <span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+          <div class="user-dropdown-name">Administrator</div>
+          <div class="user-dropdown-role">Master Assist — Super Admin</div>
+        </div>
+        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html" class="active"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+
+<!-- MAIN -->
+<main class="ma-main" id="maMain">
+
+  <div class="page-header">
+    <div>
+      <h1>Purchase Orders</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="welcome.html" style="color:#696cff;">Home</a></li>
+          <li class="breadcrumb-item active">Purchase Orders</li>
+        </ol>
+      </nav>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-ma-outline"><i class="fas fa-file-excel"></i> Export</button>
+      <button class="btn-ma-primary" id="createPOBtn"><i class="fas fa-plus"></i> Create PO</button>
+    </div>
+  </div>
+
+  <div id="alertArea"></div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-file-alt"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntTotal">0</div><div class="stat-label">Total POs</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-paper-plane"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntSent">0</div><div class="stat-label">Sent</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntReceived">0</div><div class="stat-label">Received</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-rupee-sign"></i></div>
+        <div class="stat-info"><div class="stat-value" id="cntValue">₹0</div><div class="stat-label">Total Value</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ma-card">
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="all">All <span class="tab-badge" id="tabAll">0</span></button>
+      <button class="tab-btn" data-tab="draft">Draft <span class="tab-badge" id="tabDraft">0</span></button>
+      <button class="tab-btn" data-tab="sent">Sent <span class="tab-badge" id="tabSent">0</span></button>
+      <button class="tab-btn" data-tab="partial">Partial <span class="tab-badge" id="tabPartial">0</span></button>
+      <button class="tab-btn" data-tab="received">Received <span class="tab-badge" id="tabReceived">0</span></button>
+      <button class="tab-btn" data-tab="cancelled">Cancelled <span class="tab-badge" id="tabCancelled">0</span></button>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <span class="filter-bar-label">Filter:</span>
+      <input type="text" class="ma-input" style="width:180px;height:32px;font-size:12px;" placeholder="PO No. / Supplier..." id="searchInput" />
+      <select class="ma-select" style="width:150px;height:32px;font-size:12px;" id="filterSupplier">
+        <option value="">All Suppliers</option>
+        <option>Ramesh Traders</option><option>Metro Supplies</option>
+        <option>Krishna Enterprises</option><option>National Suppliers</option>
+        <option>City Distributors</option><option>Patel Brothers</option>
+      </select>
+      <input type="date" class="ma-input" style="width:140px;height:32px;font-size:12px;" id="filterFrom" />
+      <input type="date" class="ma-input" style="width:140px;height:32px;font-size:12px;" id="filterTo" />
+      <button class="btn-ma-primary btn-ma-sm" id="applyFilter"><i class="fas fa-search"></i> Search</button>
+      <button class="btn-ma-outline btn-ma-sm" id="clearFilter"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Table -->
+    <div style="overflow-x:auto;">
+      <table class="ma-table">
+        <thead><tr>
+          <th>#</th><th>PO No.</th><th>Supplier</th><th>Date</th>
+          <th>Expected</th><th>Items</th><th>Amount</th><th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="poBody"></tbody>
+      </table>
+    </div>
+
+    <div class="ma-pagination">
+      <div class="ma-pagination-info" id="pageInfo">Showing 0</div>
+      <div class="ma-pagination-btns" id="paginationBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- View PO Modal -->
+<div class="ma-modal-overlay" id="viewPOModal">
+  <div class="ma-modal ma-modal-lg">
+    <div class="ma-modal-header">
+      <h5><i class="fas fa-receipt" style="color:#696cff;margin-right:7px;"></i>Purchase Order Details</h5>
+      <button class="ma-modal-close" id="viewPOClose">×</button>
+    </div>
+    <div class="ma-modal-body" id="viewPOBody"></div>
+    <div class="ma-modal-footer" id="viewPOFooter">
+      <button class="btn-ma-outline" id="viewPOCloseBtn">Close</button>
+      <button class="btn-ma-outline" id="viewPOPrintBtn"><i class="fas fa-print"></i> Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create PO Modal -->
+<div class="ma-modal-overlay" id="createPOModal">
+  <div class="ma-modal ma-modal-lg">
+    <div class="ma-modal-header">
+      <h5 id="createPOTitle"><i class="fas fa-plus" style="color:#696cff;margin-right:7px;"></i>Create Purchase Order</h5>
+      <button class="ma-modal-close" id="createPOClose">×</button>
+    </div>
+    <div class="ma-modal-body">
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="ma-label">Supplier <span class="req">*</span></label>
+          <select class="ma-select" id="poSupplier">
+            <option value="">Select supplier</option>
+            <option>Ramesh Traders</option><option>Metro Supplies</option>
+            <option>Krishna Enterprises</option><option>National Suppliers</option>
+            <option>City Distributors</option><option>Patel Brothers</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="ma-label">PO Date</label>
+          <input type="date" class="ma-input" id="poDate" />
+        </div>
+        <div class="col-md-3">
+          <label class="ma-label">Expected Delivery</label>
+          <input type="date" class="ma-input" id="poExpected" />
+        </div>
+        <div class="col-12">
+          <label class="ma-label">Notes</label>
+          <textarea class="ma-textarea" id="poNotes" rows="2" placeholder="Optional notes..."></textarea>
+        </div>
+      </div>
+
+      <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:8px;">Order Items</div>
+      <table class="po-items-table" id="poItemsTable">
+        <thead><tr>
+          <th>Item Name</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Rate (₹)</th><th>Total</th><th></th>
+        </tr></thead>
+        <tbody id="poItemsBody">
+          <tr id="poItemRow0">
+            <td><input type="text" class="ma-input" style="height:30px;font-size:12px;" placeholder="Item name" /></td>
+            <td><input type="text" class="ma-input" style="height:30px;font-size:12px;width:90px;" placeholder="SKU" /></td>
+            <td><input type="number" class="ma-input po-qty" style="height:30px;font-size:12px;width:70px;" placeholder="0" value="1" min="1" /></td>
+            <td><select class="ma-select" style="height:30px;font-size:12px;width:75px;"><option>Pcs</option><option>Kg</option><option>Ltr</option><option>Box</option></select></td>
+            <td><input type="number" class="ma-input po-rate" style="height:30px;font-size:12px;width:90px;" placeholder="0.00" value="0" /></td>
+            <td><span class="po-row-total" style="font-size:13px;font-weight:600;color:#696cff;">₹0</span></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn-ma-outline btn-ma-sm" style="margin-top:10px;" id="addPOItemRow"><i class="fas fa-plus"></i> Add Row</button>
+
+      <div class="po-total-row" style="margin-top:16px;">
+        <span class="po-total-label">Subtotal:</span><span class="po-total-val" id="poSubtotal">₹0</span>
+        <span class="po-total-label">GST (18%):</span><span class="po-total-val" id="poGST">₹0</span>
+        <span class="po-total-label po-grand-total">Grand Total:</span><span class="po-total-val po-grand-total" id="poGrandTotal">₹0</span>
+      </div>
+    </div>
+    <div class="ma-modal-footer">
+      <button class="btn-ma-outline" id="createPOCancel">Cancel</button>
+      <button class="btn-ma-outline" id="saveDraftBtn"><i class="fas fa-save"></i> Save Draft</button>
+      <button class="btn-ma-primary" id="sendPOBtn"><i class="fas fa-paper-plane"></i> Send PO</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+  var suppliers = MA.getAll('suppliers').map(function(s){return s.name;});
+  var statuses=['draft','sent','received','partial','sent','received','cancelled','sent','received','received'];
+
+  var poData = MA.getAll('purchaseOrders');
+function renderTable(){
+    var start=(currentPage-1)*rowsPerPage;
+    var page=filtered.slice(start,start+rowsPerPage);
+    var html='';
+    if(!page.length){
+      html='<tr><td colspan="9" style="text-align:center;padding:36px;color:#aaa;"><i class="fas fa-receipt" style="font-size:36px;display:block;margin-bottom:12px;"></i>No purchase orders found</td></tr>';
+    } else {
+      page.forEach(function(p,i){
+        html+='<tr>'+
+          '<td style="color:#aaa;font-size:12px;">'+(start+i+1)+'</td>'+
+          '<td><strong style="color:#252525;">'+p.poNo+'</strong></td>'+
+          '<td><span class="supplier-tag">'+p.supplier+'</span></td>'+
+          '<td style="font-size:12px;color:#666;">'+p.date+'</td>'+
+          '<td style="font-size:12px;color:#888;">'+p.expected+'</td>'+
+          '<td style="text-align:center;color:#888;font-size:12px;">'+p.items+'</td>'+
+          '<td style="font-weight:600;">'+fmtAmt(p.amount)+'</td>'+
+          '<td>'+statusBadge(p.status)+'</td>'+
+          '<td style="white-space:nowrap;">'+
+            '<button class="btn-icon view-po-btn" data-id="'+p.id+'" title="View"><i class="fas fa-eye"></i></button> '+
+            (p.status==='draft'?'<button class="btn-icon edit-po-btn" data-id="'+p.id+'" title="Edit"><i class="fas fa-edit"></i></button> ':'')+
+            (p.status==='sent'?'<button class="btn-icon success receive-po-btn" data-id="'+p.id+'" title="Mark Received"><i class="fas fa-check"></i></button> ':'')+
+            '<button class="btn-icon" title="Print"><i class="fas fa-print"></i></button> '+
+            (p.status!=='received'&&p.status!=='cancelled'?'<button class="btn-icon danger cancel-po-btn" data-id="'+p.id+'" title="Cancel"><i class="fas fa-ban"></i></button>':'')+
+          '</td>'+
+        '</tr>';
+      });
+    }
+    document.getElementById('poBody').innerHTML=html;
+    var total=filtered.length;
+    document.getElementById('pageInfo').textContent='Showing '+(total?start+1:0)+'–'+Math.min(start+rowsPerPage,total)+' of '+total;
+    renderPagination();
+  }
+
+  function renderPagination(){
+    var maxPage=Math.ceil(filtered.length/rowsPerPage)||1;
+    var html='<button class="page-btn" id="prev"><i class="fas fa-chevron-left"></i></button>';
+    for(var p=Math.max(1,currentPage-2);p<=Math.min(maxPage,currentPage+2);p++){
+      html+='<button class="page-btn'+(p===currentPage?' active':'')+'" data-page="'+p+'">'+p+'</button>';
+    }
+    html+='<button class="page-btn" id="next"><i class="fas fa-chevron-right"></i></button>';
+    var el=document.getElementById('paginationBtns'); el.innerHTML=html;
+    el.querySelector('#prev').addEventListener('click',function(){if(currentPage>1){currentPage--;renderTable();}});
+    el.querySelector('#next').addEventListener('click',function(){if(currentPage<maxPage){currentPage++;renderTable();}});
+    el.querySelectorAll('[data-page]').forEach(function(btn){
+      btn.addEventListener('click',function(){currentPage=parseInt(this.dataset.page);renderTable();});
+    });
+  }
+
+  /* ---- Table actions ---- */
+  document.getElementById('poBody').addEventListener('click',function(e){
+    var vBtn=e.target.closest('.view-po-btn');
+    var rBtn=e.target.closest('.receive-po-btn');
+    var cBtn=e.target.closest('.cancel-po-btn');
+    if(vBtn){
+      var p=poData.find(function(x){return x.id===parseInt(vBtn.dataset.id);});
+      var sampleItems=[
+        {name:'Basmati Rice 5kg',sku:'GRO-001',qty:10,unit:'Bag',rate:420},
+        {name:'Atta 10kg',       sku:'GRO-002',qty:8, unit:'Bag',rate:370},
+        {name:'Toor Dal 1kg',    sku:'GRO-003',qty:20,unit:'Pcs',rate:145},
+      ];
+      var subtotal=sampleItems.reduce(function(s,i){return s+i.qty*i.rate;},0);
+      var gst=Math.round(subtotal*0.18);
+      var rows=sampleItems.map(function(i,idx){
+        return '<tr><td>'+(idx+1)+'</td><td>'+i.name+'</td><td><code style="background:#f0f0f5;padding:1px 6px;border-radius:3px;font-size:11px;">'+i.sku+'</code></td><td>'+i.qty+'</td><td>'+i.unit+'</td><td>₹'+i.rate+'</td><td style="font-weight:600;">₹'+i.qty*i.rate+'</td></tr>';
+      }).join('');
+      document.getElementById('viewPOBody').innerHTML=
+        '<div class="row g-3 mb-3">'+
+          '<div class="col-6"><div style="font-size:11px;color:#888;margin-bottom:2px;">PO NUMBER</div><div style="font-size:17px;font-weight:700;">'+p.poNo+'</div></div>'+
+          '<div class="col-6" style="text-align:right;"><div style="font-size:11px;color:#888;margin-bottom:2px;">STATUS</div>'+statusBadge(p.status)+'</div>'+
+          '<div class="col-4"><div style="font-size:11px;color:#888;margin-bottom:2px;">SUPPLIER</div><div style="font-weight:500;">'+p.supplier+'</div></div>'+
+          '<div class="col-4"><div style="font-size:11px;color:#888;margin-bottom:2px;">PO DATE</div><div>'+p.date+'</div></div>'+
+          '<div class="col-4"><div style="font-size:11px;color:#888;margin-bottom:2px;">EXPECTED DELIVERY</div><div>'+p.expected+'</div></div>'+
+        '</div>'+
+        '<div style="font-size:13px;font-weight:600;color:#444;margin-bottom:8px;">Order Items</div>'+
+        '<table class="po-items-table"><thead><tr><th>#</th><th>Item</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+        '<div class="po-total-row">'+
+          '<span class="po-total-label">Subtotal:</span><span class="po-total-val">₹'+subtotal.toLocaleString('en-IN')+'</span>'+
+          '<span class="po-total-label">GST (18%):</span><span class="po-total-val">₹'+gst.toLocaleString('en-IN')+'</span>'+
+          '<span class="po-total-label po-grand-total">Grand Total:</span><span class="po-total-val po-grand-total">₹'+(subtotal+gst).toLocaleString('en-IN')+'</span>'+
+        '</div>';
+      document.getElementById('viewPOModal').classList.add('open');
+    }
+    if(rBtn){
+      var po=poData.find(function(x){return x.id===parseInt(rBtn.dataset.id);});
+      Swal.fire({title:'Mark as Received?',text:po.poNo+' from '+po.supplier,icon:'question',showCancelButton:true,confirmButtonColor:'#28a745',confirmButtonText:'Confirm Received'}).then(function(r){
+        if(r.isConfirmed){po.status='received';applyFilters();showAlert('success',po.poNo+' marked as received.');}
+      });
+    }
+    if(cBtn){
+      var po2=poData.find(function(x){return x.id===parseInt(cBtn.dataset.id);});
+      Swal.fire({title:'Cancel '+po2.poNo+'?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Cancel PO'}).then(function(r){
+        if(r.isConfirmed){po2.status='cancelled';applyFilters();showAlert('success',po2.poNo+' cancelled.');}
+      });
+    }
+  });
+
+  /* ---- Create PO ---- */
+  document.getElementById('createPOBtn').addEventListener('click',function(){
+    document.getElementById('createPOModal').classList.add('open');
+    var d=new Date();
+    document.getElementById('poDate').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    var e=new Date(d); e.setDate(e.getDate()+7);
+    document.getElementById('poExpected').value=e.getFullYear()+'-'+String(e.getMonth()+1).padStart(2,'0')+'-'+String(e.getDate()).padStart(2,'0');
+    recalcPO();
+  });
+
+  var poRowCount=1;
+  document.getElementById('addPOItemRow').addEventListener('click',function(){
+    var idx=poRowCount++;
+    var tr=document.createElement('tr'); tr.id='poItemRow'+idx;
+    tr.innerHTML='<td><input type="text" class="ma-input" style="height:30px;font-size:12px;" placeholder="Item name" /></td>'+
+      '<td><input type="text" class="ma-input" style="height:30px;font-size:12px;width:90px;" placeholder="SKU" /></td>'+
+      '<td><input type="number" class="ma-input po-qty" style="height:30px;font-size:12px;width:70px;" placeholder="0" value="1" min="1" /></td>'+
+      '<td><select class="ma-select" style="height:30px;font-size:12px;width:75px;"><option>Pcs</option><option>Kg</option><option>Ltr</option><option>Box</option></select></td>'+
+      '<td><input type="number" class="ma-input po-rate" style="height:30px;font-size:12px;width:90px;" placeholder="0.00" value="0" /></td>'+
+      '<td><span class="po-row-total" style="font-size:13px;font-weight:600;color:#696cff;">₹0</span></td>'+
+      '<td><button class="btn-icon danger remove-row" style="padding:3px 7px;"><i class="fas fa-times"></i></button></td>';
+    document.getElementById('poItemsBody').appendChild(tr);
+    tr.querySelector('.remove-row').addEventListener('click',function(){tr.remove();recalcPO();});
+  });
+
+  function recalcPO(){
+    var rows=document.querySelectorAll('#poItemsBody tr');
+    var subtotal=0;
+    rows.forEach(function(row){
+      var qty=parseFloat(row.querySelector('.po-qty')?row.querySelector('.po-qty').value:0)||0;
+      var rate=parseFloat(row.querySelector('.po-rate')?row.querySelector('.po-rate').value:0)||0;
+      var total=qty*rate;
+      var span=row.querySelector('.po-row-total');
+      if(span) span.textContent='₹'+total.toLocaleString('en-IN');
+      subtotal+=total;
+    });
+    var gst=Math.round(subtotal*0.18);
+    document.getElementById('poSubtotal').textContent='₹'+subtotal.toLocaleString('en-IN');
+    document.getElementById('poGST').textContent='₹'+gst.toLocaleString('en-IN');
+    document.getElementById('poGrandTotal').textContent='₹'+(subtotal+gst).toLocaleString('en-IN');
+  }
+
+  document.getElementById('poItemsBody').addEventListener('input',function(e){
+    if(e.target.classList.contains('po-qty')||e.target.classList.contains('po-rate')) recalcPO();
+  });
+
+  function savePO(status){
+    var supplier=document.getElementById('poSupplier').value;
+    if(!supplier){showAlert2('error','Please select a supplier.');return;}
+    var d=document.getElementById('poDate').value||'2026-07-18';
+    var ed=document.getElementById('poExpected').value||'2026-07-25';
+    var rows=document.querySelectorAll('#poItemsBody tr');
+    var subtotal=0;
+    rows.forEach(function(row){
+      subtotal+=(parseFloat(row.querySelector('.po-qty').value)||0)*(parseFloat(row.querySelector('.po-rate').value)||0);
+    });
+    var gst=Math.round(subtotal*0.18);
+    var po={id:poData.length+1,poNo:'PO-'+String(1000+poData.length).padStart(4,'0'),supplier:supplier,date:d,expected:ed,items:rows.length,amount:subtotal+gst,status:status,notes:document.getElementById('poNotes').value};
+    poData.push(po);
+    document.getElementById('createPOModal').classList.remove('open');
+    applyFilters();
+    showAlert('success','Purchase Order '+po.poNo+(status==='sent'?' sent.':" saved as draft."));
+  }
+
+  document.getElementById('saveDraftBtn').addEventListener('click',function(){savePO('draft');});
+  document.getElementById('sendPOBtn').addEventListener('click',function(){savePO('sent');});
+
+  function showAlert2(type,msg){Swal.fire({icon:type,title:msg,timer:2000,timerProgressBar:true,showConfirmButton:false});}
+
+  /* ---- Modal closes ---- */
+  ['viewPOModal','createPOModal'].forEach(function(id){
+    document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+  });
+  document.getElementById('viewPOClose').addEventListener('click',function(){document.getElementById('viewPOModal').classList.remove('open');});
+  document.getElementById('viewPOCloseBtn').addEventListener('click',function(){document.getElementById('viewPOModal').classList.remove('open');});
+  document.getElementById('createPOClose').addEventListener('click',function(){document.getElementById('createPOModal').classList.remove('open');});
+  document.getElementById('createPOCancel').addEventListener('click',function(){document.getElementById('createPOModal').classList.remove('open');});
+
+  function showAlert(type,msg){
+    var icons={success:'check-circle',error:'times-circle'};
+    var cls={success:'ma-alert-success',error:'ma-alert-error'};
+    document.getElementById('alertArea').innerHTML='<div class="ma-alert '+cls[type]+'"><i class="fas fa-'+(icons[type])+' ma-alert-icon"></i><div>'+msg+'</div><button class="ma-alert-close" onclick="this.parentElement.remove()">×</button></div>';
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(function(){var a=document.getElementById('alertArea');if(a)a.innerHTML='';},5000);
+  }
+
+  /* ---- Sidebar ---- */
+  var collapsed=false;
+  document.getElementById('sidebarToggle').addEventListener('click',function(){
+    collapsed=!collapsed;
+    if(window.innerWidth>991){document.getElementById('sidebar').classList.toggle('collapsed',collapsed);document.getElementById('maMain').classList.toggle('expanded',collapsed);}
+    else document.getElementById('sidebar').classList.toggle('mobile-open');
+  });
+  document.getElementById('userDropdownToggle').addEventListener('click',function(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('open');});
+  document.addEventListener('click',function(){document.getElementById('userDropdown').classList.remove('open');});
+
+  applyFilters();
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

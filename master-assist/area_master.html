@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Area Master</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .area-card{background:#fff;border:1px solid #e8e8f0;border-radius:10px;padding:18px;transition:box-shadow .15s;}
+    .area-card:hover{box-shadow:0 4px 14px rgba(105,108,255,.1);}
+    .area-icon{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  </style>
+</head>
+<body>
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg><div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div></a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search areas..." id="globalSearch" oninput="renderAreas()" /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;"><button class="navbar-user" id="userDropdownToggle"><div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span><i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i></button>
+    <div class="user-dropdown" id="userDropdown"><div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div><a href="profile.html"><i class="fas fa-user"></i> My Profile</a><a href="settings.html"><i class="fas fa-cog"></i> Settings</a><div class="user-dropdown-divider"></div><button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div>
+  </div>
+</nav>
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload</a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html" class="active"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div><div class="page-title">Area Master</div><div class="page-breadcrumb">Administration / Area Master</div></div>
+    <button class="btn-ma-primary" onclick="openAdd()"><i class="fas fa-plus me-1"></i>Add Area</button>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#ededff;color:#696cff;"><i class="fas fa-map-marker-alt"></i></div><div class="stat-info"><div class="stat-value" id="stAreas">0</div><div class="stat-label">Total Areas</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e3f2fd;color:#1976d2;"><i class="fas fa-city"></i></div><div class="stat-info"><div class="stat-value" id="stCities">0</div><div class="stat-label">Cities</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e8f5e9;color:#28a745;"><i class="fas fa-user-friends"></i></div><div class="stat-info"><div class="stat-value" id="stCust">0</div><div class="stat-label">Total Customers</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#fff3e0;color:#f57c00;"><i class="fas fa-truck"></i></div><div class="stat-info"><div class="stat-value" id="stSupp">0</div><div class="stat-label">Total Suppliers</div></div></div></div>
+  </div>
+  <div class="filter-bar mb-3">
+    <input type="text" class="ma-input" placeholder="Search area / city..." id="searchInput" style="max-width:280px;" oninput="renderAreas()" />
+    <select class="ma-select" id="filterCity" style="max-width:160px;" onchange="renderAreas()">
+      <option value="">All Cities</option>
+      <option>Mumbai</option><option>Pune</option><option>Nashik</option><option>Nagpur</option>
+    </select>
+  </div>
+  <div class="row g-3 mb-4" id="areaCards"></div>
+  <div style="overflow-x:auto;">
+    <table class="ma-table">
+      <thead><tr><th>#</th><th>Area Name</th><th>City</th><th>State</th><th>PIN Code</th><th>Customers</th><th>Suppliers</th><th>Salesman</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="areaBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<div class="modal fade" id="areaModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="modalTitle">Add Area</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="editId" />
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Area Name <span style="color:red">*</span></label><input type="text" class="ma-input w-100" id="aName" /></div>
+          <div class="col-md-6"><label class="form-label">City</label><input type="text" class="ma-input w-100" id="aCity" /></div>
+          <div class="col-md-4"><label class="form-label">State</label><input type="text" class="ma-input w-100" id="aState" id="aState" value="" /></div>
+          <div class="col-md-4"><label class="form-label">PIN Code</label><input type="text" class="ma-input w-100" id="aPIN" maxlength="6" /></div>
+          <div class="col-md-4"><label class="form-label">Status</label><select class="ma-select w-100" id="aStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+          <div class="col-md-6"><label class="form-label">Assigned Salesman</label><input type="text" class="ma-input w-100" id="aSalesman" /></div>
+          <div class="col-md-6"><label class="form-label">Delivery Charges (₹)</label><input type="number" class="ma-input w-100" id="aDelivery" min="0" /></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button><button class="btn-ma-primary" onclick="saveArea()">Save</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
+const COLORS=[['#ededff','#696cff'],['#e8f5e9','#28a745'],['#fff3e0','#f57c00'],['#e3f2fd','#1976d2'],['#fce4ec','#c2185b']];
+let areas=[
+  {id:1,name:'Andheri',city:'Mumbai',state:'Maharashtra',pin:'400053',customers:42,suppliers:8,salesman:'Arjun Sharma',status:'active',ci:0},
+  {id:2,name:'Bandra',city:'Mumbai',state:'Maharashtra',pin:'400050',customers:35,suppliers:5,salesman:'Priya Patel',status:'active',ci:1},
+  {id:3,name:'Dadar',city:'Mumbai',state:'Maharashtra',pin:'400014',customers:28,suppliers:6,salesman:'Rohit Verma',status:'active',ci:2},
+  {id:4,name:'Shivaji Nagar',city:'Pune',state:'Maharashtra',pin:'411005',customers:22,suppliers:4,salesman:'Sneha Nair',status:'active',ci:3},
+  {id:5,name:'Kothrud',city:'Pune',state:'Maharashtra',pin:'411038',customers:18,suppliers:3,salesman:'Vikram Singh',status:'active',ci:4},
+  {id:6,name:'Nashik Road',city:'Nashik',state:'Maharashtra',pin:'422101',customers:12,suppliers:2,salesman:'Kavitha Rajan',status:'inactive',ci:2},
+  {id:7,name:'Dharampeth',city:'Nagpur',state:'Maharashtra',pin:'440010',customers:8,suppliers:2,salesman:'Deepak Joshi',status:'active',ci:1},
+  {id:8,name:'Sadar Bazar',city:'Nagpur',state:'Maharashtra',pin:'440001',customers:15,suppliers:3,salesman:'Anita Mehta',status:'active',ci:0},
+],nextId=9;
+function updateStats(){
+  document.getElementById('stAreas').textContent=areas.length;
+  document.getElementById('stCities').textContent=[...new Set(areas.map(a=>a.city))].length;
+  document.getElementById('stCust').textContent=areas.reduce((a,x)=>a+x.customers,0);
+  document.getElementById('stSupp').textContent=areas.reduce((a,x)=>a+x.suppliers,0);
+}
+function renderAreas(){
+  const q=(document.getElementById('searchInput').value||document.getElementById('globalSearch').value||'').toLowerCase();
+  const city=document.getElementById('filterCity').value;
+  const filtered=areas.filter(a=>(!q||(a.name+a.city+a.pin).toLowerCase().includes(q))&&(!city||a.city===city));
+  document.getElementById('areaCards').innerHTML=filtered.slice(0,6).map(a=>`
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="area-card">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <div class="area-icon" style="background:${COLORS[a.ci][0]};color:${COLORS[a.ci][1]};"><i class="fas fa-map-marker-alt"></i></div>
+          <div><div style="font-size:15px;font-weight:700;">${a.name}</div><div style="font-size:12px;color:#888;">${a.city}, ${a.state} — ${a.pin}</div></div>
+        </div>
+        <div style="display:flex;gap:16px;font-size:12px;color:#555;margin-bottom:12px;">
+          <span><i class="fas fa-users me-1" style="color:#696cff;"></i>${a.customers} Customers</span>
+          <span><i class="fas fa-truck me-1" style="color:#f57c00;"></i>${a.suppliers} Suppliers</span>
+        </div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;"><i class="fas fa-user-tie me-1"></i>${a.salesman}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          ${a.status==='active'?'<span class="badge-success">Active</span>':'<span class="badge-inactive">Inactive</span>'}
+          <div><button class="btn-icon" onclick="editArea(${a.id})"><i class="fas fa-edit"></i></button><button class="btn-icon danger" onclick="deleteArea(${a.id})"><i class="fas fa-trash-alt"></i></button></div>
+        </div>
+      </div>
+    </div>`).join('');
+  document.getElementById('areaBody').innerHTML=filtered.map((a,i)=>`
+    <tr><td style="color:#aaa;font-size:12px;">${i+1}</td>
+      <td style="font-weight:600;">${a.name}</td><td>${a.city}</td><td style="font-size:12px;">${a.state}</td>
+      <td><code style="font-size:11px;background:#f0f0f5;padding:2px 6px;border-radius:4px;">${a.pin}</code></td>
+      <td style="font-weight:600;color:#696cff;">${a.customers}</td>
+      <td style="font-size:12px;">${a.suppliers}</td>
+      <td style="font-size:12px;">${a.salesman}</td>
+      <td>${a.status==='active'?'<span class="badge-success">Active</span>':'<span class="badge-inactive">Inactive</span>'}</td>
+      <td><button class="btn-icon" onclick="editArea(${a.id})"><i class="fas fa-edit"></i></button><button class="btn-icon danger" onclick="deleteArea(${a.id})"><i class="fas fa-trash-alt"></i></button></td>
+    </tr>`).join('');
+  updateStats();
+}
+function openAdd(){document.getElementById('modalTitle').textContent='Add Area';document.getElementById('editId').value='';['aName','aCity','aPIN','aSalesman'].forEach(id=>document.getElementById(id).value='');document.getElementById('aState').value='Maharashtra';document.getElementById('aDelivery').value=0;document.getElementById('aStatus').value='active';new bootstrap.Modal(document.getElementById('areaModal')).show();}
+function editArea(id){const a=areas.find(x=>x.id===id);document.getElementById('modalTitle').textContent='Edit Area';document.getElementById('editId').value=id;document.getElementById('aName').value=a.name;document.getElementById('aCity').value=a.city;document.getElementById('aState').value=a.state;document.getElementById('aPIN').value=a.pin;document.getElementById('aSalesman').value=a.salesman;document.getElementById('aStatus').value=a.status;document.getElementById('aDelivery').value=0;new bootstrap.Modal(document.getElementById('areaModal')).show();}
+function saveArea(){const name=document.getElementById('aName').value.trim();if(!name){alert('Name required');return;}const data={name,city:document.getElementById('aCity').value,state:document.getElementById('aState').value,pin:document.getElementById('aPIN').value,salesman:document.getElementById('aSalesman').value,status:document.getElementById('aStatus').value};const eid=document.getElementById('editId').value;if(eid){const idx=areas.findIndex(a=>a.id===parseInt(eid));areas[idx]={...areas[idx],...data};}else{areas.push({id:nextId++,...data,customers:0,suppliers:0,ci:Math.floor(Math.random()*COLORS.length)});}bootstrap.Modal.getInstance(document.getElementById('areaModal')).hide();renderAreas();}
+function deleteArea(id){const a=areas.find(x=>x.id===id);Swal2.fire({title:`Delete "${a.name}"?`,icon:'warning',showCancelButton:true,confirmButtonText:'Delete',confirmButtonColor:'#dc3545'}).then(r=>{if(r.isConfirmed){areas=areas.filter(x=>x.id!==id);renderAreas();}});}
+document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
+document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
+document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
+renderAreas();
+
+
+if(typeof saveArea==='function'){var _origSaveArea=saveArea;saveArea=function(){_origSaveArea();MA.set('areas',areas);};}
+if(typeof deleteArea==='function'){var _origDelArea=deleteArea;deleteArea=function(id){_origDelArea(id);MA.set('areas',areas);};}
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>

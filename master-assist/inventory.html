@@ -1,0 +1,525 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Inventory</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .stock-bar { height:6px; border-radius:3px; background:#f0f0f5; overflow:hidden; margin-top:4px; }
+    .stock-fill { height:100%; border-radius:3px; transition:width 0.4s; }
+    .stock-ok   { background:#28a745; }
+    .stock-low  { background:#ffc107; }
+    .stock-crit { background:#dc3545; }
+
+    .cat-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; background:#f0f0f5; color:#555; }
+
+    .tab-bar { display:flex; gap:0; border-bottom:2px solid #f0f0f5; margin-bottom:0; padding:0 18px; background:#fff; }
+    .tab-btn  { background:transparent; border:0; padding:12px 18px; font-size:13px; font-weight:500; color:#888; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; font-family:'Public Sans',sans-serif; transition:color 0.15s; }
+    .tab-btn.active { color:#696cff; border-bottom-color:#696cff; }
+    .tab-btn:hover:not(.active) { color:#444; }
+    .tab-badge { display:inline-flex; align-items:center; justify-content:center; background:#f0f0f5; color:#666; font-size:10px; font-weight:700; border-radius:99px; padding:1px 7px; margin-left:5px; }
+    .tab-btn.active .tab-badge { background:#ededff; color:#696cff; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/>
+      <circle cx="21" cy="5" r="3" fill="#ff6b2b"/>
+    </svg>
+    <div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div>
+  </a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" placeholder="Search items..." id="globalSearch" />
+  </div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;">
+      <button class="navbar-user" id="userDropdownToggle">
+        <div class="navbar-avatar">A</div>
+        <span class="d-none d-md-inline">Admin</span>
+        <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+          <div class="user-dropdown-name">Administrator</div>
+          <div class="user-dropdown-role">Master Assist — Super Admin</div>
+        </div>
+        <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <div class="user-dropdown-divider"></div>
+        <button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload<span class="badge-count"><span id="sidebarBillBadge">0</span></span></a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html" class="active"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+
+<!-- MAIN -->
+<main class="ma-main" id="maMain">
+
+  <div class="page-header">
+    <div>
+      <h1>Inventory</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="welcome.html" style="color:#696cff;">Home</a></li>
+          <li class="breadcrumb-item active">Inventory</li>
+        </ol>
+      </nav>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-ma-outline"><i class="fas fa-file-excel"></i> Export</button>
+      <button class="btn-ma-primary" id="addItemBtn"><i class="fas fa-plus"></i> Add Item</button>
+    </div>
+  </div>
+
+  <div id="alertArea"></div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-cubes"></i></div>
+        <div class="stat-info"><div class="stat-value" id="totalItems">0</div><div class="stat-label">Total Items</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info"><div class="stat-value" id="inStockItems">0</div><div class="stat-label">In Stock</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-info"><div class="stat-value" id="lowStockItems">0</div><div class="stat-label">Low Stock</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-info"><div class="stat-value" id="outStockItems">0</div><div class="stat-label">Out of Stock</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ma-card">
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="all">All Items <span class="tab-badge" id="tabAll">0</span></button>
+      <button class="tab-btn" data-tab="low">Low Stock <span class="tab-badge" id="tabLow" style="background:#fff3ec;color:#ff6b2b;">0</span></button>
+      <button class="tab-btn" data-tab="out">Out of Stock <span class="tab-badge" id="tabOut" style="background:#fdecea;color:#dc3545;">0</span></button>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <span class="filter-bar-label">Filter:</span>
+      <input type="text" class="ma-input" style="width:200px;height:32px;font-size:12px;" placeholder="Item name / SKU..." id="searchInput" />
+      <select class="ma-select" style="width:140px;height:32px;font-size:12px;" id="filterCat">
+        <option value="">All Categories</option>
+        <option>Groceries</option><option>Beverages</option><option>Dairy</option>
+        <option>Snacks</option><option>Personal Care</option><option>Cleaning</option>
+        <option>Electronics</option><option>Stationery</option>
+      </select>
+      <select class="ma-select" style="width:120px;height:32px;font-size:12px;" id="filterWarehouse">
+        <option value="">All Stores</option>
+        <option id="_wh1"></option>
+      </select>
+      <button class="btn-ma-primary btn-ma-sm" id="applyFilter"><i class="fas fa-search"></i> Search</button>
+      <button class="btn-ma-outline btn-ma-sm" id="clearFilter"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Table -->
+    <div style="overflow-x:auto;">
+      <table class="ma-table">
+        <thead><tr>
+          <th>#</th><th>SKU</th><th>Item Name</th><th>Category</th>
+          <th>Unit</th><th>Rate (₹)</th><th>In Stock</th><th>Min Stock</th>
+          <th>Stock Level</th><th>Warehouse</th><th>Action</th>
+        </tr></thead>
+        <tbody id="inventoryBody"></tbody>
+      </table>
+    </div>
+
+    <div class="ma-pagination">
+      <div class="ma-pagination-info" id="pageInfo">Showing 0</div>
+      <div class="ma-pagination-btns" id="paginationBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Add/Edit Item Modal -->
+<div class="ma-modal-overlay" id="itemModal">
+  <div class="ma-modal">
+    <div class="ma-modal-header">
+      <h5 id="itemModalTitle"><i class="fas fa-plus" style="color:#696cff;margin-right:7px;"></i>Add Item</h5>
+      <button class="ma-modal-close" id="itemModalClose">×</button>
+    </div>
+    <div class="ma-modal-body">
+      <form id="itemForm">
+        <input type="hidden" id="editItemId" />
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="ma-label">SKU <span class="req">*</span></label>
+            <input type="text" class="ma-input" id="iSKU" placeholder="e.g. GRO-001" required />
+          </div>
+          <div class="col-6">
+            <label class="ma-label">Item Name <span class="req">*</span></label>
+            <input type="text" class="ma-input" id="iName" placeholder="Product name" required />
+          </div>
+          <div class="col-6">
+            <label class="ma-label">Category</label>
+            <select class="ma-select" id="iCat">
+              <option>Groceries</option><option>Beverages</option><option>Dairy</option>
+              <option>Snacks</option><option>Personal Care</option><option>Cleaning</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="ma-label">Unit</label>
+            <select class="ma-select" id="iUnit">
+              <option>Pcs</option><option>Kg</option><option>Ltr</option><option>Box</option><option>Pack</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label class="ma-label">Rate (₹)</label>
+            <input type="number" class="ma-input" id="iRate" placeholder="0.00" />
+          </div>
+          <div class="col-4">
+            <label class="ma-label">Current Stock</label>
+            <input type="number" class="ma-input" id="iStock" placeholder="0" />
+          </div>
+          <div class="col-4">
+            <label class="ma-label">Min Stock Level</label>
+            <input type="number" class="ma-input" id="iMinStock" placeholder="10" />
+          </div>
+          <div class="col-12">
+            <label class="ma-label">Warehouse</label>
+            <select class="ma-select" id="iWarehouse">
+              <option id="_wh1"></option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="ma-modal-footer">
+      <button class="btn-ma-outline" id="itemModalCancel">Cancel</button>
+      <button class="btn-ma-primary" id="itemModalSave"><i class="fas fa-save"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+  var items = MA.getAll('inventory');
+
+  var filtered=items.slice(), currentTab='all', currentPage=1, rowsPerPage=10;
+
+  /* ---- Stats ---- */
+  function updateStats(){
+    var low=items.filter(function(i){return i.stock>0&&i.stock<=i.minStock;});
+    var out=items.filter(function(i){return i.stock===0;});
+    var inStock=items.filter(function(i){return i.stock>i.minStock;});
+    document.getElementById('totalItems').textContent=items.length;
+    document.getElementById('inStockItems').textContent=inStock.length;
+    document.getElementById('lowStockItems').textContent=low.length;
+    document.getElementById('outStockItems').textContent=out.length;
+    document.getElementById('tabAll').textContent=items.length;
+    document.getElementById('tabLow').textContent=low.length;
+    document.getElementById('tabOut').textContent=out.length;
+  }
+
+  function stockClass(item){
+    if(item.stock===0) return 'stock-crit';
+    if(item.stock<=item.minStock) return 'stock-low';
+    return 'stock-ok';
+  }
+  function stockPct(item){ return Math.min(100,Math.round((item.stock/Math.max(item.minStock*3,1))*100)); }
+  function stockStatus(item){
+    if(item.stock===0) return '<span class="status-badge badge-error">Out of Stock</span>';
+    if(item.stock<=item.minStock) return '<span class="status-badge badge-pending">Low Stock</span>';
+    return '<span class="status-badge badge-success">In Stock</span>';
+  }
+
+  /* ---- Filters ---- */
+  function applyFilters(){
+    var s=document.getElementById('searchInput').value.toLowerCase();
+    var cat=document.getElementById('filterCat').value;
+    var wh=document.getElementById('filterWarehouse').value;
+    filtered=items.filter(function(i){
+      if(currentTab==='low'&&!(i.stock>0&&i.stock<=i.minStock)) return false;
+      if(currentTab==='out'&&i.stock!==0) return false;
+      if(s&&i.name.toLowerCase().indexOf(s)<0&&i.sku.toLowerCase().indexOf(s)<0) return false;
+      if(cat&&i.cat!==cat) return false;
+      if(wh&&i.warehouse!==wh) return false;
+      return true;
+    });
+    currentPage=1; renderTable(); updateStats();
+  }
+  document.getElementById('applyFilter').addEventListener('click',applyFilters);
+  document.getElementById('clearFilter').addEventListener('click',function(){
+    document.getElementById('searchInput').value='';
+    document.getElementById('filterCat').value='';
+    document.getElementById('filterWarehouse').value='';
+    applyFilters();
+  });
+  document.getElementById('globalSearch').addEventListener('input',function(){
+    document.getElementById('searchInput').value=this.value; applyFilters();
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); currentTab=this.dataset.tab; applyFilters();
+    });
+  });
+
+  /* ---- Render ---- */
+  function renderTable(){
+    var start=(currentPage-1)*rowsPerPage;
+    var page=filtered.slice(start,start+rowsPerPage);
+    var html='';
+    if(!page.length){
+      html='<tr><td colspan="11" style="text-align:center;padding:36px;color:#aaa;"><i class="fas fa-boxes" style="font-size:36px;display:block;margin-bottom:12px;"></i>No items found</td></tr>';
+    } else {
+      page.forEach(function(it,i){
+        var pct=stockPct(it);
+        html+='<tr>'+
+          '<td style="color:#aaa;font-size:12px;">'+(start+i+1)+'</td>'+
+          '<td><code style="background:#f0f0f5;padding:2px 7px;border-radius:4px;font-size:12px;">'+it.sku+'</code></td>'+
+          '<td style="font-weight:500;">'+it.name+'</td>'+
+          '<td><span class="cat-badge">'+it.cat+'</span></td>'+
+          '<td style="color:#888;font-size:12px;">'+it.unit+'</td>'+
+          '<td style="font-weight:600;">₹'+it.rate+'</td>'+
+          '<td><strong style="color:'+(it.stock===0?'#dc3545':it.stock<=it.minStock?'#b08000':'#252525')+';">'+it.stock+'</strong></td>'+
+          '<td style="color:#aaa;font-size:12px;">'+it.minStock+'</td>'+
+          '<td style="min-width:100px;">'+stockStatus(it)+'<div class="stock-bar"><div class="stock-fill '+stockClass(it)+'" style="width:'+pct+'%;"></div></div></td>'+
+          '<td style="font-size:12px;color:#888;">'+it.warehouse+'</td>'+
+          '<td style="white-space:nowrap;">'+
+            '<button class="btn-icon edit-item-btn" data-id="'+it.id+'" title="Edit"><i class="fas fa-edit"></i></button> '+
+            '<button class="btn-icon success adj-stock-btn" data-id="'+it.id+'" title="Adjust Stock"><i class="fas fa-sliders-h"></i></button> '+
+            '<button class="btn-icon danger del-item-btn" data-id="'+it.id+'" title="Delete"><i class="fas fa-trash-alt"></i></button>'+
+          '</td>'+
+        '</tr>';
+      });
+    }
+    document.getElementById('inventoryBody').innerHTML=html;
+    var total=filtered.length;
+    document.getElementById('pageInfo').textContent='Showing '+(total?start+1:0)+'–'+Math.min(start+rowsPerPage,total)+' of '+total;
+    renderPagination();
+  }
+
+  function renderPagination(){
+    var maxPage=Math.ceil(filtered.length/rowsPerPage)||1;
+    var html='<button class="page-btn" id="prev"><i class="fas fa-chevron-left"></i></button>';
+    for(var p=Math.max(1,currentPage-2);p<=Math.min(maxPage,currentPage+2);p++){
+      html+='<button class="page-btn'+(p===currentPage?' active':'')+'" data-page="'+p+'">'+p+'</button>';
+    }
+    html+='<button class="page-btn" id="next"><i class="fas fa-chevron-right"></i></button>';
+    var el=document.getElementById('paginationBtns'); el.innerHTML=html;
+    el.querySelector('#prev').addEventListener('click',function(){if(currentPage>1){currentPage--;renderTable();}});
+    el.querySelector('#next').addEventListener('click',function(){if(currentPage<maxPage){currentPage++;renderTable();}});
+    el.querySelectorAll('[data-page]').forEach(function(btn){
+      btn.addEventListener('click',function(){currentPage=parseInt(this.dataset.page);renderTable();});
+    });
+  }
+
+  /* ---- Actions ---- */
+  document.getElementById('inventoryBody').addEventListener('click',function(e){
+    var eBtn=e.target.closest('.edit-item-btn');
+    var aBtn=e.target.closest('.adj-stock-btn');
+    var dBtn=e.target.closest('.del-item-btn');
+
+    if(eBtn){
+      var it=items.find(function(x){return x.id===parseInt(eBtn.dataset.id);});
+      document.getElementById('editItemId').value=it.id;
+      document.getElementById('iSKU').value=it.sku;
+      document.getElementById('iName').value=it.name;
+      document.getElementById('iCat').value=it.cat;
+      document.getElementById('iUnit').value=it.unit;
+      document.getElementById('iRate').value=it.rate;
+      document.getElementById('iStock').value=it.stock;
+      document.getElementById('iMinStock').value=it.minStock;
+      document.getElementById('iWarehouse').value=it.warehouse;
+      document.getElementById('itemModalTitle').innerHTML='<i class="fas fa-edit" style="color:#696cff;margin-right:7px;"></i>Edit Item';
+      document.getElementById('itemModal').classList.add('open');
+    }
+
+    if(aBtn){
+      var id2=parseInt(aBtn.dataset.id);
+      var it2=items.find(function(x){return x.id===id2;});
+      Swal.fire({
+        title:'Adjust Stock: '+it2.name,
+        html:'<input id="adjQty" class="swal2-input" type="number" placeholder="Qty (+ add / - remove)" />',
+        icon:'question', showCancelButton:true, confirmButtonColor:'#696cff', confirmButtonText:'Adjust',
+        preConfirm:function(){
+          var v=parseInt(document.getElementById('adjQty').value)||0;
+          if(!v) Swal.showValidationMessage('Enter a non-zero quantity');
+          return v;
+        }
+      }).then(function(r){
+        if(r.isConfirmed){
+          it2.stock=Math.max(0,it2.stock+r.value);
+          applyFilters();
+          showAlert('success','Stock for '+it2.name+' updated to '+it2.stock+' '+it2.unit+'.');
+        }
+      });
+    }
+
+    if(dBtn){
+      var id3=parseInt(dBtn.dataset.id);
+      var it3=items.find(function(x){return x.id===id3;});
+      Swal.fire({title:'Delete '+it3.name+'?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Delete'}).then(function(r){
+        if(r.isConfirmed){items=items.filter(function(x){return x.id!==id3;});applyFilters();showAlert('success',it3.name+' removed.');}
+      });
+    }
+  });
+
+  /* ---- Add item ---- */
+  document.getElementById('addItemBtn').addEventListener('click',function(){
+    document.getElementById('editItemId').value='';
+    document.getElementById('itemForm').reset();
+    document.getElementById('itemModalTitle').innerHTML='<i class="fas fa-plus" style="color:#696cff;margin-right:7px;"></i>Add Item';
+    document.getElementById('itemModal').classList.add('open');
+  });
+
+  document.getElementById('itemModalSave').addEventListener('click',function(){
+    var name=document.getElementById('iName').value.trim();
+    var sku=document.getElementById('iSKU').value.trim();
+    if(!name||!sku){showAlert('error','Name and SKU are required.');return;}
+    var editId=document.getElementById('editItemId').value;
+    if(editId){
+      var it=items.find(function(x){return x.id===parseInt(editId);});
+      if(it){it.sku=sku;it.name=name;it.cat=document.getElementById('iCat').value;it.unit=document.getElementById('iUnit').value;it.rate=parseFloat(document.getElementById('iRate').value)||0;it.stock=parseInt(document.getElementById('iStock').value)||0;it.minStock=parseInt(document.getElementById('iMinStock').value)||0;it.warehouse=document.getElementById('iWarehouse').value;}
+      showAlert('success',name+' updated.');
+    } else {
+      items.push({id:items.length+1,sku,name,cat:document.getElementById('iCat').value,unit:document.getElementById('iUnit').value,rate:parseFloat(document.getElementById('iRate').value)||0,stock:parseInt(document.getElementById('iStock').value)||0,minStock:parseInt(document.getElementById('iMinStock').value)||0,warehouse:document.getElementById('iWarehouse').value});
+      showAlert('success',name+' added.');
+    }
+    document.getElementById('itemModal').classList.remove('open');
+    applyFilters();
+  });
+
+  /* ---- Modal close ---- */
+  document.getElementById('itemModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+  document.getElementById('itemModalClose').addEventListener('click',function(){document.getElementById('itemModal').classList.remove('open');});
+  document.getElementById('itemModalCancel').addEventListener('click',function(){document.getElementById('itemModal').classList.remove('open');});
+
+  /* ---- Alert ---- */
+  function showAlert(type,msg){
+    var icons={success:'check-circle',error:'times-circle',warning:'exclamation-triangle'};
+    var cls={success:'ma-alert-success',error:'ma-alert-error',warning:'ma-alert-warning'};
+    document.getElementById('alertArea').innerHTML='<div class="ma-alert '+cls[type]+'"><i class="fas fa-'+(icons[type]||'info-circle')+' ma-alert-icon"></i><div>'+msg+'</div><button class="ma-alert-close" onclick="this.parentElement.remove()">×</button></div>';
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(function(){var a=document.getElementById('alertArea');if(a)a.innerHTML='';},5000);
+  }
+
+  /* ---- Sidebar ---- */
+  var collapsed=false;
+  document.getElementById('sidebarToggle').addEventListener('click',function(){
+    collapsed=!collapsed;
+    if(window.innerWidth>991){document.getElementById('sidebar').classList.toggle('collapsed',collapsed);document.getElementById('maMain').classList.toggle('expanded',collapsed);}
+    else document.getElementById('sidebar').classList.toggle('mobile-open');
+  });
+  document.getElementById('userDropdownToggle').addEventListener('click',function(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('open');});
+  document.addEventListener('click',function(){document.getElementById('userDropdown').classList.remove('open');});
+
+  applyFilters();
+
+
+(function(){
+  var whs=[...new Set(MA.getAll('inventory').map(function(i){return i.warehouse;}))];
+  var wh1=document.getElementById('_wh1');
+  if(wh1){var parent=wh1.parentElement;parent.innerHTML='<option value="">All Warehouses</option>'+whs.map(function(w){return '<option>'+w+'</option>';}).join('');}
+})();
+
+
+// --- MA badge refresh ---
+(function(){
+  var nb=document.getElementById('navBadge');
+  if(nb) nb.textContent=MA.getUnreadCount()||'';
+  var sb=document.getElementById('sidebarBillBadge');
+  if(sb) sb.textContent=MA.getPendingBillCount()||'';
+  // company name in brand
+  var comp=MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){
+    if(comp.name) el.textContent=comp.name;
+  });
+  document.querySelectorAll('.brand-sub').forEach(function(el){
+    if(comp.tagline) el.textContent=comp.tagline;
+  });
+})();
+</script>
+</body>
+</html>
