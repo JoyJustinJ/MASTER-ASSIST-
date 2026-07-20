@@ -238,7 +238,7 @@
               </div>
               <div class="col-12">
                 <label class="ma-label">Address</label>
-                <textarea class="ma-textarea" rows="2">123, Commerce Park, MG Road, Bengaluru – 560001</textarea>
+                <textarea class="ma-textarea" id="sAddress" rows="2"></textarea>
               </div>
               <div class="col-md-4">
                 <label class="ma-label">GSTIN</label>
@@ -682,6 +682,17 @@
 
   /* ---- Save section ---- */
   function saveSection(name){
+    if(name === 'General') {
+      MA.setCompany({
+        name: document.getElementById('sCompanyName').value,
+        tagline: document.getElementById('sTagline').value,
+        email: document.getElementById('sEmail').value,
+        phone: document.getElementById('sPhone').value,
+        address: document.getElementById('sAddress').value,
+        gstin: document.getElementById('sGSTIN').value,
+        pan: document.getElementById('sPAN').value
+      });
+    }
     Swal.fire({icon:'success',title:'Saved!',text:name+' settings saved.',timer:1800,timerProgressBar:true,showConfirmButton:false});
   }
 
@@ -724,18 +735,6 @@
   var ef=function(id,v){var e=document.getElementById(id);if(e)e.value=v||'';};
   ef('sCompanyName',c.name);ef('sTagline',c.tagline);ef('sEmail',c.email);
   ef('sPhone',c.phone);ef('sAddress',c.address);ef('sGSTIN',c.gstin);ef('sPAN',c.pan);
-  // save settings button
-  var saveBtn=document.getElementById('saveGeneralSettings')||document.querySelector('button[onclick*="saveSettings"]');
-  if(!saveBtn){
-    var panels=document.querySelectorAll('[id="panelGeneral"]');
-    if(panels.length){
-      var btn=panels[0].querySelector('button.btn-ma-primary');
-      if(btn)btn.addEventListener('click',function(){
-        MA.setCompany({name:document.getElementById('sCompanyName').value,tagline:document.getElementById('sTagline').value,email:document.getElementById('sEmail').value,phone:document.getElementById('sPhone').value,address:document.getElementById('sAddress').value,gstin:document.getElementById('sGSTIN').value,pan:document.getElementById('sPAN').value});
-        if(typeof Swal2!=='undefined')Swal2.fire({icon:'success',title:'Saved',timer:1200,showConfirmButton:false});
-      });
-    }
-  }
 })();
 
 

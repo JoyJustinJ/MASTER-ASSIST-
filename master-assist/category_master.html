@@ -127,18 +127,8 @@
 const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
 const COLORS=['#ededff','#e8f5e9','#fff3e0','#e3f2fd','#fce4ec','#f3e5f5'];
 const TCOLORS=['#696cff','#28a745','#f57c00','#1976d2','#c2185b','#7b1fa2'];
-let cats=[
-  {id:1,name:'Grocery',parent:'',gst:'0',status:'active',items:42,desc:'Food and grocery items',color:0},
-  {id:2,name:'Electronics',parent:'',gst:'18',status:'active',items:28,desc:'Electronic gadgets and appliances',color:3},
-  {id:3,name:'Clothing',parent:'',gst:'12',status:'active',items:35,desc:'Apparels and garments',color:1},
-  {id:4,name:'FMCG',parent:'',gst:'18',status:'active',items:56,desc:'Fast moving consumer goods',color:2},
-  {id:5,name:'Pharma',parent:'',gst:'12',status:'active',items:18,desc:'Medicines and health products',color:4},
-  {id:6,name:'Staples',parent:'Grocery',gst:'0',status:'active',items:15,desc:'Rice, pulses, wheat etc.',color:0},
-  {id:7,name:'Spices',parent:'Grocery',gst:'5',status:'active',items:20,desc:'All types of spices',color:2},
-  {id:8,name:'Mobiles',parent:'Electronics',gst:'18',status:'active',items:12,desc:'Mobile phones and accessories',color:3},
-  {id:9,name:'Menswear',parent:'Clothing',gst:'12',status:'active',items:18,desc:'',color:1},
-  {id:10,name:'Womenswear',parent:'Clothing',gst:'12',status:'inactive',items:14,desc:'',color:5},
-],nextId=11;
+let cats = MA.getAll('categories');
+let nextId = MA.nextId(cats);
 function renderCards(){
   const top=cats.filter(c=>!c.parent);
   document.getElementById('catCards').innerHTML=top.map(c=>`

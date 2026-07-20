@@ -139,18 +139,8 @@
 <script>
 const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
 const PALETTES=[['#ededff','#696cff'],['#e8f5e9','#28a745'],['#fff3e0','#f57c00'],['#e3f2fd','#1976d2'],['#fce4ec','#c2185b'],['#f3e5f5','#7b1fa2'],['#e0f7fa','#0097a7']];
-let brands=[
-  {id:1,name:'Samsung',country:'South Korea',web:'samsung.com',items:12,status:'active',desc:'Consumer electronics',pi:3},
-  {id:2,name:'Xiaomi',country:'China',web:'xiaomi.com',items:8,status:'active',desc:'Smart devices',pi:1},
-  {id:3,name:'Unilever',country:'UK',web:'unilever.com',items:24,status:'active',desc:'FMCG — Surf, Lifebuoy, Dove',pi:0},
-  {id:4,name:'P&G',country:'USA',web:'pg.com',items:18,status:'active',desc:'Colgate, Dettol, Head & Shoulders',pi:4},
-  {id:5,name:'Local',country:'India',web:'',items:55,status:'active',desc:'Generic/Local brands',pi:2},
-  {id:6,name:'Nestle',country:'Switzerland',web:'nestle.com',items:14,status:'active',desc:'Maggi, KitKat, Munch',pi:5},
-  {id:7,name:'ITC',country:'India',web:'itcportal.com',items:20,status:'active',desc:'Sunfeast, Bingo, Classmate',pi:6},
-  {id:8,name:'Haldirams',country:'India',web:'haldirams.com',items:30,status:'active',desc:'Snacks & Sweets',pi:2},
-  {id:9,name:'Dr. Reddy\'s',country:'India',web:'drreddys.com',items:9,status:'inactive',desc:'Pharmaceutical',pi:0},
-  {id:10,name:'Cipla',country:'India',web:'cipla.com',items:6,status:'active',desc:'Pharmaceutical',pi:1},
-],nextId=11;
+let brands = MA.getAll('brands');
+let nextId = MA.nextId(brands);
 let viewMode='grid';
 function getInitials(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
 function renderBrands(){

@@ -741,88 +741,44 @@
 
   /* ---- Main login handler ---- */
   function userLogin() {
-    $(".btn-ma-login").find("i")
-      .removeClass("fa-sign-in-alt")
-      .addClass("fa-cog fa-spin");
-
-    loginLaravelAppThenContinue();
+    $(".btn-ma-login").find("i").removeClass("fa-sign-in-alt").addClass("fa-cog fa-spin");
 
     setTimeout(function() {
-      $.ajax({
-        url: "login1.php",
-        method: "POST",
-        data: new FormData($("#form")[0]),
-        contentType: false,
-        processData: false,
-        success: function(response) {
-          $(".btn-ma-login").find("i")
-            .removeClass("fa-cog fa-spin")
-            .addClass("fa-sign-in-alt");
+      $(".btn-ma-login").find("i").removeClass("fa-cog fa-spin").addClass("fa-sign-in-alt");
 
-          try {
-            response = $.parseJSON(response);
+      var username = $("#txtUserName").val().trim();
+      var pwd = $("#txtPassword").val().trim();
+      
+      // Offline auth via store.js
+      var users = MA.getAll('users');
+      var user = users.find(function(u) { return u.username === username || u.email === username; });
+      
+      if (!user) {
+        Swal.fire({ icon: "error", text: "Invalid username or password" });
+        return;
+      }
+      if (user.password !== pwd) {
+        Swal.fire({ icon: "error", text: "Invalid username or password" });
+        return;
+      }
+      if (user.status === 'inactive') {
+        Swal.fire({ icon: "error", text: "Account is inactive. Please contact administrator." });
+        return;
+      }
 
-            if (response.status === "200") {
-              Swal.fire({ title: response.message, icon: "success", draggable: true });
-              ["get_pay_mode_1","country_state","state_district"].forEach(function(key) {
-                if (localStorage.getItem(key) !== null) localStorage.removeItem(key);
-              });
-              window.location.href = "welcome.php";
-
-            } else if (response.status === "203") {
-              $.ajax({
-                url: "api-loginotp.php",
-                method: "GET",
-                data: { Token: response.Token },
-                success: function(response_os) {
-                  try {
-                    var r = $.parseJSON(response_os);
-                    if (r.status === "200") {
-                      Swal.fire({ title: r.message, icon: "success", draggable: true });
-                      $("#tokenid").val(r.token);
-                      $("#replace_mobno").html(r.mobile);
-                      $(".popup").fadeIn(500);
-                      timerOn = true;
-                      timer(120);
-                    } else {
-                      Swal.fire({ icon: "error", text: r.message });
-                    }
-                  } catch(e) { alert(response_os); }
-                }
-              });
-
-            } else if (response.status === "209") {
-              Swal.fire({
-                icon: "error",
-                text: response.message,
-                showCancelButton: true,
-                confirmButtonText: "Logout from all devices"
-              }).then(function(result) {
-                if (result.isConfirmed) {
-                  $.ajax({
-                    url: "logout_from_all_device.php",
-                    method: "GET",
-                    data: { Token: response.Token, status: "Ajax" },
-                    success: function(response_os) {
-                      try {
-                        var r = $.parseJSON(response_os);
-                        if (r.status === "200") {
-                          Swal.fire("Successfully logged out from all devices! Please login again.", "", "success");
-                        }
-                      } catch(e) { alert(response_os); }
-                    }
-                  });
-                }
-              });
-
-            } else {
-              Swal.fire({ icon: "error", text: response.message });
-            }
-
-          } catch(err) { alert(response); }
-        }
+      // Login success
+      Swal.fire({ title: "Login Successful", icon: "success", timer: 1200, showConfirmButton: false }).then(function() {
+        // Clear old sessions
+        ["get_pay_mode_1","country_state","state_district"].forEach(function(key) {
+          if (localStorage.getItem(key) !== null) localStorage.removeItem(key);
+        });
+        
+        // Log to audit
+        MA.addAudit('User logged in: ' + user.name + ' (' + user.role + ')');
+        
+        window.location.href = "welcome.html";
       });
-    }, 1500);
+    }, 800);
   }
 
   /* ---- OTP countdown timer ---- */

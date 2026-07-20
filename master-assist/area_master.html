@@ -137,16 +137,8 @@
 <script>
 const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
 const COLORS=[['#ededff','#696cff'],['#e8f5e9','#28a745'],['#fff3e0','#f57c00'],['#e3f2fd','#1976d2'],['#fce4ec','#c2185b']];
-let areas=[
-  {id:1,name:'Andheri',city:'Mumbai',state:'Maharashtra',pin:'400053',customers:42,suppliers:8,salesman:'Arjun Sharma',status:'active',ci:0},
-  {id:2,name:'Bandra',city:'Mumbai',state:'Maharashtra',pin:'400050',customers:35,suppliers:5,salesman:'Priya Patel',status:'active',ci:1},
-  {id:3,name:'Dadar',city:'Mumbai',state:'Maharashtra',pin:'400014',customers:28,suppliers:6,salesman:'Rohit Verma',status:'active',ci:2},
-  {id:4,name:'Shivaji Nagar',city:'Pune',state:'Maharashtra',pin:'411005',customers:22,suppliers:4,salesman:'Sneha Nair',status:'active',ci:3},
-  {id:5,name:'Kothrud',city:'Pune',state:'Maharashtra',pin:'411038',customers:18,suppliers:3,salesman:'Vikram Singh',status:'active',ci:4},
-  {id:6,name:'Nashik Road',city:'Nashik',state:'Maharashtra',pin:'422101',customers:12,suppliers:2,salesman:'Kavitha Rajan',status:'inactive',ci:2},
-  {id:7,name:'Dharampeth',city:'Nagpur',state:'Maharashtra',pin:'440010',customers:8,suppliers:2,salesman:'Deepak Joshi',status:'active',ci:1},
-  {id:8,name:'Sadar Bazar',city:'Nagpur',state:'Maharashtra',pin:'440001',customers:15,suppliers:3,salesman:'Anita Mehta',status:'active',ci:0},
-],nextId=9;
+let areas = MA.getAll('areas');
+let nextId = MA.nextId(areas);
 function updateStats(){
   document.getElementById('stAreas').textContent=areas.length;
   document.getElementById('stCities').textContent=[...new Set(areas.map(a=>a.city))].length;

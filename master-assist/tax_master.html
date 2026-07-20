@@ -149,15 +149,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
 <script>
 const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
-let taxes=[
-  {id:1,name:'GST 0%',rate:0,cgst:0,sgst:0,igst:0,cess:0,hsn:'0001–2099',apply:'Essentials, Fresh produce',status:'active'},
-  {id:2,name:'GST 5%',rate:5,cgst:2.5,sgst:2.5,igst:5,cess:0,hsn:'2100–2999',apply:'Basic food, edible oils',status:'active'},
-  {id:3,name:'GST 12%',rate:12,cgst:6,sgst:6,igst:12,cess:0,hsn:'3000–5999',apply:'Processed foods, clothing',status:'active'},
-  {id:4,name:'GST 18%',rate:18,cgst:9,sgst:9,igst:18,cess:0,hsn:'6000–8999',apply:'Electronics, services',status:'active'},
-  {id:5,name:'GST 28%',rate:28,cgst:14,sgst:14,igst:28,cess:0,hsn:'9000–9999',apply:'Luxury goods, tobacco',status:'active'},
-  {id:6,name:'GST 28% + CESS 12%',rate:28,cgst:14,sgst:14,igst:28,cess:12,hsn:'2401–2402',apply:'Cigarettes, tobacco',status:'active'},
-  {id:7,name:'GST 28% + CESS 15%',rate:28,cgst:14,sgst:14,igst:28,cess:15,hsn:'2203–2206',apply:'Aerated drinks, beer',status:'active'},
-],nextId=8;
+let taxes = MA.getAll('taxes');
+let nextId = MA.nextId(taxes);
 function renderTaxes(){
   document.getElementById('taxBody').innerHTML=taxes.map((t,i)=>`
     <tr><td style="color:#aaa;font-size:12px;">${i+1}</td>

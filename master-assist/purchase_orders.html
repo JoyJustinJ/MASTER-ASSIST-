@@ -317,7 +317,72 @@
   var statuses=['draft','sent','received','partial','sent','received','cancelled','sent','received','received'];
 
   var poData = MA.getAll('purchaseOrders');
-function renderTable(){
+  var currentPage = 1, rowsPerPage = 10;
+  var filtered = poData.slice();
+
+  function statusBadge(s){
+    if(s==='draft') return '<span class="badge po-status-draft">Draft</span>';
+    if(s==='sent') return '<span class="badge po-status-sent">Sent</span>';
+    if(s==='received') return '<span class="badge po-status-received">Received</span>';
+    if(s==='partial') return '<span class="badge po-status-partial">Partial</span>';
+    if(s==='cancelled') return '<span class="badge po-status-cancelled">Cancelled</span>';
+    return '<span class="badge bg-secondary">'+s+'</span>';
+  }
+  function fmtAmt(v){ return '₹'+(v||0).toLocaleString('en-IN'); }
+
+  function applyFilters(){
+    var q = document.getElementById('searchInput').value.toLowerCase();
+    var sup = document.getElementById('filterSupplier').value;
+    var f = document.getElementById('filterFrom').value;
+    var t = document.getElementById('filterTo').value;
+    var activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+
+    filtered = poData.filter(function(p){
+      if(activeTab !== 'all' && p.status !== activeTab) return false;
+      if(sup && p.supplier !== sup) return false;
+      if(f && p.date < f) return false;
+      if(t && p.date > t) return false;
+      if(q && p.poNo.toLowerCase().indexOf(q)===-1 && p.supplier.toLowerCase().indexOf(q)===-1) return false;
+      return true;
+    });
+    currentPage = 1;
+    renderTable();
+    updateStats();
+  }
+
+  function updateStats(){
+    document.getElementById('cntTotal').textContent = poData.length;
+    document.getElementById('cntSent').textContent = poData.filter(function(p){return p.status==='sent'}).length;
+    document.getElementById('cntReceived').textContent = poData.filter(function(p){return p.status==='received'}).length;
+    var val = poData.reduce(function(a,b){return a+(b.amount||0)},0);
+    document.getElementById('cntValue').textContent = fmtAmt(val);
+    ['all','draft','sent','partial','received','cancelled'].forEach(function(t){
+      var count = t==='all' ? poData.length : poData.filter(function(p){return p.status===t}).length;
+      var el = document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+      if(el) el.textContent = count;
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('active');});
+      this.classList.add('active');
+      applyFilters();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  document.getElementById('filterSupplier').addEventListener('change', applyFilters);
+  document.getElementById('applyFilter').addEventListener('click', applyFilters);
+  document.getElementById('clearFilter').addEventListener('click', function(){
+    document.getElementById('searchInput').value='';
+    document.getElementById('filterSupplier').value='';
+    document.getElementById('filterFrom').value='';
+    document.getElementById('filterTo').value='';
+    applyFilters();
+  });
+
+  function renderTable(){
     var start=(currentPage-1)*rowsPerPage;
     var page=filtered.slice(start,start+rowsPerPage);
     var html='';

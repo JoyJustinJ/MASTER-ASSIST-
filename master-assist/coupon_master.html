@@ -146,16 +146,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
 <script>
 const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
-let coupons=[
-  {id:1,code:'SAVE50',name:'Flat 50 Off',type:'Flat Discount',value:50,maxDisc:50,minOrder:500,limit:200,used:87,from:'2026-07-01',to:'2026-07-31',status:'active',desc:'Get ₹50 off on orders above ₹500'},
-  {id:2,code:'FIRST20',name:'First Order 20%',type:'Percentage',value:20,maxDisc:200,minOrder:300,limit:1,used:156,from:'2026-01-01',to:'2026-12-31',status:'active',desc:'20% off for new customers'},
-  {id:3,code:'WEEKEND10',name:'Weekend Sale',type:'Percentage',value:10,maxDisc:100,minOrder:200,limit:500,used:43,from:'2026-07-12',to:'2026-07-13',status:'expired',desc:'10% off every weekend'},
-  {id:4,code:'BUY2GET1',name:'Buy 2 Get 1 Free',type:'Buy X Get Y',value:0,maxDisc:0,minOrder:0,limit:100,used:28,from:'2026-07-01',to:'2026-07-31',status:'active',desc:'Buy 2 items get 1 free'},
-  {id:5,code:'SUMMER15',name:'Summer Offer',type:'Percentage',value:15,maxDisc:150,minOrder:400,limit:300,used:21,from:'2026-07-01',to:'2026-08-31',status:'active',desc:'15% off summer special'},
-  {id:6,code:'BIGORDER',name:'Big Order Discount',type:'Min Order',value:100,maxDisc:100,minOrder:2000,limit:999,used:7,from:'2026-06-01',to:'2026-09-30',status:'active',desc:'₹100 off on orders above ₹2000'},
-  {id:7,code:'LOYAL100',name:'Loyalty Reward',type:'Flat Discount',value:100,maxDisc:100,minOrder:1000,limit:50,used:0,from:'2026-07-15',to:'2026-08-15',status:'draft',desc:'Exclusive for Gold members'},
-  {id:8,code:'FESTIVE25',name:'Festival Season',type:'Percentage',value:25,maxDisc:500,minOrder:1000,limit:200,used:0,from:'2026-10-01',to:'2026-11-05',status:'draft',desc:'Festive season mega offer'},
-],nextId=9;
+let coupons = MA.getAll('coupons');
+let nextId = MA.nextId(coupons);
 
 function renderCoupons(){
   const q=(document.getElementById('searchInput').value||document.getElementById('globalSearch').value||'').toLowerCase();

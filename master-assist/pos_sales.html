@@ -240,22 +240,19 @@
 
   var txns = [];
   (function(){
-    var names=['Ramesh K.','Sunita S.','Priya S.','Vijay P.','Mohan G.','Anjali M.'];
-    var pnames=posData.map(function(p){return p.name;});
-    var hours=['09:12','09:45','10:03','10:28','10:51','11:14','11:38','12:02','12:25','13:01','13:40','14:22','14:48','15:10','15:33','15:55','16:18','16:42'];
-    var types=['sale','sale','sale','sale','return','void'];
-    for(var i=0;i<60;i++){
+    var sales = MA.getAll('sales');
+    sales.forEach(function(s, idx) {
       txns.push({
-        id:i+1,
-        txnId:'TXN-'+String(7000+i).padStart(5,'0'),
-        pos:pnames[i%pnames.length],
-        cashier:names[i%names.length],
-        items:Math.floor(Math.random()*8)+1,
-        amount:Math.floor(Math.random()*5000)+200,
-        type:types[i%types.length],
-        time:hours[i%hours.length]
+        id: s.id,
+        txnId: s.billNo,
+        pos: s.pos || 'POS-01',
+        cashier: s.cashier || 'Admin',
+        items: (s.items && s.items.length) ? s.items.length : 1,
+        amount: s.total,
+        type: s.type || 'sale',
+        time: s.time || '12:00'
       });
-    }
+    });
   })();
 
   var txnPage=1, txnPerPage=10;
