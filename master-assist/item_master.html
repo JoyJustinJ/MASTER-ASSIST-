@@ -139,7 +139,7 @@
             <select class="ma-select w-100" id="iBrand"><option>Local</option><option>Samsung</option><option>Xiaomi</option><option>Unilever</option><option>P&amp;G</option></select>
           </div>
           <div class="col-md-2"><label class="form-label">GST %</label>
-            <select class="ma-select w-100" id="iGST"><option>0</option><option>5</option><option>12</option><option>18</option><option>28</option></select>
+            <input type="number" class="ma-input w-100" id="iGST" step="0.01" placeholder="e.g. 18" />
           </div>
           <div class="col-md-2"><label class="form-label">Tax Type</label>
             <select class="ma-select w-100" id="iTaxType"><option>Inclusive</option><option>Exclusive</option></select>
@@ -234,7 +234,7 @@ function openAdd(){
   ['iName','iSKU','iBarcode','iHSN','iDesc'].forEach(id=>document.getElementById(id).value='');
   ['iPurchase','iSale','iMRP','iMinStock'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('iUnit').value='Pcs';document.getElementById('iCat').value='Grocery';
-  document.getElementById('iBrand').value='Local';document.getElementById('iGST').value='18';
+  document.getElementById('iBrand').value='Local';document.getElementById('iGST').value='';
   document.getElementById('iStatus').value='active';
   new bootstrap.Modal(document.getElementById('itemModal')).show();
 }

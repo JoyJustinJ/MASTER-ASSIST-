@@ -179,7 +179,7 @@
           <span>Discount (%)</span>
           <span><input type="number" id="discountInput" min="0" max="100" value="0" style="width:55px;border:1px solid #e0e0ea;border-radius:4px;padding:2px 5px;font-size:12px;text-align:right;" oninput="recalc()"> %</span>
         </div>
-        <div class="summary-line"><span>GST (18%)</span><span id="gstAmt">₹0.00</span></div>
+        <div class="summary-line"><span>GST</span><span id="gstAmt">₹0.00</span></div>
         <div class="summary-total"><span>Total</span><span id="grandTotal">₹0.00</span></div>
       </div>
       
@@ -232,9 +232,9 @@ let rawItems = MA.getAll('items');
 if (!rawItems.length) {
     // If empty store, push some mock data to show it works.
     rawItems = [
-        { id: 1, name: "Atta 5kg", sku: "GROC-01", barcode: "8901234567890", sale: 250, mrp: 280, cat: "Grocery", stock: 50 },
-        { id: 2, name: "LED Bulb 9W", sku: "ELEC-01", barcode: "8909876543210", sale: 99, mrp: 120, cat: "Electronics", stock: 100 },
-        { id: 3, name: "Cotton T-Shirt", sku: "CLOT-01", barcode: "8901122334455", sale: 499, mrp: 699, cat: "Clothing", stock: 30 }
+        { id: 1, name: "Atta 5kg", sku: "GROC-01", barcode: "8901234567890", sale: 250, mrp: 280, cat: "Grocery", stock: 50, gst: 0 },
+        { id: 2, name: "LED Bulb 9W", sku: "ELEC-01", barcode: "8909876543210", sale: 99, mrp: 120, cat: "Electronics", stock: 100, gst: 18 },
+        { id: 3, name: "Cotton T-Shirt", sku: "CLOT-01", barcode: "8901122334455", sale: 499, mrp: 699, cat: "Clothing", stock: 30, gst: 5 }
     ];
     MA.set('items', rawItems);
 }
@@ -242,7 +242,8 @@ if (!rawItems.length) {
 const products = rawItems.map(function(i){
     return {
         id: i.id, name: i.name, sku: i.sku||'', barcode: i.barcode||i.sku,
-        price: i.sale || i.mrp || 0, cat: i.cat||'', stock: i.stock||0, icon: 'fa-cube'
+        price: i.sale || i.mrp || 0, cat: i.cat||'', stock: i.stock||0, icon: 'fa-cube',
+        gst: parseFloat(i.gst) || 0
     };
 });
 
@@ -376,9 +377,12 @@ function recalc(){
   const discAmt = sub * (discPct / 100);
   const afterDisc = sub - discAmt;
   
-  // Tax logic (assuming prices are inclusive for simplicity in POS, but we show GST split)
-  // Let's say GST is 18% extra on top for this demo
-  const gst = afterDisc * 0.18;
+  // Calculate proportional discount for each item to apply GST correctly
+  const gst = cart.reduce((totalGst, c) => {
+      const itemSubtotal = c.bargainPrice * c.qty;
+      const itemSubAfterDisc = itemSubtotal * (1 - (discPct / 100));
+      return totalGst + (itemSubAfterDisc * (c.gst / 100));
+  }, 0);
   const grand = afterDisc + gst;
   
   document.getElementById('subtotal').textContent = fmtAmt(sub);
