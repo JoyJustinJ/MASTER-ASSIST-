@@ -175,8 +175,11 @@
       
       <div class="cart-summary">
         <div class="summary-line"><span>Subtotal</span><span id="subtotal">₹0.00</span></div>
+        <div class="summary-line" id="bargainSavingsLine" style="display:none; color:#28a745; font-weight:600;">
+          <span><i class="fas fa-tags me-1"></i>Bargain Savings</span><span id="bargainSavingsAmt">-₹0.00</span>
+        </div>
         <div class="summary-line">
-          <span>Discount (%)</span>
+          <span>Overall Discount (%)</span>
           <span><input type="number" id="discountInput" min="0" max="100" value="0" style="width:55px;border:1px solid #e0e0ea;border-radius:4px;padding:2px 5px;font-size:12px;text-align:right;" oninput="recalc()"> %</span>
         </div>
         <div class="summary-line"><span>GST</span><span id="gstAmt">₹0.00</span></div>
@@ -210,12 +213,12 @@
 <!-- Receipt Modal -->
 <div class="modal fade" id="receiptModal" tabindex="-1">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Sale Complete</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-      <div class="modal-body" id="receiptBody"></div>
-      <div class="modal-footer">
-        <button class="btn-ma-outline" onclick="printReceipt()"><i class="fas fa-print me-1"></i>Print Receipt</button>
-        <button class="btn-ma-primary" data-bs-dismiss="modal" onclick="newSale()">New Sale</button>
+    <div class="modal-content" style="background:#f4f5f9;">
+      <div class="modal-header" style="border-bottom:none;"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body" id="receiptBody" style="padding-top:0;"></div>
+      <div class="modal-footer" style="border-top:none; justify-content:center; padding-bottom:20px;">
+        <button class="btn-ma-outline" style="width:140px;" onclick="printReceipt()"><i class="fas fa-print me-1"></i>Print Receipt</button>
+        <button class="btn-ma-primary" style="width:140px;" data-bs-dismiss="modal" onclick="newSale()">New Sale</button>
       </div>
     </div>
   </div>
@@ -344,12 +347,14 @@ function renderCart(){
     <div class="cart-row">
       <div style="flex:1;">
         <div class="cart-item-name">${c.name}</div>
+        <div style="font-size:10px; color:#888;">MRP: ${fmtAmt(c.price)}</div>
         <div class="cart-item-price" style="display:flex; align-items:center; gap:4px; margin-top:2px;">
             <span>₹</span>
             <input type="number" class="cart-item-price-input" value="${c.bargainPrice}" 
                 onchange="updateBargainPrice(${c.id}, this.value)" title="Edit price (Bargain)" />
             <span>each</span>
         </div>
+        ${c.bargainPrice < c.price ? `<div style="font-size:10px; color:#28a745; margin-top:2px; font-weight:600;"><i class="fas fa-tags me-1"></i>Bargain Disc: ₹${(c.price - c.bargainPrice).toFixed(2)}</div>` : ''}
       </div>
       <div class="qty-ctrl">
         <button class="qty-btn" onclick="changeQty(${c.id}, -1)">−</button>
@@ -384,6 +389,16 @@ function recalc(){
       return totalGst + (itemSubAfterDisc * (c.gst / 100));
   }, 0);
   const grand = afterDisc + gst;
+  
+  const originalSub = cart.reduce((a, c) => a + (c.price * c.qty), 0);
+  const bargainDiscTotal = originalSub - sub;
+  const bargainEl = document.getElementById('bargainSavingsLine');
+  if(bargainDiscTotal > 0) {
+      bargainEl.style.display = 'flex';
+      document.getElementById('bargainSavingsAmt').textContent = '-'+fmtAmt(bargainDiscTotal);
+  } else {
+      bargainEl.style.display = 'none';
+  }
   
   document.getElementById('subtotal').textContent = fmtAmt(sub);
   document.getElementById('gstAmt').textContent = fmtAmt(gst);
@@ -447,21 +462,61 @@ function processSale(){
   MA.upsert('sales', saleRec);
   MA.addAudit('Sale completed: ' + saleRec.billNo + ' — ' + MA.fmt(grand));
 
+  const gstAmountForPrint = cart.reduce((totalGst, c) => {
+      const itemSubtotal = c.bargainPrice * c.qty;
+      const itemSubAfterDisc = itemSubtotal * (1 - (document.getElementById('discountInput').value / 100));
+      return totalGst + (itemSubAfterDisc * (c.gst / 100));
+  }, 0);
+
   // Build Receipt HTML
   let receiptHTML = `
-    <div style="text-align:center;margin-bottom:16px;">
-      <div style="font-size:20px;font-weight:700;color:#28a745;"><i class="fas fa-check-circle me-2"></i>Sale Successful!</div>
-      <div style="font-size:13px;color:#888;margin-top:4px;">Bill No: <strong>${saleNo}</strong></div>
-      <div style="font-size:12px;color:#555;margin-top:2px;">Offline saved</div>
+    <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:16px;">
+        <div style="background:#e8f5e9; color:#28a745; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:10px;"><i class="fas fa-check"></i></div>
+        <div style="font-size:18px;font-weight:700;color:#252525;">Sale Successful!</div>
+        <div style="font-size:12px;color:#888;">Bill saved offline successfully.</div>
     </div>
-    <div style="background:#f8f8fd;border-radius:8px;padding:14px;">
-      ${cart.map(c => `<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;">${c.name} × ${c.qty}<span style="font-weight:600;">${fmtAmt(c.bargainPrice * c.qty)}</span></div>`).join('')}
-      <div style="border-top:1px dashed #ccc; margin:8px 0;"></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;"><span>Subtotal</span><span>${fmtAmt(sub)}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;"><span>Discount</span><span>${document.getElementById('discountInput').value}%</span></div>
-      <div style="border-top:1px solid #e0e0ea;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;"><span>Total</span><span style="color:#696cff;">${fmtAmt(grand)}</span></div>
-    </div>
-    <div style="margin-top:12px;text-align:center;font-size:13px;color:#888;">Payment: <strong style="color:#333;text-transform:capitalize;">${payMode}</strong></div>`;
+    
+    <div style="border:1px solid #e0e0ea; border-radius:8px; padding:16px; background:#fff; font-family:monospace;">
+        <div style="text-align:center;margin-bottom:16px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
+          <div style="font-size:18px;font-weight:700; text-transform:uppercase;">Master Assist</div>
+          <div style="font-size:12px;color:#555;">Supermarket & Electronics</div>
+          <div style="font-size:11px;color:#888;">GSTIN: 29AABBCC1234D1Z5</div>
+          <div style="margin-top:8px; font-size:12px; font-weight:600;">TAX INVOICE</div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:10px;">
+            <span style="text-align:left;">Bill No: <strong>${saleNo}</strong><br>Date: ${saleRec.date} ${saleRec.time}</span>
+            <span style="text-align:right;">Cashier: Admin<br>POS-01</span>
+          </div>
+        </div>
+        <div style="font-size:12px; margin-bottom:8px; font-weight:600; border-bottom:1px solid #eee; padding-bottom:4px; display:flex;">
+          <span style="flex:1;">Item</span>
+          <span style="width:40px; text-align:center;">Qty</span>
+          <span style="width:60px; text-align:right;">Amount</span>
+        </div>
+        <div style="margin-bottom:12px;">
+          ${cart.map(c => `
+          <div style="display:flex; font-size:11px; padding:3px 0; align-items:flex-start;">
+            <div style="flex:1;">
+                <div style="font-weight:600;">${c.name}</div>
+                ${c.bargainPrice < c.price ? `<div style="font-size:9.5px; color:#888;">MRP: ${c.price} <span style="color:#28a745;">(-${fmtAmt(c.price - c.bargainPrice)})</span></div>` : `<div style="font-size:9.5px; color:#888;">MRP: ${c.price}</div>`}
+            </div>
+            <div style="width:40px; text-align:center;">${c.qty}</div>
+            <div style="width:60px; text-align:right; font-weight:600;">${fmtAmt(c.bargainPrice * c.qty)}</div>
+          </div>`).join('')}
+        </div>
+        <div style="border-top:1px dashed #ccc; padding-top:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#333; padding:2px 0;"><span>Subtotal</span><span>${fmtAmt(sub)}</span></div>
+          ${document.getElementById('discountInput').value > 0 ? `<div style="display:flex;justify-content:space-between;font-size:12px;color:#333; padding:2px 0;"><span>Extra Discount</span><span>${document.getElementById('discountInput').value}%</span></div>` : ''}
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#333; padding:2px 0;"><span>GST Amount</span><span>${fmtAmt(gstAmountForPrint)}</span></div>
+          <div style="border-top:1px solid #333;margin-top:6px;padding-top:6px;display:flex;justify-content:space-between;font-size:16px;font-weight:800;"><span>GRAND TOTAL</span><span>${fmtAmt(grand)}</span></div>
+        </div>
+        <div style="margin-top:12px; display:flex; justify-content:space-between; font-size:11px; color:#555;">
+          <span>Paid via: <strong style="text-transform:capitalize; color:#333;">${payMode}</strong></span>
+          ${payMode==='cash' ? `<span>Tendered: ${fmtAmt(document.getElementById('cashReceived').value||0)}</span>` : ''}
+        </div>
+        <div style="margin-top:16px;text-align:center;font-size:11px;color:#555; border-top:1px dashed #ccc; padding-top:10px;">
+          Thank you for shopping with us!<br>Visit again.
+        </div>
+    </div>`;
   
   document.getElementById('receiptBody').innerHTML = receiptHTML;
   document.getElementById('printReceiptArea').innerHTML = receiptHTML.replace('color:#28a745;', 'color:#000;').replace('color:#696cff;', 'color:#000;'); // Prepare print version
