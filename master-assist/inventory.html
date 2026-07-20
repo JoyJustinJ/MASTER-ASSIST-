@@ -137,7 +137,9 @@
       </nav>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn-ma-outline"><i class="fas fa-file-excel"></i> Export</button>
+      <input type="file" id="importExcelFile" accept=".xlsx, .xls" style="display:none;" />
+      <button class="btn-ma-outline" onclick="document.getElementById('importExcelFile').click()"><i class="fas fa-file-import"></i> Import</button>
+      <button class="btn-ma-outline" onclick="exportInventory()"><i class="fas fa-file-excel"></i> Export</button>
       <button class="btn-ma-primary" id="addItemBtn"><i class="fas fa-plus"></i> Add Item</button>
     </div>
   </div>
@@ -483,6 +485,35 @@
     document.getElementById('alertArea').innerHTML='<div class="ma-alert '+cls[type]+'"><i class="fas fa-'+(icons[type]||'info-circle')+' ma-alert-icon"></i><div>'+msg+'</div><button class="ma-alert-close" onclick="this.parentElement.remove()">×</button></div>';
     window.scrollTo({top:0,behavior:'smooth'});
     setTimeout(function(){var a=document.getElementById('alertArea');if(a)a.innerHTML='';},5000);
+  }
+
+  /* ---- Import / Export ---- */
+  document.getElementById('importExcelFile').addEventListener('change', function(e) {
+      if(!e.target.files.length) return;
+      var file = e.target.files[0];
+      Swal.fire({
+          title: 'Import Inventory',
+          text: 'Are you sure you want to import data from ' + file.name + '?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#696cff',
+          confirmButtonText: 'Import'
+      }).then(function(result) {
+          if (result.isConfirmed) {
+              MA.importFromExcel(file, 'inventory', function(count) {
+                  items = MA.getAll('inventory'); // reload items
+                  applyFilters();
+                  showAlert('success', count + ' records imported successfully.');
+                  document.getElementById('importExcelFile').value = ''; // clear input
+              });
+          } else {
+              document.getElementById('importExcelFile').value = ''; // clear input
+          }
+      });
+  });
+
+  function exportInventory() {
+      MA.exportToExcel('inventory', 'Inventory_Export');
   }
 
   /* ---- Sidebar ---- */

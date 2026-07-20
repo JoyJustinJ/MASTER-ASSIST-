@@ -82,7 +82,8 @@
   <div class="page-header">
     <div><div class="page-title">Item Master</div><div class="page-breadcrumb">Inventory / Item Master</div></div>
     <div class="d-flex gap-2">
-      <button class="btn-ma-outline" onclick="importItems()"><i class="fas fa-file-import me-1"></i>Import</button>
+      <input type="file" id="importExcelFile" accept=".xlsx, .xls" style="display:none;" />
+      <button class="btn-ma-outline" onclick="document.getElementById('importExcelFile').click()"><i class="fas fa-file-import me-1"></i>Import</button>
       <button class="btn-ma-outline" onclick="exportItems()"><i class="fas fa-download me-1"></i>Export</button>
       <button class="btn-ma-primary" onclick="openAdd()"><i class="fas fa-plus me-1"></i>Add Item</button>
     </div>
@@ -265,8 +266,33 @@ function deleteItem(id){
   Swal2.fire({title:`Delete ${it.name}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Delete',confirmButtonColor:'#dc3545'}).then(r=>{if(r.isConfirmed){items=items.filter(x=>x.id!==id);applyFilters();Swal2.fire('Deleted!','','success');}});
 }
 function clearFilters(){['searchInput','filterCat','filterBrand','filterStatus'].forEach(id=>document.getElementById(id).value='');applyFilters();}
-function importItems(){Swal2.fire('Import','Upload a CSV file to bulk import items.','info');}
-function exportItems(){Swal2.fire('Export','Item master exported to CSV.','success');}
+
+document.getElementById('importExcelFile').addEventListener('change', function(e) {
+    if(!e.target.files.length) return;
+    var file = e.target.files[0];
+    Swal2.fire({
+        title: 'Import Items',
+        text: 'Are you sure you want to import data from ' + file.name + '?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Import'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            MA.importFromExcel(file, 'items', function(count) {
+                items = MA.getAll('items'); // reload items
+                applyFilters();
+                Swal2.fire('Success', count + ' records imported successfully.', 'success');
+                document.getElementById('importExcelFile').value = ''; // clear input
+            });
+        } else {
+            document.getElementById('importExcelFile').value = ''; // clear input
+        }
+    });
+});
+
+function exportItems() {
+    MA.exportToExcel('items', 'ItemMaster_Export');
+}
 
 document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
 document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
