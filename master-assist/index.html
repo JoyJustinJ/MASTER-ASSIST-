@@ -757,7 +757,8 @@
         Swal.fire({ icon: "error", text: "Invalid username or password" });
         return;
       }
-      if (user.password !== pwd) {
+      var dbPassword = user.password || 'password'; // fallback for seeded users without a password
+      if (dbPassword !== pwd) {
         Swal.fire({ icon: "error", text: "Invalid username or password" });
         return;
       }

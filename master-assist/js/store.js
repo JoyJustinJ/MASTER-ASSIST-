@@ -24,7 +24,7 @@ const MA = (function () {
       maxFileSizeMB: 10, sessionTimeout: 30, maxLoginAttempts: 5,
       passwordMinLength: 8, retainBackupDays: 30,
     },
-    users: [{ id: 1, name: 'Administrator', username: 'admin', mobile: '', email: '', role: 'Admin', pos: 'All POS', lastLogin: '', status: 'active' }],
+    users: [{ id: 1, name: 'Administrator', username: 'admin', password: 'password', mobile: '', email: '', role: 'Admin', pos: 'All POS', lastLogin: '', status: 'active' }],
     centers: [], pos: [], suppliers: [], customers: [],
     categories: [], brands: [], taxes: [], items: [],
     bills: [], purchaseOrders: [], returns: [],
