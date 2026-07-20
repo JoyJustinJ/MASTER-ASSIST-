@@ -193,6 +193,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -363,20 +364,20 @@
     }
 
     function markRead(id) {
-      const n = notifications.find(x => x.id === id); if (n) { n.unread = false; } renderNotifs();
+      const n = notifications.find(x => x.id === id); if (n) { n.unread = false; MA.set('notifications',notifications); } renderNotifs();
     }
 
     function markAllRead() {
-      notifications.forEach(n => n.unread = false); renderNotifs();
+      notifications.forEach(n => n.unread = false); MA.set('notifications',notifications); renderNotifs();
     }
 
     function deleteNotif(id) {
-      notifications = notifications.filter(x => x.id !== id); renderNotifs();
+      notifications = notifications.filter(x => x.id !== id); MA.set('notifications',notifications); renderNotifs();
     }
 
     function clearAll() {
       Swal2.fire({ title: 'Clear All Notifications?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Clear All', confirmButtonColor: '#dc3545' }).then(r => {
-        if (r.isConfirmed) { notifications = []; renderNotifs(); Swal2.fire({ icon: 'success', title: 'Cleared', timer: 1200, showConfirmButton: false }); }
+        if (r.isConfirmed) { notifications = []; MA.set('notifications',notifications); renderNotifs(); Swal2.fire({ icon: 'success', title: 'Cleared', timer: 1200, showConfirmButton: false }); }
       });
     }
 
@@ -395,9 +396,6 @@
     document.addEventListener('click', () => document.getElementById('userDropdown').classList.remove('show'));
     renderNotifs();
   
-
-if(typeof markAllRead==='function'){var _origMar=markAllRead;markAllRead=function(){_origMar();MA.set('notifications',notifications);};}
-
 
 // --- MA badge refresh ---
 (function(){

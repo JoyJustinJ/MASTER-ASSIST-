@@ -81,6 +81,7 @@
     <li><a href="payments.html" class="active"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -318,6 +319,7 @@ function savePayment(){
   const eid=document.getElementById('editId').value;
   if(eid){const idx=payments.findIndex(p=>p.id===parseInt(eid));payments[idx]={...payments[idx],...data};}
   else{payments.push({id:nextId++,no:'PAY-'+String(nextNo++).padStart(4,'0'),...data});}
+  MA.set('payments',payments);
   bootstrap.Modal.getInstance(document.getElementById('payModal')).hide();
   applyFilters();
 }
@@ -344,20 +346,17 @@ function viewPayment(id){
 function deletePayment(id){
   const p=payments.find(x=>x.id===id);
   Swal2.fire({title:`Delete ${p.no}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Delete',confirmButtonColor:'#dc3545'}).then(r=>{
-    if(r.isConfirmed){payments=payments.filter(x=>x.id!==id);applyFilters();Swal2.fire('Deleted!','','success');}
+    if(r.isConfirmed){payments=payments.filter(x=>x.id!==id);MA.set('payments',payments);applyFilters();Swal2.fire('Deleted!','','success');}
   });
 }
 
 function clearFilters(){['searchInput','filterMode','filterFrom','filterTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('globalSearch').value='';applyFilters();}
-function exportPay(){Swal2.fire('Export','Payment ledger exported.','success');}
+function exportPay(){MA.exportToExcel('payments','Payments_Ledger');}
 
 document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
 document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
 document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
 applyFilters();
-
-
-if(typeof savePayment==='function'){var _origSavePay=savePayment;savePayment=function(){_origSavePay();MA.set('payments',payments);};}
 
 
 // --- MA badge refresh ---

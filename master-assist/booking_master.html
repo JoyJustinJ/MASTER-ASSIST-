@@ -62,6 +62,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -165,12 +166,13 @@ function renderBookings(){
       </div>
     </div>`).join('');
 }
-function openAdd(){document.getElementById('modalTitle').textContent='New Booking';['bCust','bPhone','bNotes'].forEach(id=>document.getElementById(id).value='');['bAmt','bAdvance'].forEach(id=>document.getElementById(id).value='');document.getElementById('bDate').value='';document.getElementById('bStatus').value='pending';new bootstrap.Modal(document.getElementById('bookingModal')).show();}
-function editBooking(id){const b=bookings.find(x=>x.id===id);document.getElementById('modalTitle').textContent='Edit Booking';document.getElementById('bCust').value=b.cust;document.getElementById('bPhone').value=b.phone;document.getElementById('bDate').value=b.date;document.getElementById('bAmt').value=b.amt;document.getElementById('bAdvance').value=b.adv;document.getElementById('bStatus').value=b.status;document.getElementById('bNotes').value=b.notes;new bootstrap.Modal(document.getElementById('bookingModal')).show();}
-function saveBooking(){const cust=document.getElementById('bCust').value.trim();if(!cust){alert('Customer required');return;}bookings.push({id:nextId++,bno:'BKG-'+String(nextId).padStart(3,'0'),cust,phone:document.getElementById('bPhone').value,date:document.getElementById('bDate').value,amt:parseFloat(document.getElementById('bAmt').value)||0,adv:parseFloat(document.getElementById('bAdvance').value)||0,status:document.getElementById('bStatus').value,notes:document.getElementById('bNotes').value});bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();renderBookings();}
-function confirmBooking(id){bookings=bookings.map(b=>b.id===id?{...b,status:'confirmed'}:b);renderBookings();}
-function markDelivered(id){bookings=bookings.map(b=>b.id===id?{...b,status:'delivered'}:b);renderBookings();Swal2.fire({icon:'success',title:'Delivered',timer:1200,showConfirmButton:false});}
-function cancelBooking(id){Swal2.fire({title:'Cancel Booking?',icon:'warning',showCancelButton:true,confirmButtonText:'Cancel Booking',confirmButtonColor:'#dc3545'}).then(r=>{if(r.isConfirmed){bookings=bookings.map(b=>b.id===id?{...b,status:'cancelled'}:b);renderBookings();}});}
+let editingBookingId=null;
+function openAdd(){editingBookingId=null;document.getElementById('modalTitle').textContent='New Booking';['bCust','bPhone','bNotes'].forEach(id=>document.getElementById(id).value='');['bAmt','bAdvance'].forEach(id=>document.getElementById(id).value='');document.getElementById('bDate').value='';document.getElementById('bStatus').value='pending';new bootstrap.Modal(document.getElementById('bookingModal')).show();}
+function editBooking(id){editingBookingId=id;const b=bookings.find(x=>x.id===id);document.getElementById('modalTitle').textContent='Edit Booking';document.getElementById('bCust').value=b.cust;document.getElementById('bPhone').value=b.phone;document.getElementById('bDate').value=b.date;document.getElementById('bAmt').value=b.amt;document.getElementById('bAdvance').value=b.adv;document.getElementById('bStatus').value=b.status;document.getElementById('bNotes').value=b.notes;new bootstrap.Modal(document.getElementById('bookingModal')).show();}
+function saveBooking(){const cust=document.getElementById('bCust').value.trim();if(!cust){alert('Customer required');return;}if(editingBookingId){const idx=bookings.findIndex(x=>x.id===editingBookingId);if(idx>=0){bookings[idx]={...bookings[idx],cust,phone:document.getElementById('bPhone').value,date:document.getElementById('bDate').value,amt:parseFloat(document.getElementById('bAmt').value)||0,adv:parseFloat(document.getElementById('bAdvance').value)||0,status:document.getElementById('bStatus').value,notes:document.getElementById('bNotes').value};}}else{bookings.push({id:nextId++,bno:'BKG-'+String(nextId).padStart(3,'0'),cust,phone:document.getElementById('bPhone').value,date:document.getElementById('bDate').value,amt:parseFloat(document.getElementById('bAmt').value)||0,adv:parseFloat(document.getElementById('bAdvance').value)||0,status:document.getElementById('bStatus').value,notes:document.getElementById('bNotes').value});}MA.set('bookings',bookings);bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();renderBookings();}
+function confirmBooking(id){bookings=bookings.map(b=>b.id===id?{...b,status:'confirmed'}:b);MA.set('bookings',bookings);renderBookings();}
+function markDelivered(id){bookings=bookings.map(b=>b.id===id?{...b,status:'delivered'}:b);MA.set('bookings',bookings);renderBookings();Swal2.fire({icon:'success',title:'Delivered',timer:1200,showConfirmButton:false});}
+function cancelBooking(id){Swal2.fire({title:'Cancel Booking?',icon:'warning',showCancelButton:true,confirmButtonText:'Cancel Booking',confirmButtonColor:'#dc3545'}).then(r=>{if(r.isConfirmed){bookings=bookings.map(b=>b.id===id?{...b,status:'cancelled'}:b);MA.set('bookings',bookings);renderBookings();}});}
 document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
 document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
 document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
@@ -185,12 +187,6 @@ renderBookings();
   el('bkConfirmed',bk.filter(function(b){return b.status==='confirmed';}).length);
   el('bkDelivered',bk.filter(function(b){return b.status==='delivered';}).length);
 })();
-if(typeof saveBooking==='function'){var _origSaveBk=saveBooking;saveBooking=function(){_origSaveBk();MA.set('bookings',bookings);};}
-if(typeof confirmBooking==='function'){var _origCnfBk=confirmBooking;confirmBooking=function(id){_origCnfBk(id);MA.set('bookings',bookings);};}
-if(typeof markDelivered==='function'){var _origMkDel=markDelivered;markDelivered=function(id){_origMkDel(id);MA.set('bookings',bookings);};}
-if(typeof cancelBooking==='function'){var _origCncBk=cancelBooking;cancelBooking=function(id){_origCncBk(id);MA.set('bookings',bookings);};}
-
-
 // --- MA badge refresh ---
 (function(){
   var nb=document.getElementById('navBadge');

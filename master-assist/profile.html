@@ -92,6 +92,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -346,6 +347,11 @@ document.getElementById('newPwd').addEventListener('input',function(){
 
 /* ---- Save profile ---- */
 function saveProfile(){
+  var users=MA.getAll('users');
+  var idx=users.findIndex(function(u){return u.username==='admin';});
+  var data={name:document.getElementById('pName').value.trim(),email:document.getElementById('pEmail').value.trim(),mobile:document.getElementById('pMobile').value.trim()};
+  if(idx>=0){users[idx]={...users[idx],...data};}else{users.push({id:1,username:'admin',role:'Admin',status:'active',...data});}
+  MA.set('users',users);
   Swal.fire({icon:'success',title:'Profile Updated',text:'Your changes have been saved.',timer:1800,timerProgressBar:true,showConfirmButton:false});
 }
 
@@ -357,6 +363,10 @@ function changePassword(){
   if(!cur||!np||!cp){showAlert('error','All password fields are required.');return;}
   if(np!==cp){showAlert('error','New passwords do not match.');return;}
   if(np.length<8){showAlert('error','Password must be at least 8 characters.');return;}
+  var users=MA.getAll('users');
+  var idx=users.findIndex(function(u){return u.username==='admin';});
+  if(idx>=0){users[idx].password=np;}
+  MA.set('users',users);
   Swal.fire({icon:'success',title:'Password Updated',text:'Your password has been changed.',timer:1800,timerProgressBar:true,showConfirmButton:false});
   document.getElementById('currentPwd').value='';
   document.getElementById('newPwd').value='';

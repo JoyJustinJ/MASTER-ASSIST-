@@ -87,6 +87,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -320,6 +321,7 @@ function saveTransfer(status){
   if(!items.length){alert('Add at least one item.');return;}
   const d=new Date().toISOString().split('T')[0];
   transfers.unshift({id:nextId++,no:'TRF-'+String(nextNo++).padStart(4,'0'),from,to,date:d,expected:document.getElementById('txExpected').value,items,status,by:'Admin',notes:document.getElementById('txNotes').value.trim()});
+  MA.set('stockTransfers',transfers);
   bootstrap.Modal.getInstance(document.getElementById('txModal')).hide();
   applyFilters();
   Swal2.fire({icon:'success',title:status==='sent'?'Transfer Sent!':'Draft Saved',timer:1500,showConfirmButton:false});
@@ -357,13 +359,13 @@ function viewTransfer(id){
 function markReceived(id){
   const t=transfers.find(x=>x.id===id);if(!t) return;
   Swal2.fire({title:'Mark as Received?',text:`Confirm receipt of ${t.no}`,icon:'question',showCancelButton:true,confirmButtonText:'Yes, Received'}).then(r=>{
-    if(r.isConfirmed){t.status='received';bootstrap.Modal.getOrCreateInstance(document.getElementById('viewTxModal')).hide();applyFilters();Swal2.fire({icon:'success',title:'Received!',timer:1500,showConfirmButton:false});}
+    if(r.isConfirmed){t.status='received';MA.set('stockTransfers',transfers);bootstrap.Modal.getOrCreateInstance(document.getElementById('viewTxModal')).hide();applyFilters();Swal2.fire({icon:'success',title:'Received!',timer:1500,showConfirmButton:false});}
   });
 }
 
 function sendTransfer(id){
   const t=transfers.find(x=>x.id===id);if(!t) return;
-  t.status='sent';applyFilters();
+  t.status='sent';MA.set('stockTransfers',transfers);applyFilters();
   Swal2.fire({icon:'success',title:'Transfer Sent',timer:1500,showConfirmButton:false});
 }
 
@@ -371,12 +373,12 @@ function cancelTransfer(id){
   const t=transfers.find(x=>x.id===id);
   if(t.status==='received'){Swal2.fire('Cannot Cancel','Already received.','info');return;}
   Swal2.fire({title:`Cancel ${t.no}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Yes, Cancel',confirmButtonColor:'#dc3545'}).then(r=>{
-    if(r.isConfirmed){t.status='cancelled';applyFilters();Swal2.fire({icon:'success',title:'Cancelled',timer:1500,showConfirmButton:false});}
+    if(r.isConfirmed){t.status='cancelled';MA.set('stockTransfers',transfers);applyFilters();Swal2.fire({icon:'success',title:'Cancelled',timer:1500,showConfirmButton:false});}
   });
 }
 
 function clearFilters(){['searchInput','filterFrom','filterStatus'].forEach(id=>document.getElementById(id).value='');document.getElementById('globalSearch').value='';applyFilters();}
-function exportTx(){Swal2.fire('Export','Stock transfer report exported.','success');}
+function exportTx(){MA.exportToExcel('stockTransfers','Stock_Transfers');}
 
 document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
 document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
@@ -393,9 +395,6 @@ applyFilters();
     s.innerHTML=first+centers.map(function(c){return '<option>'+c.name+'</option>';}).join('');
   });
 })();
-if(typeof saveTransfer==='function'){var _origSaveTrf=saveTransfer;saveTransfer=function(){_origSaveTrf();MA.set('stockTransfers',transfers);};}
-
-
 // --- MA badge refresh ---
 (function(){
   var nb=document.getElementById('navBadge');

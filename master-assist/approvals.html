@@ -122,6 +122,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -269,13 +270,46 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
 <script>
-  /* ---- Data ---- */
-  var parties = MA.getAll('suppliers').map(function(s){return s.name;});
-  var posList = MA.getAll('posTerminals').map(function(p){return p.name;});
-  var types    = ['Purchase Bill','Expense Bill','Return Bill','Sales Bill'];
-  var statuses = ['pending','pending','pending','approved','approved','approved','approved','rejected','rejected','approved'];
+  /* ---- Helpers ---- */
+  function fmtAmt(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
+  function statusBadge(s){var m={approved:'badge-success',pending:'badge-pending',rejected:'badge-error'};return '<span class="status-badge '+(m[s]||'badge-info')+'" style="text-transform:capitalize;">'+s+'</span>';}
 
-  var allBills = MA.getAll('bills').filter(function(b){return b.status==='pending';});
+  /* ---- Data ---- */
+  var allBills = MA.getAll('bills');
+  var filtered = [];
+  var selected = new Set();
+  var currentTab = 'pending';
+  var currentPage = 1;
+  var rowsPerPage = 10;
+  var viewingId = null;
+
+  function applyFilters(){
+    var q=(document.getElementById('searchInput').value||'').toLowerCase();
+    var pos=document.getElementById('filterPOS').value;
+    var date=document.getElementById('filterDate').value;
+    filtered=allBills.filter(function(b){
+      if(currentTab!=='all'&&b.status!==currentTab) return false;
+      if(q&&(b.billNo+b.party).toLowerCase().indexOf(q)<0) return false;
+      if(pos&&b.pos!==pos) return false;
+      if(date&&b.date!==date) return false;
+      return true;
+    });
+    currentPage=1;
+    selected.clear();
+    updateCounts();
+    renderList();
+    updateBulkBar();
+  }
+  function updateCounts(){
+    document.getElementById('cntAll').textContent=allBills.length;
+    document.getElementById('cntPending').textContent=allBills.filter(function(b){return b.status==='pending';}).length;
+    document.getElementById('cntApproved').textContent=allBills.filter(function(b){return b.status==='approved';}).length;
+    document.getElementById('cntRejected').textContent=allBills.filter(function(b){return b.status==='rejected';}).length;
+    document.getElementById('tabPending').textContent=allBills.filter(function(b){return b.status==='pending';}).length;
+    document.getElementById('tabApproved').textContent=allBills.filter(function(b){return b.status==='approved';}).length;
+    document.getElementById('tabRejected').textContent=allBills.filter(function(b){return b.status==='rejected';}).length;
+    document.getElementById('tabAll').textContent=allBills.length;
+  }
 function renderList(){
     var start=(currentPage-1)*rowsPerPage;
     var page=filtered.slice(start,Math.min(start+rowsPerPage,filtered.length));
@@ -396,6 +430,8 @@ function renderList(){
     var b=allBills.find(function(x){return x.id===id;});
     if(!b) return;
     b.status=status;
+    MA.set('bills',allBills);
+    MA.addAudit('Bill '+b.billNo+' '+status,'admin');
     applyFilters();
     showAlert('success','Bill '+b.billNo+' '+(status==='approved'?'approved':'rejected')+'.');
   }
@@ -418,19 +454,21 @@ function renderList(){
       var b=allBills.find(function(x){return x.id===id;});
       if(b&&b.status==='pending') b.status='approved';
     });
-    selected.clear(); applyFilters(); showAlert('success','Selected bills approved.');
+    selected.clear(); MA.set('bills',allBills); applyFilters(); showAlert('success','Selected bills approved.');
   });
   document.getElementById('bulkReject').addEventListener('click',function(){
     selected.forEach(function(id){
       var b=allBills.find(function(x){return x.id===id;});
       if(b&&b.status==='pending') b.status='rejected';
     });
-    selected.clear(); applyFilters(); showAlert('success','Selected bills rejected.');
+    selected.clear(); MA.set('bills',allBills); applyFilters(); showAlert('success','Selected bills rejected.');
   });
   document.getElementById('bulkApproveAllBtn').addEventListener('click',function(){
-    Swal.fire({title:'Approve all pending?',text:'This will approve all '+allBills.filter(function(b){return b.status==='pending';}).length+' pending bills.',icon:'question',showCancelButton:true,confirmButtonColor:'#28a745',confirmButtonText:'Approve All'}).then(function(r){
+    var cnt=allBills.filter(function(b){return b.status==='pending';}).length;
+    Swal.fire({title:'Approve all pending?',text:'This will approve all '+cnt+' pending bills.',icon:'question',showCancelButton:true,confirmButtonColor:'#28a745',confirmButtonText:'Approve All'}).then(function(r){
       if(r.isConfirmed){
         allBills.forEach(function(b){if(b.status==='pending') b.status='approved';});
+        MA.set('bills',allBills);
         applyFilters(); showAlert('success','All pending bills approved.');
       }
     });
@@ -459,7 +497,26 @@ function renderList(){
   });
   document.getElementById('userDropdownToggle').addEventListener('click',function(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('open');});
   document.addEventListener('click',function(){document.getElementById('userDropdown').classList.remove('open');});
-  document.getElementById('approvalMenu').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('approvalSubmenu').classList.toggle('open');});
+  // tabs
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active');
+      currentTab=this.dataset.tab;
+      applyFilters();
+    });
+  });
+  document.getElementById('applyFilter').addEventListener('click',applyFilters);
+  document.getElementById('clearFilter').addEventListener('click',function(){
+    document.getElementById('searchInput').value='';
+    document.getElementById('filterPOS').value='';
+    document.getElementById('filterDate').value='';
+    applyFilters();
+  });
+  document.getElementById('globalSearch').addEventListener('input',function(){
+    document.getElementById('searchInput').value=this.value;
+    applyFilters();
+  });
 
   /* ---- Init ---- */
   applyFilters();

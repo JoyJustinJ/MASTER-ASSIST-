@@ -418,6 +418,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -588,7 +589,7 @@
           <div class="ma-card-header">
             <h5><i class="fas fa-file-invoice" style="color:#7957fb;margin-right:7px;"></i>Uploaded Bills</h5>
             <div class="card-header-actions">
-              <button class="btn-icon" title="Export Excel"><i class="fas fa-file-excel"></i></button>
+              <button class="btn-icon" title="Export Excel" onclick="MA.exportToExcel('bills','Bills_Upload')"><i class="fas fa-file-excel"></i></button>
               <button class="btn-icon" title="Refresh" id="refreshBtn"><i class="fas fa-sync-alt"></i></button>
             </div>
           </div>
@@ -911,6 +912,7 @@
           file:   selectedFiles[0].name
         };
         billsData.unshift(newBill);
+        MA.set('bills', billsData);
         filteredData = billsData.slice();
         currentPage  = 1;
         renderTable();
@@ -987,6 +989,7 @@
           if (result.isConfirmed) {
             billsData     = billsData.filter(function(b) { return b.id !== id2; });
             filteredData  = filteredData.filter(function(b) { return b.id !== id2; });
+            MA.set('bills', billsData);
             renderTable();
             showAlert('success', 'Bill deleted successfully.');
           }

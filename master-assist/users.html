@@ -104,6 +104,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -517,6 +518,7 @@
       var u3  = usersData.find(function(x){return x.id===id3;});
       if (!u3) return;
       u3.status = u3.status==='active' ? 'inactive' : 'active';
+      MA.set('users',usersData);
       applyFilters();
       showAlert('success','User '+u3.name+' is now '+(u3.status==='active'?'active':'inactive')+'.');
     }
@@ -531,6 +533,7 @@
       }).then(function(r){
         if (r.isConfirmed) {
           usersData = usersData.filter(function(x){return x.id!==id4;});
+          MA.set('users',usersData);
           applyFilters();
           showAlert('success','User '+u4.name+' deleted.');
         }
@@ -597,6 +600,7 @@
       usersData.push(newUser);
       showAlert('success','User '+name+' added.');
     }
+    MA.set('users',usersData);
     document.getElementById('userModal').classList.remove('open');
     applyFilters();
   });
@@ -660,10 +664,6 @@
   var s=document.getElementById('uPOS');
   if(s&&posList.length){s.innerHTML='<option value="All POS">All POS</option>'+posList.map(function(p){return '<option>'+p.name+'</option>';}).join('');}
 })();
-if(typeof saveUser==='function'){var _origSaveUsr=saveUser;saveUser=function(){_origSaveUsr();MA.set('users',usersData);};}
-if(typeof deleteUser==='function'){var _origDelUsr=deleteUser;deleteUser=function(id){_origDelUsr(id);MA.set('users',usersData);};}
-
-
 // --- MA badge refresh ---
 (function(){
   var nb=document.getElementById('navBadge');

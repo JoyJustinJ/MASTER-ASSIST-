@@ -108,6 +108,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -467,13 +468,13 @@
     if(rBtn){
       var po=poData.find(function(x){return x.id===parseInt(rBtn.dataset.id);});
       Swal.fire({title:'Mark as Received?',text:po.poNo+' from '+po.supplier,icon:'question',showCancelButton:true,confirmButtonColor:'#28a745',confirmButtonText:'Confirm Received'}).then(function(r){
-        if(r.isConfirmed){po.status='received';applyFilters();showAlert('success',po.poNo+' marked as received.');}
+        if(r.isConfirmed){po.status='received';MA.set('purchaseOrders',poData);applyFilters();showAlert('success',po.poNo+' marked as received.');}
       });
     }
     if(cBtn){
       var po2=poData.find(function(x){return x.id===parseInt(cBtn.dataset.id);});
       Swal.fire({title:'Cancel '+po2.poNo+'?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Cancel PO'}).then(function(r){
-        if(r.isConfirmed){po2.status='cancelled';applyFilters();showAlert('success',po2.poNo+' cancelled.');}
+        if(r.isConfirmed){po2.status='cancelled';MA.set('purchaseOrders',poData);applyFilters();showAlert('success',po2.poNo+' cancelled.');}
       });
     }
   });
@@ -537,6 +538,7 @@
     var gst=Math.round(subtotal*0.18);
     var po={id:poData.length+1,poNo:'PO-'+String(1000+poData.length).padStart(4,'0'),supplier:supplier,date:d,expected:ed,items:rows.length,amount:subtotal+gst,status:status,notes:document.getElementById('poNotes').value};
     poData.push(po);
+    MA.set('purchaseOrders',poData);
     document.getElementById('createPOModal').classList.remove('open');
     applyFilters();
     showAlert('success','Purchase Order '+po.poNo+(status==='sent'?' sent.':" saved as draft."));

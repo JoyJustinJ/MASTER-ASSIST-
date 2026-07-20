@@ -98,6 +98,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -433,6 +434,7 @@
       }).then(function(r){
         if(r.isConfirmed){
           it2.stock=Math.max(0,it2.stock+r.value);
+          MA.set('inventory',items);
           applyFilters();
           showAlert('success','Stock for '+it2.name+' updated to '+it2.stock+' '+it2.unit+'.');
         }
@@ -443,7 +445,7 @@
       var id3=parseInt(dBtn.dataset.id);
       var it3=items.find(function(x){return x.id===id3;});
       Swal.fire({title:'Delete '+it3.name+'?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Delete'}).then(function(r){
-        if(r.isConfirmed){items=items.filter(function(x){return x.id!==id3;});applyFilters();showAlert('success',it3.name+' removed.');}
+        if(r.isConfirmed){items=items.filter(function(x){return x.id!==id3;});MA.set('inventory',items);applyFilters();showAlert('success',it3.name+' removed.');}
       });
     }
   });
@@ -469,6 +471,7 @@
       items.push({id:items.length+1,sku,name,cat:document.getElementById('iCat').value,unit:document.getElementById('iUnit').value,rate:parseFloat(document.getElementById('iRate').value)||0,stock:parseInt(document.getElementById('iStock').value)||0,minStock:parseInt(document.getElementById('iMinStock').value)||0,warehouse:document.getElementById('iWarehouse').value});
       showAlert('success',name+' added.');
     }
+    MA.set('inventory',items);
     document.getElementById('itemModal').classList.remove('open');
     applyFilters();
   });

@@ -135,6 +135,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -461,6 +462,7 @@ function saveCenter() {
   } else {
     centers.push({ id: nextCenterId++, pos: [], ...data });
   }
+  MA.set('centers',centers);
   bootstrap.Modal.getInstance(document.getElementById('centerModal')).hide();
   renderCenters();
 }
@@ -474,6 +476,7 @@ function deleteCenter(id) {
   }).then(r => {
     if (r.isConfirmed) {
       centers = centers.filter(c => c.id !== id);
+      MA.set('centers',centers);
       renderCenters();
       Swal2.fire('Deleted!', 'Center has been removed.', 'success');
     }
@@ -501,12 +504,13 @@ function savePOS() {
     cashier: document.getElementById('posCashier').value.trim() || '—',
     status: document.getElementById('posStatus').value
   });
+  MA.set('centers',centers);
   bootstrap.Modal.getInstance(document.getElementById('posModal')).hide();
   renderCenters();
 }
 
 function exportCenters() {
-  Swal2.fire('Export', 'Centers data exported to CSV.', 'success');
+  MA.exportToExcel('centers','Centers_Export');
 }
 
 // Sidebar toggle
@@ -524,10 +528,6 @@ document.addEventListener('click', () => document.getElementById('userDropdown')
 
 // Init
 renderCenters();
-
-
-if(typeof saveCenter==='function'){var _origSaveC=saveCenter;saveCenter=function(){_origSaveC();MA.set('centers',centers);};}
-if(typeof deleteCenter==='function'){var _origDelC=deleteCenter;deleteCenter=function(id){_origDelC(id);MA.set('centers',centers);};}
 
 
 // --- MA badge refresh ---

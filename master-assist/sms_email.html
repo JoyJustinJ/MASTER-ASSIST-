@@ -67,6 +67,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -223,8 +224,16 @@ function loadTemplate(key,el){
 }
 function showView(v,btn){['templates','send','logs'].forEach(id=>document.getElementById('view-'+id).style.display='none');document.getElementById('view-'+v).style.display='';document.querySelectorAll('.comm-tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
 function copyVar(v){navigator.clipboard.writeText(v).catch(()=>{});Swal2.fire({icon:'success',title:'Copied',text:v,toast:true,position:'top-end',timer:1200,showConfirmButton:false});}
-function openAdd(){Swal2.fire('New Template','Template editor would open here for a new template.','info');}
-function openEdit(){Swal2.fire('Edit Template','Template editor would open here.','info');}
+function openAdd(){
+  Swal2.fire({title:'New Template',html:'<input id="st_title" class="swal2-input" placeholder="Template Title" /><textarea id="st_body" class="swal2-textarea" placeholder="Template body..."></textarea>',confirmButtonText:'Save',showCancelButton:true,preConfirm:function(){var t=document.getElementById('st_title').value.trim();var b=document.getElementById('st_body').value.trim();if(!t||!b){Swal2.showValidationMessage('Title and body are required');}return{title:t,body:b};}}).then(function(r){if(r.isConfirmed){var tmpls=MA.getAll('smsTemplates');var key='custom_'+Date.now();tmpls.push({key:key,title:r.value.title,body:r.value.body,trigger:'Manual'});MA.set('smsTemplates',tmpls);Swal2.fire({icon:'success',title:'Saved!',timer:1500,showConfirmButton:false});}});
+}
+function openEdit(){
+  var bodyEl=document.getElementById('tplBody');
+  var titleEl=document.getElementById('tplTitle');
+  var curBody=bodyEl?bodyEl.textContent:'';
+  var curTitle=titleEl?titleEl.textContent:'';
+  Swal2.fire({title:'Edit Template',html:'<input id="et_title" class="swal2-input" value="'+curTitle+'" /><textarea id="et_body" class="swal2-textarea" style="height:100px;">'+curBody+'</textarea>',confirmButtonText:'Save',showCancelButton:true,preConfirm:function(){return{title:document.getElementById('et_title').value.trim(),body:document.getElementById('et_body').value.trim()};}}).then(function(r){if(r.isConfirmed){if(bodyEl)bodyEl.textContent=r.value.body;if(titleEl)titleEl.textContent=r.value.title;Swal2.fire({icon:'success',title:'Template Updated',timer:1500,showConfirmButton:false});}});
+}
 function testTemplate(){Swal2.fire({icon:'success',title:'Test SMS Sent',text:'Sent to admin mobile number',timer:1500,showConfirmButton:false});}
 function confirmSend(){Swal2.fire({title:'Send Campaign?',text:'This will send SMS to 248 customers.',icon:'warning',showCancelButton:true,confirmButtonText:'Send Now'}).then(r=>{if(r.isConfirmed){Swal2.fire({icon:'success',title:'Campaign Queued',text:'Your campaign has been queued for sending.',timer:2000,showConfirmButton:false});}});}
 document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});

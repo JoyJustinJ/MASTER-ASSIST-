@@ -118,6 +118,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -276,8 +277,32 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
 <script>
+  /* ---- Helpers ---- */
+  function fmtAmt(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
+  function fileIcon(f){
+    if(!f) return '<span style="color:#bbb;font-size:12px;">—</span>';
+    var ext=(f.split('.').pop()||'').toLowerCase();
+    var ic=ext==='pdf'?'fa-file-pdf red':ext==='jpg'||ext==='png'||ext==='jpeg'?'fa-file-image blue':'fa-file';
+    return '<i class="fas '+ic+'" style="font-size:18px;"></i>';
+  }
+  function statusBadge(s){
+    var m={approved:'badge-success',pending:'badge-pending',rejected:'badge-error'};
+    return '<span class="status-badge '+(m[s]||'badge-info')+'" style="text-transform:capitalize;">'+s+'</span>';
+  }
+  function updateTabCounts(){
+    document.getElementById('tabCountAll').textContent=allBills.length;
+    document.getElementById('tabCountPending').textContent=allBills.filter(function(b){return b.status==='pending';}).length;
+    document.getElementById('tabCountApproved').textContent=allBills.filter(function(b){return b.status==='approved';}).length;
+    document.getElementById('tabCountRejected').textContent=allBills.filter(function(b){return b.status==='rejected';}).length;
+  }
   /* ---- Data ---- */
   var allBills = MA.getAll('bills');
+  var filteredBills = [];
+  var selectedIds = new Set();
+  var currentTab = 'all';
+  var currentPage = 1;
+  var rowsPerPage = 10;
+  var pendingAction = null;
 function applyFilters() {
     var search = document.getElementById('searchInput').value.toLowerCase();
     var pos    = document.getElementById('filterPOS').value;
@@ -481,6 +506,7 @@ function applyFilters() {
       }).then(function(r){
         if (r.isConfirmed) {
           allBills = allBills.filter(function(x){return x.id!==id4;});
+          MA.set('bills', allBills);
           applyFilters();
           showAlert('success','Bill '+b4.billNo+' deleted.');
         }
@@ -493,6 +519,7 @@ function applyFilters() {
     if (!pendingAction) return;
     var b = allBills.find(function(x){return x.id===pendingAction.id;});
     if (b) b.status = (pendingAction.type==='approve') ? 'approved' : 'rejected';
+    MA.set('bills', allBills);
     document.getElementById('actionModal').classList.remove('open');
     document.getElementById('actionRemarks').value = '';
     pendingAction = null;
@@ -506,7 +533,7 @@ function applyFilters() {
       var b = allBills.find(function(x){return x.id===id;});
       if (b && b.status==='pending') b.status = 'approved';
     });
-    selectedIds.clear();
+    selectedIds.clear(); MA.set('bills', allBills);
     applyFilters();
     showAlert('success','Selected bills approved.');
   });
@@ -515,10 +542,12 @@ function applyFilters() {
       var b = allBills.find(function(x){return x.id===id;});
       if (b && b.status==='pending') b.status = 'rejected';
     });
-    selectedIds.clear();
+    selectedIds.clear(); MA.set('bills', allBills);
     applyFilters();
     showAlert('success','Selected bills rejected.');
   });
+  document.getElementById('bulkExport').addEventListener('click', function(){ MA.exportToExcel('bills','Bills'); });
+  document.getElementById('exportExcelBtn').addEventListener('click', function(){ MA.exportToExcel('bills','All_Bills'); });
 
   /* ---- Modal close ---- */
   ['viewModal','actionModal'].forEach(function(id) {

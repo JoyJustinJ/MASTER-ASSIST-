@@ -85,6 +85,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -116,7 +117,7 @@
       <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="welcome.html" style="color:#696cff;">Home</a></li><li class="breadcrumb-item active">Returns</li></ol></nav>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn-ma-outline"><i class="fas fa-file-excel"></i> Export</button>
+      <button class="btn-ma-outline" onclick="MA.exportToExcel('returns','Returns')"><i class="fas fa-file-excel"></i> Export</button>
       <button class="btn-ma-primary" id="addReturnBtn"><i class="fas fa-plus"></i> New Return</button>
     </div>
   </div>
@@ -245,6 +246,40 @@ var reasons=['Damaged goods','Wrong item received','Quality issue','Excess quant
 var statuses=['pending','processed','processed','processed','rejected','pending','processed'];
 
 var returnsData = MA.getAll('returns');
+var filtered = [];
+var currentTab = 'all';
+var currentPage = 1;
+var rowsPerPage = 10;
+var viewingId = null;
+function fmtAmt(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
+function statusBadge(s){var m={processed:'badge-success',pending:'badge-pending',rejected:'badge-error'};return '<span class="status-badge '+(m[s]||'badge-info')+'" style="text-transform:capitalize;">'+s+'</span>';}
+function applyFilters(){
+  var q=(document.getElementById('searchInput').value||'').toLowerCase();
+  var type=document.getElementById('filterType').value;
+  var pos=document.getElementById('filterPOS').value;
+  var date=document.getElementById('filterDate').value;
+  filtered=returnsData.filter(function(r){
+    if(currentTab!=='all'&&r.status!==currentTab) return false;
+    if(q&&(r.returnNo+r.party).toLowerCase().indexOf(q)<0) return false;
+    if(type&&r.type!==type) return false;
+    if(pos&&r.pos!==pos) return false;
+    if(date&&r.date!==date) return false;
+    return true;
+  });
+  currentPage=1;
+  updateStats();
+  renderTable();
+}
+function updateStats(){
+  document.getElementById('cntTotal').textContent=returnsData.length;
+  document.getElementById('cntPending').textContent=returnsData.filter(function(r){return r.status==='pending';}).length;
+  document.getElementById('cntProcessed').textContent=returnsData.filter(function(r){return r.status==='processed';}).length;
+  document.getElementById('cntValue').textContent=MA.fmt(returnsData.reduce(function(a,r){return a+(r.amount||0);},0));
+  document.getElementById('tabAll').textContent=returnsData.length;
+  document.getElementById('tabPending').textContent=returnsData.filter(function(r){return r.status==='pending';}).length;
+  document.getElementById('tabProcessed').textContent=returnsData.filter(function(r){return r.status==='processed';}).length;
+  document.getElementById('tabRejected').textContent=returnsData.filter(function(r){return r.status==='rejected';}).length;
+}
 function renderTable(){
   var start=(currentPage-1)*rowsPerPage;
   var page=filtered.slice(start,start+rowsPerPage);
@@ -315,17 +350,17 @@ document.getElementById('returnsBody').addEventListener('click',function(e){
     pb.style.display=r.status==='pending'?'inline-flex':'none';
     document.getElementById('viewReturnModal').classList.add('open');
   }
-  if(pBtn){var r2=returnsData.find(function(x){return x.id===parseInt(pBtn.dataset.id);});if(r2){r2.status='processed';applyFilters();showAlert('success',r2.returnNo+' marked as processed.');}}
+  if(pBtn){var r2=returnsData.find(function(x){return x.id===parseInt(pBtn.dataset.id);});if(r2){r2.status='processed';MA.set('returns',returnsData);applyFilters();showAlert('success',r2.returnNo+' marked as processed.');}}
   if(dBtn){
     var r3=returnsData.find(function(x){return x.id===parseInt(dBtn.dataset.id);});
-    Swal.fire({title:'Delete '+r3.returnNo+'?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Delete'}).then(function(res){if(res.isConfirmed){returnsData=returnsData.filter(function(x){return x.id!==r3.id;});applyFilters();showAlert('success',r3.returnNo+' deleted.');}});
+    Swal.fire({title:'Delete '+r3.returnNo+'?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Delete'}).then(function(res){if(res.isConfirmed){returnsData=returnsData.filter(function(x){return x.id!==r3.id;});MA.set('returns',returnsData);applyFilters();showAlert('success',r3.returnNo+' deleted.');}});
   }
 });
 
 document.getElementById('processReturnBtn').addEventListener('click',function(){
   if(!viewingId) return;
   var r=returnsData.find(function(x){return x.id===viewingId;});
-  if(r){r.status='processed';applyFilters();showAlert('success',r.returnNo+' marked as processed.');}
+  if(r){r.status='processed';MA.set('returns',returnsData);applyFilters();showAlert('success',r.returnNo+' marked as processed.');}
   document.getElementById('viewReturnModal').classList.remove('open');
 });
 
@@ -340,6 +375,7 @@ document.getElementById('returnModalSave').addEventListener('click',function(){
   var amt=parseFloat(document.getElementById('rAmount').value)||0;
   if(!bill||!party||!amt){showAlert('error','Fill required fields.');return;}
   returnsData.push({id:returnsData.length+1,returnNo:'RET-'+String(100+returnsData.length).padStart(4,'0'),origBill:bill,party:party,pos:document.getElementById('rPOS').value,type:document.getElementById('rType').value,amount:amt,date:document.getElementById('rDate').value,reason:document.getElementById('rReason').value,status:'pending',remarks:document.getElementById('rRemarks').value});
+  MA.set('returns',returnsData);
   document.getElementById('returnModal').classList.remove('open');
   applyFilters();showAlert('success','Return submitted.');
 });

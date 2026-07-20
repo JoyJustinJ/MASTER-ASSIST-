@@ -1,0 +1,786 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Master Assist — Rate Master</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/master-assist.css" />
+  <style>
+    .pl-tab { padding:8px 18px; border:1px solid #e0e0ea; border-radius:6px; background:#fff; font-size:12px; font-weight:600; color:#555; cursor:pointer; transition:all .15s; white-space:nowrap; }
+    .pl-tab.active { background:#696cff; color:#fff; border-color:#696cff; }
+    .pl-tab:hover:not(.active) { background:#f0f0ff; color:#696cff; border-color:#b8b9f9; }
+    .pl-tabs-wrap { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px; align-items:center; }
+    .rate-badge { display:inline-block; background:#ededff; color:#696cff; padding:2px 9px; border-radius:4px; font-size:12px; font-weight:700; }
+    .mrp-cell { color:#888; font-size:12px; text-decoration:line-through; }
+    .margin-good { color:#28a745; font-weight:600; font-size:12px; }
+    .margin-low  { color:#f57c00; font-weight:600; font-size:12px; }
+    .margin-zero { color:#dc3545; font-weight:600; font-size:12px; }
+    .rate-info-badge { font-size:10px; background:#e8f5e9; color:#28a745; padding:1px 6px; border-radius:3px; }
+    .bulk-toolbar { display:none; align-items:center; gap:10px; padding:10px 16px; background:#ededff; border-radius:8px; margin-bottom:12px; font-size:13px; }
+    .bulk-toolbar.show { display:flex; }
+    .bulk-sel-count { font-weight:700; color:#696cff; }
+  </style>
+</head>
+<body>
+<nav class="ma-navbar">
+  <a href="welcome.html" class="ma-navbar-brand"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="2,2 10,2 13,10 16,2 24,2 24,24 18,24 18,12 13,20 8,12 8,24 2,24" fill="#fff" opacity="0.95"/><circle cx="21" cy="5" r="3" fill="#ff6b2b"/></svg><div><div class="brand-text">Master Assist</div><div class="brand-sub">ERP-23</div></div></a>
+  <button class="navbar-toggle-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+  <div class="navbar-search ms-3"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search items..." id="globalSearch" oninput="renderTable()" /></div>
+  <div class="ma-navbar-right ms-auto">
+    <button class="navbar-icon-btn" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i><span class="navbar-badge"><span id="navBadge">0</span></span></button>
+    <div style="position:relative;"><button class="navbar-user" id="userDropdownToggle"><div class="navbar-avatar">A</div><span class="d-none d-md-inline">Admin</span><i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i></button>
+    <div class="user-dropdown" id="userDropdown"><div class="user-dropdown-header"><div class="user-dropdown-name">Administrator</div><div class="user-dropdown-role">Master Assist — Super Admin</div></div><a href="profile.html"><i class="fas fa-user"></i> My Profile</a><a href="settings.html"><i class="fas fa-cog"></i> Settings</a><div class="user-dropdown-divider"></div><button onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div>
+  </div>
+</nav>
+<aside class="ma-sidebar" id="sidebar">
+  <div class="sidebar-section-title">Main Menu</div>
+  <ul class="sidebar-menu"><li><a href="welcome.html"><span class="menu-icon"><i class="fas fa-th-large"></i></span>Dashboard</a></li></ul>
+  <div class="sidebar-section-title">Sales</div>
+  <ul class="sidebar-menu">
+    <li><a href="new_sale.html"><span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>New Sale</a></li>
+    <li><a href="pos_sales.html"><span class="menu-icon"><i class="fas fa-cash-register"></i></span>POS Sales</a></li>
+    <li><a href="booking_master.html"><span class="menu-icon"><i class="fas fa-calendar-check"></i></span>Bookings</a></li>
+  </ul>
+  <div class="sidebar-section-title">Bill Management</div>
+  <ul class="sidebar-menu">
+    <li><a href="bill_upload.html"><span class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></span>Bill Upload</a></li>
+    <li><a href="bills.html"><span class="menu-icon"><i class="fas fa-file-invoice"></i></span>All Bills</a></li>
+    <li><a href="approvals.html"><span class="menu-icon"><i class="fas fa-tasks"></i></span>Approvals</a></li>
+    <li><a href="purchase_orders.html"><span class="menu-icon"><i class="fas fa-receipt"></i></span>Purchase Orders</a></li>
+    <li><a href="returns.html"><span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>Returns</a></li>
+    <li><a href="suppliers.html"><span class="menu-icon"><i class="fas fa-truck"></i></span>Suppliers</a></li>
+    <li><a href="customers.html"><span class="menu-icon"><i class="fas fa-user-friends"></i></span>Customers</a></li>
+  </ul>
+  <div class="sidebar-section-title">Inventory</div>
+  <ul class="sidebar-menu">
+    <li><a href="inventory.html"><span class="menu-icon"><i class="fas fa-boxes"></i></span>Inventory</a></li>
+    <li><a href="item_master.html"><span class="menu-icon"><i class="fas fa-cube"></i></span>Item Master</a></li>
+    <li><a href="category_master.html"><span class="menu-icon"><i class="fas fa-tags"></i></span>Categories</a></li>
+    <li><a href="brand_list.html"><span class="menu-icon"><i class="fas fa-trademark"></i></span>Brands</a></li>
+    <li><a href="barcode_list.html"><span class="menu-icon"><i class="fas fa-barcode"></i></span>Barcodes</a></li>
+    <li><a href="stock_transfer.html"><span class="menu-icon"><i class="fas fa-dolly"></i></span>Stock Transfer</a></li>
+  </ul>
+  <div class="sidebar-section-title">Finance</div>
+  <ul class="sidebar-menu">
+    <li><a href="expenses.html"><span class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></span>Expenses</a></li>
+    <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
+    <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
+    <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html" class="active"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
+    <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
+    <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
+  </ul>
+  <div class="sidebar-section-title">Reports</div>
+  <ul class="sidebar-menu">
+    <li><a href="reports.html"><span class="menu-icon"><i class="fas fa-chart-bar"></i></span>Sales Reports</a></li>
+    <li><a href="gst_reports.html"><span class="menu-icon"><i class="fas fa-file-alt"></i></span>GST Reports</a></li>
+    <li><a href="aging_report.html"><span class="menu-icon"><i class="fas fa-clock"></i></span>Aging Report</a></li>
+    <li><a href="salesman_report.html"><span class="menu-icon"><i class="fas fa-user-tie"></i></span>Salesman Report</a></li>
+  </ul>
+  <div class="sidebar-section-title">Communication</div>
+  <ul class="sidebar-menu"><li><a href="sms_email.html"><span class="menu-icon"><i class="fas fa-envelope"></i></span>SMS &amp; Email</a></li></ul>
+  <div class="sidebar-section-title">Administration</div>
+  <ul class="sidebar-menu">
+    <li><a href="users.html"><span class="menu-icon"><i class="fas fa-users"></i></span>User Management</a></li>
+    <li><a href="area_master.html"><span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>Area Master</a></li>
+    <li><a href="centers.html"><span class="menu-icon"><i class="fas fa-building"></i></span>Centers</a></li>
+    <li><a href="notifications.html"><span class="menu-icon"><i class="fas fa-bell"></i></span>Notifications</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-cog"></i></span>Settings</a></li>
+    <li><a href="settings.html"><span class="menu-icon"><i class="fas fa-history"></i></span>Audit Log</a></li>
+  </ul>
+  <div class="sidebar-divider"></div>
+  <ul class="sidebar-menu"><li><button onclick="window.location.href='index.html'"><span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>Logout</button></li></ul>
+</aside>
+
+<main class="ma-main" id="maMain">
+  <div class="page-header">
+    <div><div class="page-title">Rate Master</div><div class="page-breadcrumb">Finance / Rate Master</div></div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn-ma-outline" onclick="openBulkUpdate()"><i class="fas fa-percentage me-1"></i>Bulk Update</button>
+      <button class="btn-ma-outline" onclick="MA.exportToExcel('rates','Rate_Master')"><i class="fas fa-file-excel me-1"></i>Export</button>
+      <button class="btn-ma-outline" onclick="openAddList()"><i class="fas fa-list-alt me-1"></i>Manage Lists</button>
+      <button class="btn-ma-primary" onclick="openAdd()"><i class="fas fa-plus me-1"></i>Add Rate</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#ededff;color:#696cff;"><i class="fas fa-boxes"></i></div><div class="stat-info"><div class="stat-value" id="stItems">0</div><div class="stat-label">Total Items</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e8f5e9;color:#28a745;"><i class="fas fa-rupee-sign"></i></div><div class="stat-info"><div class="stat-value" id="stRated">0</div><div class="stat-label">Items Priced</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#e3f2fd;color:#1976d2;"><i class="fas fa-list-alt"></i></div><div class="stat-info"><div class="stat-value" id="stLists">0</div><div class="stat-label">Price Lists</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-icon" style="background:#fff3e0;color:#f57c00;"><i class="fas fa-tag"></i></div><div class="stat-info"><div class="stat-value" id="stAvgDisc">0%</div><div class="stat-label">Avg. Discount</div></div></div></div>
+  </div>
+
+  <!-- Price List Tabs -->
+  <div class="pl-tabs-wrap" id="plTabs"></div>
+
+  <!-- Bulk toolbar -->
+  <div class="bulk-toolbar" id="bulkToolbar">
+    <span><span class="bulk-sel-count" id="bulkCount">0</span> items selected</span>
+    <button class="btn-ma-primary btn-ma-sm" onclick="bulkSetRate()"><i class="fas fa-edit me-1"></i>Set Rate</button>
+    <button class="btn-ma-outline btn-ma-sm" onclick="bulkClearRates()"><i class="fas fa-trash-alt me-1"></i>Clear Rates</button>
+    <button class="btn-ma-outline btn-ma-sm" onclick="clearSelection()"><i class="fas fa-times me-1"></i>Cancel</button>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar mb-3">
+    <input type="text" class="ma-input" placeholder="Search item / SKU..." id="searchInput" style="max-width:240px;" oninput="renderTable()" />
+    <select class="ma-select" id="filterCat" style="max-width:160px;" onchange="renderTable()">
+      <option value="">All Categories</option>
+    </select>
+    <select class="ma-select" id="filterBrand" style="max-width:140px;" onchange="renderTable()">
+      <option value="">All Brands</option>
+    </select>
+    <select class="ma-select" id="filterRated" style="max-width:150px;" onchange="renderTable()">
+      <option value="">All Items</option>
+      <option value="1">With Custom Rate</option>
+      <option value="0">Using MRP</option>
+    </select>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="ma-table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="checkAll" onchange="toggleAll(this.checked)" /></th>
+          <th>#</th><th>Item Name</th><th>SKU</th><th>Category</th><th>Brand</th>
+          <th>MRP</th><th>Rate</th><th>Disc %</th><th>Margin %</th>
+          <th>Eff. From</th><th>Status</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="rateBody"></tbody>
+    </table>
+  </div>
+  <div class="ma-pagination" id="paginationBar">
+    <div class="ma-pagination-info" id="pgInfo"></div>
+    <div class="ma-pagination-btns" id="pgBtns"></div>
+  </div>
+</main>
+
+<!-- Rate Modal -->
+<div class="modal fade" id="rateModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="rModalTitle">Add Rate</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="rEditId" />
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Item <span style="color:red">*</span></label>
+            <select class="ma-select w-100" id="rItem"></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Price List</label>
+            <select class="ma-select w-100" id="rList"></select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">MRP ₹</label>
+            <input type="number" class="ma-input w-100" id="rMRP" readonly style="background:#f8f8fc;" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Rate ₹ <span style="color:red">*</span></label>
+            <input type="number" class="ma-input w-100" id="rRate" step="0.01" min="0" oninput="calcFromRate()" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Discount %</label>
+            <input type="number" class="ma-input w-100" id="rDisc" step="0.01" min="0" max="100" oninput="calcFromDisc()" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Margin %</label>
+            <input type="number" class="ma-input w-100" id="rMargin" readonly style="background:#f8f8fc;" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Effective From</label>
+            <input type="date" class="ma-input w-100" id="rEffFrom" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Effective To</label>
+            <input type="date" class="ma-input w-100" id="rEffTo" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select class="ma-select w-100" id="rStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Notes</label>
+            <textarea class="ma-textarea w-100" id="rNotes" rows="2" placeholder="Optional notes..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button><button class="btn-ma-primary" onclick="saveRate()"><i class="fas fa-save me-1"></i>Save Rate</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Price List Modal -->
+<div class="modal fade" id="plModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Manage Price Lists</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div id="plListBody" style="margin-bottom:16px;"></div>
+        <div style="border-top:1px solid #f0f0f5;padding-top:16px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:#252525;">Add New Price List</div>
+          <div class="row g-2">
+            <div class="col-md-5"><input type="text" class="ma-input w-100" id="plName" placeholder="List name *" /></div>
+            <div class="col-md-4">
+              <select class="ma-select w-100" id="plType">
+                <option>Standard</option><option>Wholesale</option><option>Retail</option><option>Special</option><option>Export</option>
+              </select>
+            </div>
+            <div class="col-md-3"><input type="number" class="ma-input w-100" id="plDisc" placeholder="Default disc%" min="0" max="100" /></div>
+            <div class="col-12"><textarea class="ma-textarea w-100" id="plDesc" rows="1" placeholder="Description (optional)"></textarea></div>
+          </div>
+          <div style="margin-top:10px;text-align:right;">
+            <button class="btn-ma-primary" onclick="addPriceList()"><i class="fas fa-plus me-1"></i>Add List</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-ma-outline" data-bs-dismiss="modal">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Update Modal -->
+<div class="modal fade" id="bulkModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Bulk Rate Update</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Apply to Price List</label>
+            <select class="ma-select w-100" id="buList"></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Apply to Category</label>
+            <select class="ma-select w-100" id="buCat"><option value="">All Categories</option></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Update Type</label>
+            <select class="ma-select w-100" id="buType" onchange="toggleBulkFields()">
+              <option value="pct_disc">Set Discount % from MRP</option>
+              <option value="pct_inc">Increase Rate by %</option>
+              <option value="pct_dec">Decrease Rate by %</option>
+              <option value="flat_amt">Set Flat Rate Amount</option>
+              <option value="reset_mrp">Reset to MRP (no discount)</option>
+            </select>
+          </div>
+          <div class="col-md-6" id="buValueWrap">
+            <label class="form-label" id="buValueLabel">Value</label>
+            <input type="number" class="ma-input w-100" id="buValue" step="0.01" min="0" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Effective From</label>
+            <input type="date" class="ma-input w-100" id="buEffFrom" />
+          </div>
+          <div class="col-12">
+            <div class="ma-alert ma-alert-warning" style="margin-bottom:0;">
+              <i class="fas fa-exclamation-triangle ma-alert-icon"></i>
+              <span>This will update rates for <strong id="buAffected">0</strong> items. Existing rates for the selected list/category will be overwritten.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button><button class="btn-ma-primary" onclick="applyBulkUpdate()"><i class="fas fa-check me-1"></i>Apply Update</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Set Rate Modal -->
+<div class="modal fade" id="bulkSetModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Set Rate for Selected Items</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Price List</label>
+            <select class="ma-select w-100" id="bsrList"></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Discount % from MRP</label>
+            <input type="number" class="ma-input w-100" id="bsrDisc" step="0.01" min="0" max="100" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Effective From</label>
+            <input type="date" class="ma-input w-100" id="bsrEffFrom" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select class="ma-select w-100" id="bsrStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-ma-outline" data-bs-dismiss="modal">Cancel</button><button class="btn-ma-primary" onclick="applyBulkSetRate()"><i class="fas fa-check me-1"></i>Apply</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const Swal2 = Swal.mixin({ confirmButtonColor: '#696cff' });
+
+let priceLists = MA.getAll('priceLists');
+let rates = MA.getAll('rates');
+let items = MA.getAll('items');
+let categories = MA.getAll('categories');
+let brands = MA.getAll('brands');
+
+// Seed default price lists if none
+if (!priceLists.length) {
+  priceLists = [
+    { id:1, name:'Retail', type:'Retail', desc:'Default retail selling price', defaultDisc:0, status:'active' },
+    { id:2, name:'Wholesale', type:'Wholesale', desc:'Bulk / distributor pricing', defaultDisc:10, status:'active' },
+    { id:3, name:'Special', type:'Special', desc:'Special customer pricing', defaultDisc:15, status:'active' },
+  ];
+  MA.set('priceLists', priceLists);
+}
+
+let nextListId = MA.nextId(priceLists);
+let nextRateId = MA.nextId(rates);
+let currentListId = priceLists[0] ? priceLists[0].id : null;
+let selectedItems = new Set();
+const PAGE_SIZE = 20;
+let currentPage = 1;
+
+// ---- Filter dropdowns population ----
+function populateFilters() {
+  const catSel = document.getElementById('filterCat');
+  const buCat = document.getElementById('buCat');
+  catSel.innerHTML = '<option value="">All Categories</option>' + [...new Set(items.map(i => i.cat).filter(Boolean))].map(c => `<option>${c}</option>`).join('');
+  buCat.innerHTML = '<option value="">All Categories</option>' + [...new Set(items.map(i => i.cat).filter(Boolean))].map(c => `<option>${c}</option>`).join('');
+  document.getElementById('filterBrand').innerHTML = '<option value="">All Brands</option>' + [...new Set(items.map(i => i.brand).filter(Boolean))].map(b => `<option>${b}</option>`).join('');
+}
+
+// ---- Price List Tabs ----
+function renderTabs() {
+  const wrap = document.getElementById('plTabs');
+  wrap.innerHTML = priceLists.filter(l => l.status === 'active').map(l =>
+    `<button class="pl-tab ${l.id === currentListId ? 'active' : ''}" onclick="switchList(${l.id})">${l.name}</button>`
+  ).join('') + `<button class="pl-tab" onclick="openAddList()" style="border-style:dashed;"><i class="fas fa-plus me-1"></i>Add List</button>`;
+}
+
+function switchList(id) {
+  currentListId = id;
+  currentPage = 1;
+  renderTabs();
+  renderTable();
+}
+
+// ---- Rate helpers ----
+function getRateForItem(itemId, listId) {
+  return rates.find(r => r.itemId === itemId && r.listId === listId && r.status === 'active') || null;
+}
+
+function calcMargin(mrp, rate) {
+  if (!mrp || !rate) return 0;
+  return Math.round(((mrp - rate) / mrp) * 100 * 10) / 10;
+}
+
+// ---- Table render ----
+function renderTable() {
+  const q = (document.getElementById('searchInput').value || document.getElementById('globalSearch').value || '').toLowerCase();
+  const cat = document.getElementById('filterCat').value;
+  const brand = document.getElementById('filterBrand').value;
+  const rated = document.getElementById('filterRated').value;
+
+  let filtered = items.filter(i => {
+    if (q && !(i.name + (i.sku || '')).toLowerCase().includes(q)) return false;
+    if (cat && i.cat !== cat) return false;
+    if (brand && i.brand !== brand) return false;
+    if (rated === '1' && !getRateForItem(i.id, currentListId)) return false;
+    if (rated === '0' && getRateForItem(i.id, currentListId)) return false;
+    return true;
+  });
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const paged = filtered.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('rateBody').innerHTML = paged.map((item, i) => {
+    const r = getRateForItem(item.id, currentListId);
+    const mrp = item.mrp || item.sale || 0;
+    const rate = r ? r.rate : mrp;
+    const disc = r ? calcMargin(mrp, rate) : 0;
+    const margin = calcMargin(mrp, rate);
+    const marginClass = margin > 20 ? 'margin-good' : margin > 5 ? 'margin-low' : 'margin-zero';
+    const isCustom = !!r;
+    const chk = selectedItems.has(item.id) ? 'checked' : '';
+    return `<tr>
+      <td><input type="checkbox" class="item-chk" data-id="${item.id}" ${chk} onchange="toggleItem(${item.id},this.checked)" /></td>
+      <td style="color:#aaa;font-size:12px;">${start + i + 1}</td>
+      <td>
+        <div style="font-weight:600;font-size:13px;">${item.name}</div>
+        ${isCustom ? '<span class="rate-info-badge">Custom Rate</span>' : '<span style="font-size:10px;color:#bbb;">MRP rate</span>'}
+      </td>
+      <td><code style="font-size:11px;background:#f0f0f5;padding:2px 6px;border-radius:3px;">${item.sku || '—'}</code></td>
+      <td style="font-size:12px;color:#666;">${item.cat || '—'}</td>
+      <td style="font-size:12px;color:#666;">${item.brand || '—'}</td>
+      <td class="mrp-cell">₹${mrp}</td>
+      <td><span class="rate-badge">₹${rate}</span></td>
+      <td><span class="${marginClass}">${disc}%</span></td>
+      <td><span class="${marginClass}">${margin}%</span></td>
+      <td style="font-size:11px;color:#888;">${r ? (r.effFrom || '—') : '—'}</td>
+      <td>${r ? (r.status === 'active' ? '<span class="badge-success">Active</span>' : '<span class="badge-inactive">Inactive</span>') : '<span class="badge-inactive">Default</span>'}</td>
+      <td>
+        <button class="btn-icon" onclick="editRate(${item.id})" title="Edit Rate"><i class="fas fa-edit"></i></button>
+        ${isCustom ? `<button class="btn-icon danger" onclick="deleteRate(${item.id})" title="Remove custom rate"><i class="fas fa-trash-alt"></i></button>` : ''}
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="13" style="text-align:center;padding:32px;color:#aaa;"><i class="fas fa-search" style="font-size:20px;display:block;margin-bottom:8px;"></i>No items found</td></tr>';
+
+  updateStats(filtered);
+  renderPagination(total, totalPages);
+}
+
+function renderPagination(total, totalPages) {
+  document.getElementById('pgInfo').textContent = `Showing ${Math.min((currentPage-1)*PAGE_SIZE+1, total)}–${Math.min(currentPage*PAGE_SIZE, total)} of ${total} items`;
+  const btns = document.getElementById('pgBtns');
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for (let p = Math.max(1, currentPage-2); p <= Math.min(totalPages, currentPage+2); p++) {
+    html += `<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>›</button>`;
+  btns.innerHTML = html;
+}
+
+function goPage(p) {
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  if (p < 1 || p > totalPages) return;
+  currentPage = p;
+  renderTable();
+}
+
+function updateStats(filtered) {
+  document.getElementById('stItems').textContent = items.length;
+  const ratedCount = items.filter(i => getRateForItem(i.id, currentListId)).length;
+  document.getElementById('stRated').textContent = ratedCount;
+  document.getElementById('stLists').textContent = priceLists.filter(l => l.status === 'active').length;
+  const discs = rates.filter(r => r.status === 'active').map(r => {
+    const it = items.find(i => i.id === r.itemId);
+    const mrp = it ? (it.mrp || it.sale || 0) : 0;
+    return mrp ? calcMargin(mrp, r.rate) : 0;
+  });
+  const avg = discs.length ? Math.round(discs.reduce((a,b)=>a+b,0)/discs.length*10)/10 : 0;
+  document.getElementById('stAvgDisc').textContent = avg + '%';
+}
+
+// ---- Selection ----
+function toggleItem(id, checked) { checked ? selectedItems.add(id) : selectedItems.delete(id); updateBulkBar(); }
+function toggleAll(checked) {
+  document.querySelectorAll('.item-chk').forEach(cb => { cb.checked = checked; const id = parseInt(cb.dataset.id); checked ? selectedItems.add(id) : selectedItems.delete(id); });
+  updateBulkBar();
+}
+function updateBulkBar() {
+  const bar = document.getElementById('bulkToolbar');
+  document.getElementById('bulkCount').textContent = selectedItems.size;
+  bar.classList.toggle('show', selectedItems.size > 0);
+}
+function clearSelection() { selectedItems.clear(); document.querySelectorAll('.item-chk').forEach(cb => cb.checked = false); document.getElementById('checkAll').checked = false; updateBulkBar(); }
+
+// ---- Rate calculations in modal ----
+function calcFromRate() {
+  const mrp = parseFloat(document.getElementById('rMRP').value) || 0;
+  const rate = parseFloat(document.getElementById('rRate').value) || 0;
+  if (mrp) {
+    const disc = Math.round(((mrp - rate) / mrp) * 100 * 100) / 100;
+    document.getElementById('rDisc').value = disc;
+    document.getElementById('rMargin').value = disc;
+  }
+}
+function calcFromDisc() {
+  const mrp = parseFloat(document.getElementById('rMRP').value) || 0;
+  const disc = parseFloat(document.getElementById('rDisc').value) || 0;
+  if (mrp) {
+    const rate = Math.round(mrp * (1 - disc / 100) * 100) / 100;
+    document.getElementById('rRate').value = rate;
+    document.getElementById('rMargin').value = disc;
+  }
+}
+
+// ---- Open Add Rate ----
+function openAdd() {
+  document.getElementById('rModalTitle').textContent = 'Add Rate';
+  document.getElementById('rEditId').value = '';
+  document.getElementById('rRate').value = '';
+  document.getElementById('rDisc').value = '';
+  document.getElementById('rMargin').value = '';
+  document.getElementById('rNotes').value = '';
+  document.getElementById('rEffFrom').value = MA.today();
+  document.getElementById('rEffTo').value = '';
+  document.getElementById('rStatus').value = 'active';
+
+  const itemSel = document.getElementById('rItem');
+  itemSel.innerHTML = '<option value="">Select Item...</option>' + items.map(i => `<option value="${i.id}">${i.name} (${i.sku || 'no-sku'})</option>`).join('');
+  itemSel.onchange = function() {
+    const it = items.find(x => x.id === parseInt(this.value));
+    document.getElementById('rMRP').value = it ? (it.mrp || it.sale || 0) : '';
+    document.getElementById('rRate').value = it ? (it.mrp || it.sale || 0) : '';
+    document.getElementById('rDisc').value = 0;
+    document.getElementById('rMargin').value = 0;
+  };
+
+  const listSel = document.getElementById('rList');
+  listSel.innerHTML = priceLists.filter(l => l.status === 'active').map(l => `<option value="${l.id}" ${l.id === currentListId ? 'selected' : ''}>${l.name}</option>`).join('');
+
+  new bootstrap.Modal(document.getElementById('rateModal')).show();
+}
+
+// ---- Edit Rate ----
+function editRate(itemId) {
+  const item = items.find(i => i.id === itemId);
+  if (!item) return;
+  const r = getRateForItem(itemId, currentListId);
+
+  document.getElementById('rModalTitle').textContent = 'Edit Rate — ' + item.name;
+  document.getElementById('rEditId').value = r ? r.id : '';
+  document.getElementById('rMRP').value = item.mrp || item.sale || 0;
+  document.getElementById('rRate').value = r ? r.rate : (item.mrp || item.sale || 0);
+  document.getElementById('rDisc').value = r ? calcMargin(item.mrp || item.sale || 0, r.rate) : 0;
+  document.getElementById('rMargin').value = r ? calcMargin(item.mrp || item.sale || 0, r.rate) : 0;
+  document.getElementById('rEffFrom').value = r ? (r.effFrom || MA.today()) : MA.today();
+  document.getElementById('rEffTo').value = r ? (r.effTo || '') : '';
+  document.getElementById('rStatus').value = r ? r.status : 'active';
+  document.getElementById('rNotes').value = r ? (r.notes || '') : '';
+
+  const itemSel = document.getElementById('rItem');
+  itemSel.innerHTML = `<option value="${item.id}" selected>${item.name} (${item.sku || 'no-sku'})</option>`;
+  itemSel.onchange = null;
+
+  const listSel = document.getElementById('rList');
+  listSel.innerHTML = priceLists.filter(l => l.status === 'active').map(l => `<option value="${l.id}" ${l.id === currentListId ? 'selected' : ''}>${l.name}</option>`).join('');
+
+  new bootstrap.Modal(document.getElementById('rateModal')).show();
+}
+
+// ---- Save Rate ----
+function saveRate() {
+  const itemId = parseInt(document.getElementById('rItem').value);
+  if (!itemId) { Swal2.fire('Error', 'Please select an item.', 'error'); return; }
+  const rate = parseFloat(document.getElementById('rRate').value);
+  if (isNaN(rate) || rate < 0) { Swal2.fire('Error', 'Enter a valid rate.', 'error'); return; }
+  const listId = parseInt(document.getElementById('rList').value);
+  const eid = document.getElementById('rEditId').value;
+
+  const data = {
+    itemId, listId,
+    rate,
+    disc: parseFloat(document.getElementById('rDisc').value) || 0,
+    effFrom: document.getElementById('rEffFrom').value,
+    effTo: document.getElementById('rEffTo').value,
+    status: document.getElementById('rStatus').value,
+    notes: document.getElementById('rNotes').value,
+  };
+
+  if (eid) {
+    const idx = rates.findIndex(r => r.id === parseInt(eid));
+    if (idx >= 0) rates[idx] = { ...rates[idx], ...data };
+  } else {
+    // Deactivate any existing rate for same item+list
+    rates.forEach(r => { if (r.itemId === itemId && r.listId === listId) r.status = 'inactive'; });
+    rates.push({ id: nextRateId++, ...data });
+  }
+
+  MA.set('rates', rates);
+  bootstrap.Modal.getInstance(document.getElementById('rateModal')).hide();
+  Swal2.fire({ icon:'success', title:'Rate Saved', toast:true, position:'top-end', timer:1500, showConfirmButton:false });
+  renderTable();
+}
+
+// ---- Delete Rate ----
+function deleteRate(itemId) {
+  const item = items.find(i => i.id === itemId);
+  Swal2.fire({ title: `Remove custom rate for "${item.name}"?`, text:'Item will revert to MRP.', icon:'warning', showCancelButton:true, confirmButtonText:'Remove', confirmButtonColor:'#dc3545' }).then(r => {
+    if (r.isConfirmed) {
+      rates = rates.filter(x => !(x.itemId === itemId && x.listId === currentListId));
+      MA.set('rates', rates);
+      renderTable();
+    }
+  });
+}
+
+// ---- Price List management ----
+function openAddList() {
+  renderPlList();
+  new bootstrap.Modal(document.getElementById('plModal')).show();
+}
+
+function renderPlList() {
+  document.getElementById('plListBody').innerHTML = priceLists.length
+    ? `<table class="ma-table"><thead><tr><th>Name</th><th>Type</th><th>Default Disc%</th><th>Status</th><th></th></tr></thead><tbody>`
+      + priceLists.map(l => `<tr>
+        <td style="font-weight:600;">${l.name}</td>
+        <td style="font-size:12px;">${l.type}</td>
+        <td style="color:#696cff;font-weight:600;">${l.defaultDisc || 0}%</td>
+        <td>${l.status === 'active' ? '<span class="badge-success">Active</span>' : '<span class="badge-inactive">Inactive</span>'}</td>
+        <td>
+          <button class="btn-icon" onclick="toggleListStatus(${l.id})" title="${l.status==='active'?'Deactivate':'Activate'}"><i class="fas fa-${l.status==='active'?'eye-slash':'eye'}"></i></button>
+          <button class="btn-icon danger" onclick="deletePriceList(${l.id})"><i class="fas fa-trash-alt"></i></button>
+        </td></tr>`).join('') + '</tbody></table>'
+    : '<div style="color:#aaa;text-align:center;padding:20px;">No price lists yet.</div>';
+}
+
+function addPriceList() {
+  const name = document.getElementById('plName').value.trim();
+  if (!name) { alert('Name required'); return; }
+  priceLists.push({ id: nextListId++, name, type: document.getElementById('plType').value, desc: document.getElementById('plDesc').value, defaultDisc: parseFloat(document.getElementById('plDisc').value) || 0, status: 'active' });
+  MA.set('priceLists', priceLists);
+  document.getElementById('plName').value = '';
+  document.getElementById('plDesc').value = '';
+  document.getElementById('plDisc').value = '';
+  renderPlList();
+  renderTabs();
+}
+
+function toggleListStatus(id) {
+  const idx = priceLists.findIndex(l => l.id === id);
+  if (idx >= 0) priceLists[idx].status = priceLists[idx].status === 'active' ? 'inactive' : 'active';
+  MA.set('priceLists', priceLists);
+  renderPlList(); renderTabs();
+}
+
+function deletePriceList(id) {
+  if (priceLists.length <= 1) { Swal2.fire('Cannot Delete', 'At least one price list must exist.', 'warning'); return; }
+  Swal2.fire({ title: 'Delete this price list?', text: 'All rates in this list will also be removed.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete', confirmButtonColor: '#dc3545' }).then(r => {
+    if (r.isConfirmed) {
+      priceLists = priceLists.filter(l => l.id !== id);
+      rates = rates.filter(r => r.listId !== id);
+      MA.set('priceLists', priceLists);
+      MA.set('rates', rates);
+      if (currentListId === id) currentListId = priceLists[0] ? priceLists[0].id : null;
+      renderPlList(); renderTabs(); renderTable();
+    }
+  });
+}
+
+// ---- Bulk Update ----
+function openBulkUpdate() {
+  const listSel = document.getElementById('buList');
+  listSel.innerHTML = priceLists.filter(l => l.status === 'active').map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+  document.getElementById('buEffFrom').value = MA.today();
+  document.getElementById('buValue').value = '';
+  toggleBulkFields();
+  updateBulkAffected();
+  new bootstrap.Modal(document.getElementById('bulkModal')).show();
+}
+
+function toggleBulkFields() {
+  const type = document.getElementById('buType').value;
+  const wrap = document.getElementById('buValueWrap');
+  const label = document.getElementById('buValueLabel');
+  wrap.style.display = type === 'reset_mrp' ? 'none' : '';
+  if (type === 'pct_disc') label.textContent = 'Discount %';
+  else if (type === 'flat_amt') label.textContent = 'Rate Amount ₹';
+  else label.textContent = 'Percentage %';
+  updateBulkAffected();
+}
+
+function updateBulkAffected() {
+  const cat = document.getElementById('buCat').value;
+  const count = cat ? items.filter(i => i.cat === cat).length : items.length;
+  document.getElementById('buAffected').textContent = count;
+}
+document.getElementById('buCat').addEventListener('change', updateBulkAffected);
+
+function applyBulkUpdate() {
+  const listId = parseInt(document.getElementById('buList').value);
+  const cat = document.getElementById('buCat').value;
+  const type = document.getElementById('buType').value;
+  const val = parseFloat(document.getElementById('buValue').value) || 0;
+  const effFrom = document.getElementById('buEffFrom').value;
+
+  const targetItems = cat ? items.filter(i => i.cat === cat) : items;
+  let updated = 0;
+
+  targetItems.forEach(item => {
+    const mrp = item.mrp || item.sale || 0;
+    if (!mrp) return;
+    let newRate = mrp;
+    if (type === 'pct_disc') newRate = Math.round(mrp * (1 - val / 100) * 100) / 100;
+    else if (type === 'pct_inc') { const existing = getRateForItem(item.id, listId); const cur = existing ? existing.rate : mrp; newRate = Math.round(cur * (1 + val / 100) * 100) / 100; }
+    else if (type === 'pct_dec') { const existing = getRateForItem(item.id, listId); const cur = existing ? existing.rate : mrp; newRate = Math.round(cur * (1 - val / 100) * 100) / 100; }
+    else if (type === 'flat_amt') newRate = val;
+    else if (type === 'reset_mrp') newRate = mrp;
+
+    rates = rates.filter(r => !(r.itemId === item.id && r.listId === listId));
+    rates.push({ id: nextRateId++, itemId: item.id, listId, rate: newRate, disc: Math.round(((mrp - newRate) / mrp) * 100 * 10) / 10, effFrom, effTo: '', status: 'active', notes: 'Bulk update' });
+    updated++;
+  });
+
+  MA.set('rates', rates);
+  bootstrap.Modal.getInstance(document.getElementById('bulkModal')).hide();
+  Swal2.fire({ icon:'success', title:`${updated} items updated`, toast:true, position:'top-end', timer:2000, showConfirmButton:false });
+  renderTable();
+}
+
+// ---- Bulk Set Rate (from selection) ----
+function bulkSetRate() {
+  if (!selectedItems.size) return;
+  const listSel = document.getElementById('bsrList');
+  listSel.innerHTML = priceLists.filter(l => l.status === 'active').map(l => `<option value="${l.id}" ${l.id === currentListId ? 'selected' : ''}>${l.name}</option>`).join('');
+  document.getElementById('bsrEffFrom').value = MA.today();
+  document.getElementById('bsrDisc').value = '';
+  new bootstrap.Modal(document.getElementById('bulkSetModal')).show();
+}
+
+function applyBulkSetRate() {
+  const listId = parseInt(document.getElementById('bsrList').value);
+  const disc = parseFloat(document.getElementById('bsrDisc').value) || 0;
+  const effFrom = document.getElementById('bsrEffFrom').value;
+  const status = document.getElementById('bsrStatus').value;
+
+  selectedItems.forEach(itemId => {
+    const item = items.find(i => i.id === itemId);
+    if (!item) return;
+    const mrp = item.mrp || item.sale || 0;
+    const rate = Math.round(mrp * (1 - disc / 100) * 100) / 100;
+    rates = rates.filter(r => !(r.itemId === itemId && r.listId === listId));
+    rates.push({ id: nextRateId++, itemId, listId, rate, disc, effFrom, effTo: '', status, notes: '' });
+  });
+
+  MA.set('rates', rates);
+  bootstrap.Modal.getInstance(document.getElementById('bulkSetModal')).hide();
+  clearSelection();
+  Swal2.fire({ icon:'success', title:`Rates updated for ${selectedItems.size || 'selected'} items`, toast:true, position:'top-end', timer:1800, showConfirmButton:false });
+  renderTable();
+}
+
+function bulkClearRates() {
+  Swal2.fire({ title:`Clear custom rates for ${selectedItems.size} items?`, text:'Items will revert to MRP.', icon:'warning', showCancelButton:true, confirmButtonText:'Clear', confirmButtonColor:'#dc3545' }).then(r => {
+    if (r.isConfirmed) {
+      selectedItems.forEach(itemId => { rates = rates.filter(r => !(r.itemId === itemId && r.listId === currentListId)); });
+      MA.set('rates', rates);
+      clearSelection();
+      renderTable();
+    }
+  });
+}
+
+// ---- Sidebar / navbar boilerplate ----
+document.getElementById('sidebarToggle').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('maMain').classList.toggle('expanded'); });
+document.getElementById('userDropdownToggle').addEventListener('click', e => { e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); });
+document.addEventListener('click', () => document.getElementById('userDropdown').classList.remove('show'));
+
+// ---- Init ----
+populateFilters();
+renderTabs();
+renderTable();
+
+(function(){
+  var nb = document.getElementById('navBadge');
+  if (nb) nb.textContent = MA.getUnreadCount() || '';
+  var comp = MA.getCompany();
+  document.querySelectorAll('.brand-text').forEach(function(el){ if(comp.name) el.textContent = comp.name; });
+  document.querySelectorAll('.brand-sub').forEach(function(el){ if(comp.tagline) el.textContent = comp.tagline; });
+})();
+</script>
+</body>
+</html>

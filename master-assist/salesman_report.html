@@ -61,6 +61,7 @@
     <li><a href="payments.html"><span class="menu-icon"><i class="fas fa-hand-holding-usd"></i></span>Payments</a></li>
     <li><a href="cashbook.html"><span class="menu-icon"><i class="fas fa-book"></i></span>Cashbook</a></li>
     <li><a href="tax_master.html"><span class="menu-icon"><i class="fas fa-percent"></i></span>Tax Master</a></li>
+    <li><a href="rate_master.html"><span class="menu-icon"><i class="fas fa-rupee-sign"></i></span>Rate Master</a></li>
     <li><a href="coupon_master.html"><span class="menu-icon"><i class="fas fa-tag"></i></span>Coupons &amp; Offers</a></li>
     <li><a href="target_master.html"><span class="menu-icon"><i class="fas fa-bullseye"></i></span>Targets</a></li>
   </ul>
@@ -97,7 +98,7 @@
     <input type="date" class="ma-input" value="2026-07-01" /><span style="font-size:12px;color:#888;">to</span>
     <input type="date" class="ma-input" value="2026-07-18" />
     <select class="ma-select" style="max-width:160px;"><option>All Centers</option><option>Main Branch</option><option>East Branch</option><option>West Branch</option></select>
-    <button class="btn-ma-primary btn-ma-sm">Apply</button>
+    <button class="btn-ma-primary btn-ma-sm" onclick="applySalesmanFilter()">Apply</button>
   </div>
 
   <!-- Summary Cards -->
@@ -159,6 +160,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
 <script>
 const Swal2=Swal.mixin({confirmButtonColor:'#696cff'});
+function applySalesmanFilter(){
+  var filters=document.querySelectorAll('.filter-bar input[type="date"], .filter-bar select');
+  Swal2.fire({icon:'success',title:'Filter Applied',timer:1200,showConfirmButton:false});
+}
 document.getElementById('sidebarToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('maMain').classList.toggle('expanded');});
 document.getElementById('userDropdownToggle').addEventListener('click',e=>{e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');});
 document.addEventListener('click',()=>document.getElementById('userDropdown').classList.remove('show'));
