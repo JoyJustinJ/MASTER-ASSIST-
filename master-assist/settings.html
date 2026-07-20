@@ -550,28 +550,29 @@
               <div style="width:100px;"><input type="number" class="ma-input" value="30" style="height:32px;font-size:13px;" /></div>
             </div>
             <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
-              <button class="btn-ma-primary" onclick="showAlert('success','Backup started. You will be notified when complete.')"><i class="fas fa-download"></i> Download Backup Now</button>
-              <button class="btn-ma-outline" onclick="showAlert('info','Select a backup file to restore.')"><i class="fas fa-upload"></i> Restore from Backup</button>
+              <button class="btn-ma-primary" id="downloadBackupBtn"><i class="fas fa-download"></i> Download Backup Now</button>
+              <button class="btn-ma-outline" id="restoreBackupBtn"><i class="fas fa-upload"></i> Restore from Backup</button>
+              <input type="file" id="restoreFileInput" accept=".json" style="display:none;" />
             </div>
 
             <div class="section-title" style="margin-top:24px;">Data Management</div>
             <div class="row g-3">
               <div class="col-md-4">
                 <div style="background:#fafaff;border:1px solid #e8e8f0;border-radius:8px;padding:14px;text-align:center;">
-                  <div style="font-size:26px;font-weight:700;color:#696cff;">2.4 GB</div>
-                  <div style="font-size:12px;color:#888;margin-top:4px;">Total Storage Used</div>
+                  <div style="font-size:26px;font-weight:700;color:#696cff;" id="statStorageUsed">—</div>
+                  <div style="font-size:12px;color:#888;margin-top:4px;">localStorage Used</div>
                 </div>
               </div>
               <div class="col-md-4">
                 <div style="background:#fafaff;border:1px solid #e8e8f0;border-radius:8px;padding:14px;text-align:center;">
-                  <div style="font-size:26px;font-weight:700;color:#28a745;">7.6 GB</div>
-                  <div style="font-size:12px;color:#888;margin-top:4px;">Available Storage</div>
+                  <div style="font-size:26px;font-weight:700;color:#28a745;" id="statStorageFree">—</div>
+                  <div style="font-size:12px;color:#888;margin-top:4px;">Approx. Free (5 MB limit)</div>
                 </div>
               </div>
               <div class="col-md-4">
                 <div style="background:#fafaff;border:1px solid #e8e8f0;border-radius:8px;padding:14px;text-align:center;">
-                  <div style="font-size:26px;font-weight:700;color:#ff6b2b;">1,284</div>
-                  <div style="font-size:12px;color:#888;margin-top:4px;">Uploaded Files</div>
+                  <div style="font-size:26px;font-weight:700;color:#ff6b2b;" id="statUploadedFiles">—</div>
+                  <div style="font-size:12px;color:#888;margin-top:4px;">Uploaded Bills</div>
                 </div>
               </div>
             </div>
@@ -730,6 +731,91 @@
 
   renderCenters();
   renderAudit();
+
+  /* ---- Backup & Data ---- */
+  function calcStorageStats() {
+    var total = 0;
+    var keys = ['bills','users','items','inventory','categories','suppliers','customers','payments',
+                'expenses','purchaseOrders','returns','stockTransfers','bookings','centers',
+                'notifications','auditLog','targets','rates','priceLists','ledger','smsTemplates'];
+    keys.forEach(function(k) {
+      var v = localStorage.getItem('ma_' + k);
+      if (v) total += v.length * 2; // UTF-16 bytes
+    });
+    var usedKB = (total / 1024).toFixed(1);
+    var usedMB = (total / (1024 * 1024)).toFixed(2);
+    var displayUsed = total > 1024 * 1024 ? usedMB + ' MB' : usedKB + ' KB';
+    var freeBytes = Math.max(0, 5 * 1024 * 1024 - total);
+    var freeMB = (freeBytes / (1024 * 1024)).toFixed(2);
+    var el = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+    el('statStorageUsed', displayUsed);
+    el('statStorageFree', freeMB + ' MB');
+    el('statUploadedFiles', MA.getAll('bills').length);
+  }
+  calcStorageStats();
+
+  document.getElementById('downloadBackupBtn').addEventListener('click', function() {
+    var backup = {};
+    var keys = ['bills','users','items','inventory','categories','suppliers','customers','payments',
+                'expenses','purchaseOrders','returns','stockTransfers','bookings','centers',
+                'notifications','auditLog','targets','rates','priceLists','ledger','smsTemplates',
+                'company','settings'];
+    keys.forEach(function(k) {
+      var v = localStorage.getItem('ma_' + k);
+      if (v) { try { backup[k] = JSON.parse(v); } catch(e) { backup[k] = v; } }
+    });
+    backup._backupDate = new Date().toISOString();
+    backup._version = '1.0';
+    var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'MasterAssist_Backup_' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showAlert('success', 'Backup downloaded successfully.');
+    MA.addAudit('Backup downloaded', 'Admin');
+  });
+
+  document.getElementById('restoreBackupBtn').addEventListener('click', function() {
+    document.getElementById('restoreFileInput').click();
+  });
+
+  document.getElementById('restoreFileInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    Swal.fire({
+      title: 'Restore from Backup?',
+      text: 'This will overwrite all current data with the backup file: ' + file.name,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      confirmButtonText: 'Yes, Restore'
+    }).then(function(r) {
+      if (!r.isConfirmed) { e.target.value = ''; return; }
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          var data = JSON.parse(ev.target.result);
+          var count = 0;
+          Object.keys(data).forEach(function(k) {
+            if (k.startsWith('_')) return;
+            localStorage.setItem('ma_' + k, JSON.stringify(data[k]));
+            count++;
+          });
+          showAlert('success', 'Restored ' + count + ' data collections from backup.');
+          MA.addAudit('Backup restored from ' + file.name, 'Admin');
+          setTimeout(function() { location.reload(); }, 1500);
+        } catch(err) {
+          showAlert('error', 'Invalid backup file. Please select a valid JSON backup.');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+  });
 
 
 (function(){
